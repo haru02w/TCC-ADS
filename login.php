@@ -7,19 +7,19 @@
     $password = filter_input(INPUT_POST, 'PASSWORD_LOGIN', FILTER_SANITIZE_STRING);
     $type = filter_input(INPUT_POST, 'TYPE_LOGIN', FILTER_SANITIZE_STRING);
 
-    if(isEmptyInputLogin($email, $password, $type) !== false) {
+    if(isEmptyInputLogin($email, $password, $type)) {
         $_SESSION['l'] = "failurel";
         header("Location: /");
         exit();
     }
 
-    if(isValidEmail($email) !== false) {
+    if(isValidEmail($email)) {
         $_SESSION['l'] = "failurel";
         header("Location: /");
         exit();
     }
 
-    if(login($email, $password, $type, $conn) !== true) {
+    if(!login($email, $password, $type, $conn)) {
         $_SESSION['EMAIL'] = $email;
         $_SESSION['PASSWORD'] = $password;
         $_SESSION['TYPE'] = $type;

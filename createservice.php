@@ -10,18 +10,16 @@
         exit();
     }
     $_SESSION['LAST_ACTIVITY'] = time();
-    
+
     if ($_SESSION['TYPE'] == "DEVELOPER") {
 
         header("Location: /developermenu.php");
         exit();
     }
-   
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,9 +30,8 @@
     <script src="js/v-mask.min.js"></script>
     <script src="js/moment.js"></script>
 </head>
-
 <body class="background">
-    <div id="app">
+    <div id="app" class="script">
         <?php require("headercustomer.php"); ?>
         <br>
         <section class="hero is-fullheight">
@@ -47,9 +44,9 @@
                             </p>
                         </div>
                     </section>
-                    <div class="section">
-                        <form action="" method="POST">
-                            <div class="columns">
+                    <form action="" method="POST">
+                        <div class="section">
+                            <div class="columns is-centered">
                                 <div class="column is-5">
                                     <div class="field">
                                         <label class="label">Título do serviço</label>
@@ -62,10 +59,6 @@
                                 </div>
                                 <div class="column is-5">
                                     <div class="field">
-                                        <label class="label" for="contact">Contato</label>
-                                        <input class="input" type="tel" name="contact" placeholder="Digite aqui o seu contato">
-                                    </div>
-                                    <div class="field">
                                         <label class="label" for="category">Tipo de serviço</label>
                                         <div class="select">
                                             <select name="category">
@@ -74,16 +67,23 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="submit" class="button is-primary">Criar</button>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                            <div class="field is-grouped is-grouped-centered is-grouped-multiline">
+                                <p class="control">
+                                    <button type="submit" name="submit" class="button is-primary">Criar</button>
+                                </p>
+                                <p class="control">
+                                    <button type="button" class="button is-danger" onclick="window.location.replace('customermenu.php')">Cancelar criação</button>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
-
     </div>
+    <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',
@@ -101,5 +101,4 @@
         })
     </script>
 </body>
-
 </html>

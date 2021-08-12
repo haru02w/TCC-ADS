@@ -15,43 +15,43 @@
     $arraybirth = explode("-", $birthdate);
     $type = filter_input(INPUT_POST, 'TYPE_REGISTER', FILTER_SANITIZE_STRING);
 
-    if(isEmptyInputRegister($name, $cpf, $email, $password1, $password2, $birthdate, $type) !== false) {
+    if(isEmptyInputRegister($name, $cpf, $email, $password1, $password2, $birthdate, $type)) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(isValidEmail($email) !== false) {
+    if(isValidEmail($email) ) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(isPasswordMatch($password1, $password2) !== false) {
+    if(isPasswordMatch($password1, $password2)) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(passwordStrength($password1) !== false) {
+    if(passwordStrength($password1)) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(validateCpf($cpf) !== false) {
+    if(validateCpf($cpf)) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(validateDate($arraybirth[1], $arraybirth[2], $arraybirth[0], $yearphp) !== false) {
+    if(validateDate($arraybirth[1], $arraybirth[2], $arraybirth[0], $yearphp)) {
         $_SESSION['r'] = "failurer";
         header("Location: /");
         exit();
     }
 
-    if(register($name, $cpf, $email, $password1, $birthdate, $type, $conn) === false) {
+    if(!register($name, $cpf, $email, $password1, $birthdate, $type, $conn)) {
         $_SESSION['r'] = "successr";
         header("Location: /");
         exit();

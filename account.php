@@ -90,7 +90,7 @@
 </head>
 
 <body class="background">
-    <div id="app">
+    <div id="app" class="script">
         <?php if ($type == "CUSTOMER") {
             require("headercustomer.php");
         } else {
@@ -113,11 +113,11 @@
                                 <div class="columns is-vcentered">
                                     <div class="column">
                                         <figure class="image is-square ">
-                                            <img class="is-rounded" src='<?php echo $row['IMAGE']; ?>'>
+                                            <img style="object-fit: cover;" class="is-rounded" src='<?php echo $row['IMAGE']; ?>'>
                                         </figure>
                                     </div>
                                     <div class="column">
-                                        <div class="box">
+                                        <div class="box has-text-centered">
                                             <label class="label is-medium">Nome do Usuário</label>
                                             <p class="subtitle is-5"><?php echo $row['NAME']; ?></p>
                                             <label class="label is-medium">Email do Usuário</label>
@@ -125,7 +125,7 @@
                                             <label class="label is-medium">Data de Nascimento</label>
                                             <p class="subtitle is-5"><?php echo(implode('/',array_reverse(explode('-',$row['BIRTH_DATE']),FALSE)));?></p>
                                             <form method="post" enctype="multipart/form-data" action="">
-                                                <div id="file-image" class="file has-name is-boxed">
+                                                <div id="file-image" class="file has-name is-boxed is-centered">
                                                     <label class="file-label">
                                                         <input class="file-input" @click="nameImage" type="file" name="image" accept="image/png, image/jpeg">
                                                         <span class="file-cta">
@@ -133,7 +133,7 @@
                                                                 <i class="fas fa-upload"></i>
                                                             </span>
                                                             <span class="file-label">
-                                                                Selecionar imagem...
+                                                                Selecionar<br>imagem...
                                                             </span>
                                                         </span>
                                                         <span class="file-name"></span>
@@ -182,6 +182,7 @@
             </div>
         </div>
     </div>
+    <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',

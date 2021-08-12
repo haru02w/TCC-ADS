@@ -32,7 +32,7 @@
 </head>
 
 <body class="background">
-    <div id="app">
+    <div id="app" class="script">
         <?php require("headerdeveloper.php"); ?>
         
         <section class="hero is-fullheight">
@@ -44,6 +44,7 @@
         </section>
         
     </div>
+    <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',

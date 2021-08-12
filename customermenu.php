@@ -11,14 +11,14 @@
         exit();
     }
     $_SESSION['LAST_ACTIVITY'] = time();
+    
+    $email = $_SESSION['EMAIL'];
+    $type = $_SESSION['TYPE'];
 
     if($type == "DEVELOPER") {
         header("Location: /developermenu.php");
         exit();
     }
-
-    $email = $_SESSION['EMAIL'];
-    $type = $_SESSION['TYPE'];
 
     $row = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
     $id = $row["ID_CUSTOMER"];
@@ -45,7 +45,7 @@
 </head>
 
 <body class="background">
-    <div id="app">
+    <div id="app" class="script">
         <?php require("headercustomer.php");?>
         <br>
         <section class="hero is-fullheight">
@@ -61,7 +61,7 @@
                     <div class="section is-fullheight">
                         <?php if($resultserv->num_rows <= 0) { ?>
                             <div class="box">
-                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! </p>
+                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice.php" class="is-5">Clique aqui</a> para criar um serviço!</p>
                             </div>
                         <?php } ?>
                         <div class="columns is-variable is-multiline">
@@ -89,7 +89,7 @@
             </div>
         </section>
     </div>
-
+    <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',

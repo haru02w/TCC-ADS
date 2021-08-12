@@ -16,4 +16,3 @@ const verDig = pos => cpf => getDV(cpf, pos) === cpf[pos]
 
 const checks = [is11Len, notAllEquals, onlyNum, verDig(9), verDig(10)]
 const checkAll = cpf => checks.map(f => f(cpf)).every(r => !!r)
-

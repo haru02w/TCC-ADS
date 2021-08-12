@@ -1,6 +1,6 @@
 <?php
 
-    require_once 'vendor/autoload.php';
+    require_once('vendor/autoload.php');
     require_once('mail/PHPMailer.php');
     require_once('mail/SMTP.php');
     require_once('mail/Exception.php');
