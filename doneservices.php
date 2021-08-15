@@ -1,27 +1,36 @@
 <?php
+    session_name("HATIDS");
     session_start();
+    date_default_timezone_set('America/Sao_Paulo');
     require("connection.php");
     require("functions.php");
 
-    if (!isset($_SESSION['EMAIL']) || !isset($_SESSION['PASSWORD']) || !isset($_SESSION['TYPE']) || isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-
-        session_unset();
-        $_SESSION['s'] = "expired";
-        header("Location: /");
-        exit();
+    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $email = $_COOKIE['EMAIL'];
+        $type = $_COOKIE['TYPE'];
     }
-    $_SESSION['LAST_ACTIVITY'] = time();
-
-    $email = $_SESSION['EMAIL'];
-    $type = $_SESSION['TYPE'];
+    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $email = $_SESSION['EMAIL'];
+        $type = $_SESSION['TYPE'];
+    }
+    else {
+        expiredReturn();
+    }
 
     $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    if(is_null($rowuser)) {
+        expiredReturn();
+    }
     $id = $rowuser["ID_$type"];
 
-    $stmt2 = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_$type = ? AND STATUS = 3");
-    mysqli_stmt_bind_param($stmt2, "i", $id);
-    mysqli_stmt_execute($stmt2);
-    $resultserv = mysqli_stmt_get_result($stmt2);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_$type = ? AND STATUS = 3");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $resultserv = mysqli_stmt_get_result($stmt);
     mysqli_close($conn);
 ?>
 

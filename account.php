@@ -1,28 +1,38 @@
 <?php
+    session_name("HATIDS");
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
     require('connection.php');
     require('functions.php');
-
-    if (!isset($_SESSION['EMAIL']) || !isset($_SESSION['PASSWORD']) || !isset($_SESSION['TYPE']) || isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-
-        session_unset();
-        $_SESSION['s'] = "expired";
-        header("Location: /");
-        exit();
+    
+    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $email = $_COOKIE['EMAIL'];
+        $type = $_COOKIE['TYPE'];
     }
-    $_SESSION['LAST_ACTIVITY'] = time();
-
-    $email = $_SESSION['EMAIL'];
-    $type = $_SESSION['TYPE'];
-
+    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $email = $_SESSION['EMAIL'];
+        $type = $_SESSION['TYPE'];
+    }
+    else {
+        expiredReturn();
+    }
+    
     $row = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    
+    if(is_null($row)) {
+        expiredReturn();
+    }
+    
     $id = $row["ID_$type"];
 
     if (isset($_POST['submit'])) {
         if (($_FILES['image']['name'] != "")) {
             if(file_exists($_FILES['image']['tmp_name']))  {
-
+                
                 $temp = $_FILES['image']['tmp_name'];
                 $filename = $_FILES['image']['name'];
                 $fileext = explode('.', $filename); $fileext = array_pop($fileext);
@@ -34,19 +44,18 @@
                         unlink($row['IMAGE']);
                         $row['IMAGE'] = "images/user.png";
                     }
-
+                    
                     $date = date("m/d/Yh:i:sa", time());
                     $rand = rand(0, 99999);
                     $encname = $date . $rand;
                     $filename = md5($encname) . '.' . $fileext;
                     $filepath = 'allimages/' . $filename;
-
+                    
                     if (move_uploaded_file($temp, $filepath)) {
-
+                        
                         $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
                         mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
                         $bool = mysqli_stmt_execute($stmt);
-    
                         if ($bool) {
                             $image = "success";
                         } else {
@@ -64,20 +73,22 @@
         }
     }
     elseif(isset($_POST['delete'])) {
-        unlink($row['IMAGE']);
-        $filepath = "images/user.png";
-        $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
-        mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
-        $bool = mysqli_stmt_execute($stmt);
-        header("Location: /account.php");
-        exit();
+        if($row['IMAGE'] != "images/user.png") {
+            
+            unlink($row['IMAGE']);
+            $filepath = "images/user.png";
+            $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
+            mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
+            mysqli_stmt_execute($stmt);
+            header("Location: /account.php");
+            exit();
+        }
     }
     mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -88,7 +99,6 @@
     <script src="js/v-mask.min.js"></script>
     <script src="js/moment.js"></script>
 </head>
-
 <body class="background">
     <div id="app" class="script">
         <?php if ($type == "CUSTOMER") {
@@ -140,7 +150,7 @@
                                                     </label>
                                                 </div>
                                                 <br>
-                                                <div v-if="isActiveButtonImage" class="field">
+                                                <div v-show="isActiveButtonImage" class="field">
                                                     <button name="submit" class="button is-link"> Enviar foto de perfil </button>
                                                 </div>
                                                 <?php if ($row['IMAGE'] != "images/user.png") { ?>

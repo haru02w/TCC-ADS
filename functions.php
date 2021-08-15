@@ -277,6 +277,15 @@
         $result = mysqli_stmt_get_result($stmt);
         return $result;
     }
+    
+    function expiredReturn() {
+        session_unset();
+        setcookie("EMAIL", '', time()-86400*30);
+        setcookie("TYPE", '', time()-86400*30);
+        $_SESSION['s'] = "expired";
+        header("Location: /");
+        exit();
+    }
 
 ?>
     

@@ -1,26 +1,37 @@
 <?php
+    session_name("HATIDS");
     session_start();
+    date_default_timezone_set('America/Sao_Paulo');
     require("connection.php");
     require("functions.php");
-
-    if (!isset($_SESSION['EMAIL']) || !isset($_SESSION['PASSWORD']) || !isset($_SESSION['TYPE']) || isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-
-        session_unset();
-        $_SESSION['s'] = "expired";
-        header("Location: /");
-        exit();
-    }
-    $_SESSION['LAST_ACTIVITY'] = time();
     
-    $email = $_SESSION['EMAIL'];
-    $type = $_SESSION['TYPE'];
+    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $email = $_COOKIE['EMAIL'];
+        $type = $_COOKIE['TYPE'];
+    }
+    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $email = $_SESSION['EMAIL'];
+        $type = $_SESSION['TYPE'];
+    }
+    else {
+        expiredReturn();
+    }
 
-    if($type == "DEVELOPER") {
-        header("Location: /developermenu.php");
+    if($type != "CUSTOMER") {
+        header("Location: /");
         exit();
     }
 
     $row = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    
+    if(is_null($row)) {
+        expiredReturn();
+    }
+    
     $id = $row["ID_CUSTOMER"];
 
     $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_CUSTOMER = ? AND STATUS = 0");
