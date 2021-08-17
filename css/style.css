@@ -82,3 +82,11 @@ body::-webkit-scrollbar-thumb {
     transform: rotate(360deg);
   }
 }
+
+#textColorOne {
+  color: #c3e0fb;
+}
+
+#textColorTwo {
+  color: #1c2731;
+}
