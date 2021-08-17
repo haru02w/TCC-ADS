@@ -1,19 +1,26 @@
 <?php
+    session_name("HATIDS");
     session_start();
+    date_default_timezone_set('America/Sao_Paulo');
     require('connection.php');
+    require('functions.php');
 
-    if (!isset($_SESSION['EMAIL']) || !isset($_SESSION['PASSWORD']) || !isset($_SESSION['TYPE']) || isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-
-        session_unset();
-        $_SESSION['s'] = "expired";
-        header("Location: /");
-        exit();
+    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $type = $_COOKIE['TYPE'];
     }
-    $_SESSION['LAST_ACTIVITY'] = time();
+    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $type = $_SESSION['TYPE'];
+    }
+    else {
+        expiredReturn();
+    }
 
-    if ($_SESSION['TYPE'] == "CUSTOMER") {
-
-        header("Location: /customermenu.php");
+    if ($type != "DEVELOPER") {
+        header("Location: /");
         exit();
     }
 

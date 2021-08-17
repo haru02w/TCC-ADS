@@ -1,35 +1,44 @@
 <?php
+    session_name("HATIDS");
     session_start();
+    date_default_timezone_set('America/Sao_Paulo');
     require("connection.php");
     require("functions.php");
 
+    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $email = $_COOKIE['EMAIL'];
+        $type = $_COOKIE['TYPE'];
+    }
+    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $email = $_SESSION['EMAIL'];
+        $type = $_SESSION['TYPE'];
+    }
+    else {
+        expiredReturn();
+    }
+    
+    if ($type != "CUSTOMER") {
+        header("Location: /");
+    }
+    
     if (!isset($_GET['ids'])) {
         header("Location: /customermenu.php");
         exit();
     }
-
-    if (!isset($_SESSION['EMAIL']) || !isset($_SESSION['PASSWORD']) || !isset($_SESSION['TYPE']) || isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-        session_unset();
-        $_SESSION['s'] = "expired";
-        header("Location: /");
-        exit();
-    }
-    $_SESSION['LAST_ACTIVITY'] = time();
-
-    if ($_SESSION['TYPE'] == "DEVELOPER") {
-        header("Location: /developermenu.php");
-    }
-
     $ids = $_GET['ids'];
-    $email = $_SESSION['EMAIL'];
-    $type = "CUSTOMER";
 
     $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    if(is_null($rowuser)) {
+        expiredReturn();
+    }
     $id = $rowuser["ID_CUSTOMER"];
 
     $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
     $idcus = $rowser['COD_CUSTOMER'];
-
     if ($id !== $idcus OR $row['STATUS'] == 3) {
         header("Location: /customermenu.php");
         exit();

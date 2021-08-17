@@ -1,16 +1,24 @@
 <?php
-session_start();
+  session_name("HATIDS");
+  session_start();
 
-date_default_timezone_set('America/Sao_Paulo');
-$year = date('Y');
+  date_default_timezone_set('America/Sao_Paulo');
+  $year = date('Y');
 
-if (isset($_SESSION['TYPE'])) {
-  if ($_SESSION['TYPE'] == "CUSTOMER") {
-    header("Location: /customermenu.php");
-  } else if ($_SESSION['TYPE'] == "DEVELOPER") {
-    header("Location: /developermenu.php");
+  if (isset($_SESSION['TYPE'])) {
+    if ($_SESSION['TYPE'] == "CUSTOMER") {
+      header("Location: /customermenu.php");
+    } else if ($_SESSION['TYPE'] == "DEVELOPER") {
+      header("Location: /developermenu.php");
+    }
   }
-}
+  else if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+    if ($_COOKIE['TYPE'] == "CUSTOMER") {
+      header("Location: /customermenu.php");
+    } else if ($_COOKIE['TYPE'] == "DEVELOPER") {
+      header("Location: /developermenu.php");
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,6 +42,7 @@ if (isset($_SESSION['TYPE'])) {
         <a class="navbar-item" href="/">
           <img src="https://image.flaticon.com/icons/png/512/2026/2026650.png" alt="image da logo">
           <p class="subtitle is-3 font-face">&nbspHatchFy</p>
+        </a>
           <div class="navbar-start">
             <a class="navbar-item" href="whoweare.php">
               Quem somos?
@@ -42,7 +51,7 @@ if (isset($_SESSION['TYPE'])) {
               LGPD
             </a>  
           </div>
-        </a>
+        <p class="subtitle is-3">HatchFy</p>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -240,6 +249,7 @@ if (isset($_SESSION['TYPE'])) {
         </section>
       </div>
     </div>
+    <!--LOGIN MODAL-->
     <div class="modal " :class="{'is-active': isActiveLogin}">
       <div class="modal-background"></div>
       <div class="modal-card">
@@ -268,8 +278,8 @@ if (isset($_SESSION['TYPE'])) {
                 </span>
               </div>
             </div>
-            <label for="TYPE_LOGIN" class="label">Tipo de usuário</label>
             <div class="control has-icons-left">
+              <label for="TYPE_LOGIN" class="label">Tipo de usuário</label>
               <div class="select">
                 <select name="TYPE_LOGIN" required @change="validSubmitLogin" v-model="loginSelect">
                   <option value="" disabled selected>Selecione</option>
@@ -285,7 +295,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="field">
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" class="checkbox">
+                  <input type="checkbox" class="checkbox" name="remember">
                   Lembrar de mim
                 </label>
               </div>

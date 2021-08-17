@@ -1,4 +1,5 @@
 <?php
+    session_name("HATIDS");
     session_start();
     require("connection.php");
 
