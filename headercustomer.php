@@ -18,24 +18,24 @@
                     Serviços
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="customermenu.php">
+                    <a class="navbar-item" href="/customermenu/">
                         Meus serviços
                     </a>
-                    <a class="navbar-item" href="createservice.php">
+                    <a class="navbar-item" href="/createservice/">
                         Crie um serviço
                     </a>
-                    <a class="navbar-item" href="pendingservices.php">
+                    <a class="navbar-item" href="/pendingservices/">
                         Serviços pendentes
                     </a>
-                    <a class="navbar-item" href="developmentservices.php">
+                    <a class="navbar-item" href="/developmentservices/">
                         Serviços em desenvolvimento
                     </a>
-                    <a class="navbar-item" href="doneservices.php">
+                    <a class="navbar-item" href="/doneservices/">
                         Serviços concluídos
                     </a>
                 </div>
             </div>
-                <a class="navbar-item" href="account.php"> Minha conta </a>
+                <a class="navbar-item" href="/account/"> Minha conta </a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">

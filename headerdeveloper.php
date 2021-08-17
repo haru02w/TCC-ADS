@@ -18,28 +18,28 @@
                     Serviços
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="developermenu.php">
+                    <a class="navbar-item" href="/developermenu/">
                         Meus serviços
                     </a>
-                    <a class="navbar-item" href="search.php" >
+                    <a class="navbar-item" href="/search/" >
                         Serviços disponíveis
                     </a>
-                    <a class="navbar-item" href="pendingservices.php">
+                    <a class="navbar-item" href="/pendingservices/">
                         Serviços pendentes
                     </a>
-                    <a  class="navbar-item" href="developmentservices.php">
+                    <a  class="navbar-item" href="/developmentservices/">
                         Serviços em desenvolvimento
                     </a>
-                    <a class="navbar-item" href="doneservices.php">
+                    <a class="navbar-item" href="/doneservices/">
                         Serviços concluídos
                     </a>
                 </div>
             </div>
-            <a class="navbar-item" href="account.php"> Minha conta </a>
+            <a class="navbar-item" href="/account/"> Minha conta </a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
-                <form action="search.php" method="GET">
+                <form action="/search/" method="GET">
                     <div class="field has-addons">
                         <div class="control">
                             <input type="search" class="input is-rounded" placeholder="Procurar serviços..." name="q">

@@ -7,16 +7,16 @@
 
   if (isset($_SESSION['TYPE'])) {
     if ($_SESSION['TYPE'] == "CUSTOMER") {
-      header("Location: /customermenu.php");
+      header("Location: /customermenu/");
     } else if ($_SESSION['TYPE'] == "DEVELOPER") {
-      header("Location: /developermenu.php");
+      header("Location: /developermenu/");
     }
   }
   else if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
     if ($_COOKIE['TYPE'] == "CUSTOMER") {
-      header("Location: /customermenu.php");
+      header("Location: /customermenu/");
     } else if ($_COOKIE['TYPE'] == "DEVELOPER") {
-      header("Location: /developermenu.php");
+      header("Location: /developermenu/");
     }
   }
 ?>
@@ -43,14 +43,6 @@
           <img src="/favicon.ico" alt="imagem da logo">
           <p class="subtitle is-3 font-face">&nbspHatchFy</p>
         </a>
-          <div class="navbar-start">
-            <a class="navbar-item" href="whoweare.php">
-              Quem somos?
-            </a>
-            <a class="navbar-item" href="privacypolicy.php">
-              LGPD
-            </a>  
-          </div>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -58,6 +50,14 @@
         </a>
       </div>
       <div id="navbarMenuPage" class="navbar-menu is-transparent" :class="{'is-active': isActiveBurger}">
+        <div class="navbar-start">
+          <a class="navbar-item" href="whoweare.php">
+            Quem somos?
+          </a>
+          <a class="navbar-item" href="privacypolicy.php">
+            LGPD
+          </a>  
+        </div>
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
@@ -145,7 +145,7 @@
           <button class="delete" aria-label="close" @click="onClickButtonRegister"></button>
         </header>
         <section class="modal-card-body">
-          <form action="register.php" class="box" method="POST" name="registerForm">
+          <form action="/register/" class="box" method="POST" name="registerForm">
             <div class="field">
               <h3 class="title is-1 has-text-dark has-text-centered">Crie Sua Conta!</h3>
               <label for="NAME_REGISTER" class="label">Nome Completo</label>
@@ -257,7 +257,7 @@
           <button class="delete" aria-label="close" @click="onClickButtonLogin"></button>
         </header>
         <section class="modal-card-body">
-          <form action="login.php" class="box" method="POST" name="loginForm">
+          <form action="/login/" class="box" method="POST" name="loginForm">
             <div class="field">
               <h1 class="title is-1 has-text-dark has-text-centered">Login</h1>
               <label for="EMAIL_LOGIN" class="label">Email</label>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<categories>
+    <category>
+        <name> Gerenciamento </name>
+        <subcategories>
+            <subcategory1> Gerenciamento de Finanças </subcategory1>
+            <subcategory2> Gerenciamento de Vendas </subcategory2>
+            <subcategory3> Gerenciamento de Estoque </subcategory3>
+        </subcategories>
+    </category>
+    <category>
+        <name> Cat 2 </name>
+        <subcategories>
+            <subcategory1> Sub 12 </subcategory1>
+            <subcategory2> Sub 22 </subcategory2>
+            <subcategory3> Sub 32 </subcategory3>
+        </subcategories>
+    </category>
+    <category>
+        <name> Cat 3 </name>
+        <subcategories>
+            <subcategory1> Sub 13 </subcategory1>
+            <subcategory2> Sub 23 </subcategory2>
+            <subcategory3> Sub 33 </subcategory3>
+        </subcategories>
+    </category>
+    <category>
+        <name> Cat 4 </name>
+        <subcategories>
+            <subcategory1> Sub 14 </subcategory1>
+            <subcategory2> Sub 24 </subcategory2>
+            <subcategory3> Sub 34 </subcategory3>
+        </subcategories>
+    </category>
+    <category>
+        <name> Cat 5 </name>
+        <subcategories>
+            <subcategory1> Sub 15 </subcategory1>
+            <subcategory2> Sub 25 </subcategory2>
+            <subcategory3> Sub 35 </subcategory3>
+        </subcategories>
+    </category>
+</categories>
