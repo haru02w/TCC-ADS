@@ -48,11 +48,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/vue.js"></script>
-    <script src="js/jscript.js"></script>
-    <script src="js/v-mask.min.js"></script>
-    <script src="js/moment.js"></script>
+    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -72,7 +72,7 @@
                     <div class="section is-fullheight">
                         <?php if($resultserv->num_rows <= 0) { ?>
                             <div class="box">
-                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice.php" class="is-5">Clique aqui</a> para criar um serviço!</p>
+                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
                             </div>
                         <?php } ?>
                         <div class="columns is-variable is-multiline">
@@ -88,8 +88,8 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="details.php?ids=<?php echo $row['ID_SERVICE']; ?>" class="card-footer-item">Ver detalhes</a>
-                                        <a href="updateservice.php?ids=<?php echo $row['ID_SERVICE']; ?>" class="card-footer-item">Editar serviço</a>
+                                        <a href="/details/<?php echo $row['ID_SERVICE'];?>/<?php echo $row['TITLE'];?>/" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/updateservice/<?php echo $row['ID_SERVICE'];?>/<?php echo $row['TITLE'];?>/" class="card-footer-item">Editar serviço</a>
                                     </footer>
                                 </div>
                             </div>
@@ -112,7 +112,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("logout.php")
+                    window.location.replace("/logout/")
                 },
             }
         })

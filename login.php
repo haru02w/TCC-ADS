@@ -31,11 +31,11 @@
             $_SESSION['TYPE'] = $type;
         }
         if($type === "CUSTOMER") {
-            header("Location: /customermenu.php");
+            header("Location: /customermenu/");
             exit();
         }
         else {
-            header("Location: /developermenu.php");
+            header("Location: /developermenu/");
             exit();
         }
     }

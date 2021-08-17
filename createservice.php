@@ -22,7 +22,7 @@
     }
 
     if ($type == "DEVELOPER") {
-        header("Location: /developermenu.php");
+        header("Location: /developermenu/");
         exit();
     }
 ?>
@@ -33,11 +33,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/vue.js"></script>
-    <script src="js/jscript.js"></script>
-    <script src="js/v-mask.min.js"></script>
-    <script src="js/moment.js"></script>
+    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -83,7 +83,7 @@
                                     <button type="submit" name="submit" class="button is-primary">Criar</button>
                                 </p>
                                 <p class="control">
-                                    <button type="button" class="button is-danger" onclick="window.location.replace('customermenu.php')">Cancelar criação</button>
+                                    <button type="button" class="button is-danger" onclick="window.location.replace('/customermenu/')">Cancelar criação</button>
                                 </p>
                             </div>
                         </div>
@@ -104,7 +104,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("logout.php")
+                    window.location.replace("/logout/")
                 }
             }
         })

@@ -80,7 +80,7 @@
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
             mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
             mysqli_stmt_execute($stmt);
-            header("Location: /account.php");
+            header("Location: /account/");
             exit();
         }
     }
@@ -93,11 +93,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/vue.js"></script>
-    <script src="js/jscript.js"></script>
-    <script src="js/v-mask.min.js"></script>
-    <script src="js/moment.js"></script>
+    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -123,7 +123,7 @@
                                 <div class="columns is-vcentered">
                                     <div class="column">
                                         <figure class="image is-square ">
-                                            <img style="object-fit: cover;" class="is-rounded" src='<?php echo $row['IMAGE']; ?>'>
+                                            <img style="object-fit: cover;" class="is-rounded" src='/<?php echo $row['IMAGE']; ?>'>
                                         </figure>
                                     </div>
                                     <div class="column">
@@ -219,7 +219,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("logout.php")
+                    window.location.replace("/logout/")
                 },
                 nameImage() {
                     const fileInput = document.querySelector('#file-image input[type=file]');
@@ -232,7 +232,7 @@
                     }
                 },
                 onClickButtonReturn() {
-                    window.location.replace("account.php");
+                    window.location.replace("/account/");
                 }
             }
         })
