@@ -27,12 +27,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hatchfy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/vue.js"></script>
-  <script src="js/jscript.js"></script>
-  <script src="js/v-mask.min.js"></script>
-  <script src="js/moment.js"></script>
-  <script src="js/zxcvbn.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/vue.js"></script>
+  <script src="/js/jscript.js"></script>
+  <script src="/js/v-mask.min.js"></script>
+  <script src="/js/moment.js"></script>
+  <script src="/js/zxcvbn.js"></script>
 </head>
 
 <body class="background">
@@ -40,7 +40,7 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <img src="https://image.flaticon.com/icons/png/512/2026/2026650.png" alt="image da logo">
+          <img src="/favicon.ico" alt="imagem da logo">
           <p class="subtitle is-3 font-face">&nbspHatchFy</p>
         </a>
           <div class="navbar-start">
@@ -51,7 +51,6 @@
               LGPD
             </a>  
           </div>
-        <p class="subtitle is-3">HatchFy</p>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -84,7 +83,7 @@
             Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.
           </p>
           <p class="subtitle is-4" id="textColorOne">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi numquam quis minima debitis harum unde. Animi, eos magni distinctio debitis error dolores harum quibusdam ratione
+            (Este projeto tem o objetivo de proporcionar ensinamentos sobre Analise e Desenvolvimento de Softwares<br> para alunos assim como soluções simples para a sem processos burocraticos<br> e caro para a confecção de um software com propositos especificos)
           </p>
         </div>
       </div>
