@@ -40,8 +40,18 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <p class="subtitle is-3">HatchFy</p>
+          <img src="https://image.flaticon.com/icons/png/512/2026/2026650.png" alt="image da logo">
+          <p class="subtitle is-3 font-face">&nbspHatchFy</p>
         </a>
+          <div class="navbar-start">
+            <a class="navbar-item" href="whoweare.php">
+              Quem somos?
+            </a>
+            <a class="navbar-item" href="privacypolicy.php">
+              LGPD
+            </a>  
+          </div>
+        <p class="subtitle is-3">HatchFy</p>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -52,7 +62,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <button class="button is-primary" @click="onClickButtonRegister">
+              <button class="button is-info" @click="onClickButtonRegister">
                 <strong>Registrar</strong>
               </button>
               <button class="button is-light" @click="onClickButtonLogin">
@@ -67,12 +77,14 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <p class="title is-2">HatchFy</p>
-          <p class="subtitle is-4">Receba ou crie o seu programa agora!</p>
-          <p class="subtitle is-4">
-            Nossa plataforma te ajudará a obter
-            experiência no mercado de trabalho
-            ou ter o seu problema solucionado
-            através de uma aplicação feita por desenvolvedores jovens.
+          <p class="subtitle is-4" id="textColorTwo">
+            Receba ou crie o seu programa agora!
+          </p>
+          <p class="subtitle is-4" id="textColorOne">
+            Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.
+          </p>
+          <p class="subtitle is-4" id="textColorOne">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi numquam quis minima debitis harum unde. Animi, eos magni distinctio debitis error dolores harum quibusdam ratione
           </p>
         </div>
       </div>
