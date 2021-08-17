@@ -27,13 +27,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hatchfy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
-  <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/zxcvbn.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/vue.js"></script>
+  <script src="/js/jscript.js"></script>
+  <script src="/js/v-mask.min.js"></script>
+  <script src="/js/moment.js"></script>
+  <script src="/js/zxcvbn.js"></script>
 </head>
 
 <body class="background">
@@ -41,7 +40,8 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <p class="subtitle is-3">HatchFy</p>
+          <img src="/favicon.ico" alt="imagem da logo">
+          <p class="subtitle is-3 font-face">&nbspHatchFy</p>
         </a>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
           <span aria-hidden="true"></span>
@@ -50,10 +50,18 @@
         </a>
       </div>
       <div id="navbarMenuPage" class="navbar-menu is-transparent" :class="{'is-active': isActiveBurger}">
+        <div class="navbar-start">
+          <a class="navbar-item" href="whoweare.php">
+            Quem somos?
+          </a>
+          <a class="navbar-item" href="privacypolicy.php">
+            LGPD
+          </a>  
+        </div>
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <button class="button is-primary" @click="onClickButtonRegister">
+              <button class="button is-info" @click="onClickButtonRegister">
                 <strong>Registrar</strong>
               </button>
               <button class="button is-light" @click="onClickButtonLogin">
@@ -68,12 +76,14 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <p class="title is-2">HatchFy</p>
-          <p class="subtitle is-4">Receba ou crie o seu programa agora!</p>
-          <p class="subtitle is-4">
-            Nossa plataforma te ajudará a obter
-            experiência no mercado de trabalho
-            ou ter o seu problema solucionado
-            através de uma aplicação feita por desenvolvedores jovens.
+          <p class="subtitle is-4" id="textColorTwo">
+            Receba ou crie o seu programa agora!
+          </p>
+          <p class="subtitle is-4" id="textColorOne">
+            Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.
+          </p>
+          <p class="subtitle is-4" id="textColorOne">
+            (Este projeto tem o objetivo de proporcionar ensinamentos sobre Analise e Desenvolvimento de Softwares<br> para alunos assim como soluções simples para a sem processos burocraticos<br> e caro para a confecção de um software com propositos especificos)
           </p>
         </div>
       </div>
