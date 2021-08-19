@@ -1,6 +1,7 @@
 <?php
     session_name("HATIDS");
     session_start();
+    date_default_timezone_set('America/Sao_Paulo');
     require('connection.php');
     require('functions.php');
 
@@ -22,14 +23,15 @@
     }
 
     if(!login($email, $password, $type, $conn)) {
-        if($remember) {
-            setcookie('EMAIL', $email, time()+86400*30);
-            setcookie('TYPE', $type, time()+86400*30);
+        if($remember == true) {
+            setcookie('EMAIL', $email, time()+86400*30, '/');
+            setcookie('TYPE', $type, time()+86400*30, '/');
         }
         else {
             $_SESSION['EMAIL'] = $email;
-            $_SESSION['TYPE'] = $type;
+            $_SESSION['TYPE'] = $type;  
         }
+        
         if($type === "CUSTOMER") {
             header("Location: /customermenu/");
             exit();
