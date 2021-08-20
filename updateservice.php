@@ -26,7 +26,7 @@
     }
     
     if (!isset($_GET['ids'])) {
-        header("Location: /customermenu.php");
+        header("Location: /customermenu/");
         exit();
     }
     $ids = $_GET['ids'];
@@ -39,18 +39,17 @@
 
     $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
     $idcus = $rowser['COD_CUSTOMER'];
-    if ($id !== $idcus OR $row['STATUS'] == 3) {
-        header("Location: /customermenu.php");
+    if ($id !== $idcus OR $rowser['STATUS'] == 3) {
+        header("Location: /customermenu/");
         exit();
     }
 
-    if(isset($_POST['TITLE']) AND isset($_POST['CONTACT']) AND isset($_POST['DESCRIPTION'])) {
+    if(isset($_POST['TITLE']) AND isset($_POST['DESCRIPTION'])) {
         $title = filter_input(INPUT_POST, 'TITLE', FILTER_SANITIZE_STRING);
-        $contact = filter_input(INPUT_POST, 'CONTACT', FILTER_SANITIZE_STRING);
         $description = filter_input(INPUT_POST, 'DESCRIPTION', FILTER_SANITIZE_STRING);
 
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ?, CONTACT = ? WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "sssi", $title, $description, $contact, $ids);
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ?  WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "sssi", $title, $description, $ids);
         $bool = mysqli_stmt_execute($stmt);
         mysqli_close($conn);
 
@@ -70,11 +69,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/vue.js"></script>
-    <script src="js/jscript.js"></script>
-    <script src="js/v-mask.min.js"></script>
-    <script src="js/moment.js"></script>
+    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -102,12 +101,6 @@
                                     <div class="control">
                                         <label class="label" for="description">Descrição do serviço</label>
                                         <textarea class="textarea has-fixed-size" placeholder="Digite a descrição do serviço" name="DESCRIPTION"> <?php echo $rowser['DESCRIPTION'];?> </textarea>
-                                    </div>
-                                </div>
-                                <div class="column is-5">
-                                    <div class="field">
-                                        <label class="label" for="contact">Contato</label>
-                                        <input class="input" type="tel" name="CONTACT" value="<?php echo $rowser['CONTACT'];?>" placeholder="Digite aqui o seu contato">
                                     </div>
                                 </div>
                             </div>
@@ -169,18 +162,18 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("logout.php")
+                    window.location.replace("/logout/")
                 },
                 onClickCancel() {
                     switch(<?php echo $row['STATUS']; ?>) {
                         case 0:
-                            window.location.replace("customermenu.php")
+                            window.location.replace("/customermenu/")
                             break;
                         case 1:
-                            window.location.replace("pendingservices.php")
+                            window.location.replace("/pendingservices/")
                             break;
                         case 2:
-                            window.location.replace("developmentservices.php");
+                            window.location.replace("/developmentservices/");
                             break;
                     }
                     
@@ -188,13 +181,13 @@
                 onClickButtonReturn() {
                     switch(<?php echo $row['STATUS'] ?>) {
                         case 0:
-                            window.location.replace("customermenu.php")
+                            window.location.replace("/customermenu/")
                             break;
                         case 1:
-                            window.location.replace("pendingservices.php")
+                            window.location.replace("/pendingservices/")
                             break;
                         case 2:
-                            window.location.replace("developmentservices.php");
+                            window.location.replace("/developmentservices/");
                             break;
                     }
                 }

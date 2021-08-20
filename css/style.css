@@ -6,6 +6,15 @@
   font-family: 'Baloo 2', sans-serif;
 }
 
+.estrelas input[type=radio]{
+  display: none;
+}.estrelas label i.fa::before{
+  content: '\f005';
+  color: #FC0;
+}.estrelas input[type=radio]:checked ~ label i.fa:before{
+  color: #ccc;
+}
+
 body::-webkit-scrollbar {
   width: 0.50rem;
 }
@@ -40,6 +49,8 @@ body::-webkit-scrollbar-thumb {
 .half-circle-spinner, .half-circle-spinner * {
   box-sizing: border-box;
 }
+
+
 
 .half-circle-spinner, .half-circle-spinner * {
   box-sizing: border-box;
@@ -81,12 +92,4 @@ body::-webkit-scrollbar-thumb {
   100%{
     transform: rotate(360deg);
   }
-}
-
-#textColorOne {
-  color: #c3e0fb;
-}
-
-#textColorTwo {
-  color: #1c2731;
 }

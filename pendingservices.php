@@ -41,11 +41,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/vue.js"></script>
-    <script src="js/jscript.js"></script>
-    <script src="js/v-mask.min.js"></script>
-    <script src="js/moment.js"></script>
+    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
+    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -81,9 +81,9 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="details.php?ids=<?php echo $rowser['ID_SERVICE']; ?>" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['TITLE'];?>/" class="card-footer-item">Ver detalhes</a>
                                         <?php if($type == "CUSTOMER") { ?>
-                                            <a href="updateservice.php?ids=<?php echo $rowser['ID_SERVICE']; ?>" class="card-footer-item">Editar serviço</a>
+                                            <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['TITLE'];?>/" class="card-footer-item">Editar serviço</a>
                                         <?php } ?>
                                     </footer>
                                 </div>
@@ -147,7 +147,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("logout.php")
+                    window.location.replace("/logout/")
                 },
                 onClickButtonReturn() {
                     this.isActiveReturn = !this.isActiveReturn

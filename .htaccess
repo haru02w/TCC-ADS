@@ -1,0 +1,39 @@
+RewriteEngine on
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+
+RewriteRule account/ account.php [QSA,NC,L]
+
+RewriteRule createservice/ createservice.php [QSA,NC,L] 
+
+RewriteRule customermenu/ customermenu.php [QSA,NC,L] 
+
+RewriteRule ^details/([0-9]+)/([0-9a-zA-Z-]+)/ details.php?ids=$1&name=$2 [QSA,NC,L] 
+
+RewriteRule developermenu/ developermenu.php [QSA,NC,L] 
+
+RewriteRule developmentservices/ developmentservices.php [QSA,NC,L] 
+
+RewriteRule doneservices/ doneservices.php [QSA,NC,L] 
+
+RewriteRule login/ login.php [QSA,NC,L] 
+
+RewriteRule logout/ logout.php [QSA,NC,L] 
+
+RewriteRule pendingservices/ pendingservices.php [QSA,NC,L] 
+
+RewriteRule register/ register.php [QSA,NC,L] 
+
+RewriteRule search/ search.php [QSA,NC,L] 
+
+RewriteRule ^updateservice/([0-9]+)/([0-9a-zA-Z-]+)/ updateservice.php?ids=$1&name=$2 [QSA,NC,L]
+
+RewriteRule resetpassword/ resetpassword.php [QSA,NC,L]
+
+RewriteRule requestpwdreset/ requestpwdreset.php [QSA,NC,L]
+
+RewriteRule create-new-password/([0-9a-zA-Z-]+)/([0-9a-zA-Z-]+)/ createnewpassword.php?selector=$1&validator=$2 [QSA,NC,L]
+
+RewriteRule submitpwdreset/ submitpwdreset.php [QSA,NC,L]

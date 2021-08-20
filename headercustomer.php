@@ -1,7 +1,8 @@
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <p class="subtitle is-3 font-face">HatchFy</p>
+            <img src="/images/logochick.png" alt="imagem da logo">
+            <p class="subtitle is-3 font-face">&nbsp HatchFy</p>
         </a>
 
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" @click="onClickBurger" :class="{'is-active' : isActiveBurger}">
@@ -18,24 +19,24 @@
                     Serviços
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="customermenu.php">
+                    <a class="navbar-item" href="/customermenu/">
                         Meus serviços
                     </a>
-                    <a class="navbar-item" href="createservice.php">
+                    <a class="navbar-item" href="/createservice/">
                         Crie um serviço
                     </a>
-                    <a class="navbar-item" href="pendingservices.php">
+                    <a class="navbar-item" href="/pendingservices/">
                         Serviços pendentes
                     </a>
-                    <a class="navbar-item" href="developmentservices.php">
+                    <a class="navbar-item" href="/developmentservices/">
                         Serviços em desenvolvimento
                     </a>
-                    <a class="navbar-item" href="doneservices.php">
+                    <a class="navbar-item" href="/doneservices/">
                         Serviços concluídos
                     </a>
                 </div>
             </div>
-                <a class="navbar-item" href="account.php"> Minha conta </a>
+                <a class="navbar-item" href="/account/"> Minha conta </a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
