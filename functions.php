@@ -136,7 +136,7 @@
                     <div class="wrapper">
                         <p> Olá '. $name .'!</p>
                         <p> Obrigado por realizar o cadastro em nosso site! Para verificar a sua conta, por favor, clique no link abaixo! </p>
-                        <a href="https://hatchfy.philadelpho.tk/verifyemail/'. $token .'/">Verificar conta!</a>
+                        <a href="https://hatchfy.philadelpho.tk/verifyemail.php?token='. $token .'">Verificar conta!</a>
                     </div>
                 </body>
                 </html>';
@@ -263,12 +263,10 @@
             if(!$mail->Send()){
               exit(var_dump($mail));
             }
-            return false;
         }
         catch (Exception $e){
             echo "Erro ao enviar a mensagem: {$mail->ErrorInfo}";
             echo "\n".$e;
-            return true;
         }
     }
 
@@ -282,8 +280,8 @@
     
     function expiredReturn() {
         session_unset();
-        setcookie("EMAIL", '', time()-86400*30, "/");
-        setcookie("TYPE", '', time()-86400*30, "/");
+        setcookie("EMAIL", '', time()-86400*30);
+        setcookie("TYPE", '', time()-86400*30);
         $_SESSION['s'] = "expired";
         header("Location: /");
         exit();

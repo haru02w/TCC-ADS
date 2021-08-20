@@ -1,42 +1,54 @@
 RewriteEngine on
-RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule account/ account.php [NC,L]
 
-RewriteRule account/ account.php [QSA,NC,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule createservice/ createservice.php [NC,L]
 
-RewriteRule createnewpassword/([0-9a-zA-Z-]+)/([0-9a-zA-Z-]+)/ createnewpassword.php?selector=$1&validator=$2 [QSA,NC,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule customermenu/ customermenu.php [NC,L]
 
-RewriteRule createservice/ createservice.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^details/([0-9]+)/([0-9a-zA-Z-]+)/ details.php?ids=$1&name=$2 [NC,L]
 
-RewriteRule customermenu/ customermenu.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule developermenu/ developermenu.php [NC,L]
 
-RewriteRule details/([0-9]+)/([0-9a-zA-Z-]+)/ details.php?ids=$1&name=$2 [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule developmentservices/ developmentservices.php [NC,L]
 
-RewriteRule developermenu/ developermenu.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule doneservices/ doneservices.php [NC,L]
 
-RewriteRule developmentservices/ developmentservices.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule login/ login.php [NC,L]
 
-RewriteRule doneservices/ doneservices.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule logout/ logout.php [NC,L]
 
-RewriteRule login/ login.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule pendingservices/ pendingservices.php [NC,L]
 
-RewriteRule logout/ logout.php [QSA,NC,L] 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule register/ register.php [NC,L]
 
-RewriteRule pendingservices/ pendingservices.php [QSA,NC,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule search/ search.php [NC,L]
 
-RewriteRule privacypolicy/ privacypolicy.php [QSA,NC,L]
-
-RewriteRule register/ register.php [QSA,NC,L]
-
-RewriteRule resetpassword/ resetpassword.php [QSA,NC,L]
-
-RewriteRule search/ search.php [QSA,NC,L] 
-
-RewriteRule updateservice/([0-9]+)/([0-9a-zA-Z-]+)/ updateservice.php?ids=$1&name=$2 [QSA,NC,L]
-
-RewriteRule verifyemail/([0-9a-zA-Z-]+)/ verifyemail.php?token=$1 [QSA,NC,L]
-
-RewriteRule whoweare/ whoweare.php [QSA,NC,L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^updateservice/([0-9]+)/([0-9a-zA-Z-]+)/ updateservice.php?ids=$1&name=$2 [NC,L]
 

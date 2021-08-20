@@ -176,7 +176,7 @@
                         <div class="message-header">
                             <p v-if="isActiveReturn == 'success'">Sucesso</p>
                             <p v-else if="isActiveReturn == 'failure' || isActiveReturn == 'failuretype'">Falha</p>
-                            <button class="delete" aria-label="close" @click="onClickButtonReturn"></button>
+                            <button class="delete" aria-label="close" @click="onClickButtonReturn" v-if="isActiveReturn == 'success' || isActiveReturn == 'failure' || this.isActiveReturn == 'failuretype'"></button>
                         </div>
                         <div v-if="isActiveReturn == 'success'" class="message-body">
                             A imagem foi inserida com sucesso!
