@@ -32,35 +32,44 @@
     $ids = $_GET['ids'];
 
     $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
+    
     if(is_null($rowuser)) {
         expiredReturn();
     }
+    
+    if(is_null($rowser)) {
+        header("Location: /customermenu/");
+        exit();
+    }
+    
     $id = $rowuser["ID_CUSTOMER"];
-
-    $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
     $idcus = $rowser['COD_CUSTOMER'];
-    if ($id !== $idcus OR $row['STATUS'] == 3) {
+    
+    if ($id !== $idcus OR $rowser['STATUS'] == 3) {
         header("Location: /customermenu/");
         exit();
     }
 
-    if(isset($_POST['TITLE']) AND isset($_POST['CONTACT']) AND isset($_POST['DESCRIPTION'])) {
+    if(isset($_POST['TITLE']) && isset($_POST['DESCRIPTION'])) {
         $title = filter_input(INPUT_POST, 'TITLE', FILTER_SANITIZE_STRING);
-        $contact = filter_input(INPUT_POST, 'CONTACT', FILTER_SANITIZE_STRING);
         $description = filter_input(INPUT_POST, 'DESCRIPTION', FILTER_SANITIZE_STRING);
 
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ?, CONTACT = ? WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "sssi", $title, $description, $contact, $ids);
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ? WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "ssi", $title, $description, $ids);
         $bool = mysqli_stmt_execute($stmt);
         mysqli_close($conn);
 
         if($bool) {
-            $update = "success";
+            $_SESSION['update'] = "As informações do serviço foram alteradas com sucesso!";
+            $_SESSION['updateclass'] = "is-success";
         }
         else {
-            $update = "failure";
+            $_SESSION['update'] = "Falha ao alterar as informações do serviço! Por favor, tente novamente mais tarde!";
+            $_SESSION['updateclass'] = "is-danger";
         }
     }
+    
 ?>
 
 <!DOCTYPE html>
@@ -93,6 +102,12 @@
                     </section>
                     <form action="" method="POST">
                         <div class="section">
+                            <?php if (isset($_SESSION['update']) AND $_SESSION['update'] != "") { ?>
+                                <div class="notification <?php echo $_SESSION['updateclass']; ?>">
+                                    <?php echo $_SESSION['update']; ?>                          
+                                </div>
+                            <?php } ?>
+                            <?php unset($_SESSION['update']); unset($_SESSION['updateclass']);?> 
                             <div class="columns">
                                 <div class="column is-5">
                                     <div class="field">
@@ -101,13 +116,7 @@
                                     </div>
                                     <div class="control">
                                         <label class="label" for="description">Descrição do serviço</label>
-                                        <textarea class="textarea has-fixed-size" placeholder="Digite a descrição do serviço" name="DESCRIPTION"> <?php echo $rowser['DESCRIPTION'];?> </textarea>
-                                    </div>
-                                </div>
-                                <div class="column is-5">
-                                    <div class="field">
-                                        <label class="label" for="contact">Contato</label>
-                                        <input class="input" type="tel" name="CONTACT" value="<?php echo $rowser['CONTACT'];?>" placeholder="Digite aqui o seu contato">
+                                        <textarea class="textarea has-fixed-size" placeholder="Digite a descrição do serviço" name="DESCRIPTION"><?php echo $rowser['DESCRIPTION'];?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -122,26 +131,6 @@
                 </div>
             </div>
         </section>
-        <div class="modal" :class="topModalReturn">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                <div class="box">
-                    <article class="message" :class="messageModalReturn">
-                        <div class="message-header">
-                            <p v-if="isActiveReturn == 'success'">Sucesso</p>
-                            <p v-else if="isActiveReturn == 'failure'">Falha</p>
-                            <button class="delete" aria-label="close" @click="onClickButtonReturn" v-if="isActiveReturn == 'success' || isActiveReturn == 'failure'"></button>
-                        </div>
-                        <div v-if="isActiveReturn == 'success'" class="message-body">
-                            O serviço foi alterado com sucesso!
-                        </div>
-                        <div v-else-if="isActiveReturn == 'failure'" class="message-body">
-                            Falha ao alterar o serviço! Por favor, tente novamente mais tarde!
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
@@ -149,20 +138,6 @@
             el: '#app',
             data: {
                 isActiveBurger: false,
-                isActiveReturn: "<?php if(isset($update)) { echo $update; }?>",
-            },
-            computed: {
-                topModalReturn : function () {
-                    return {
-                        'is-active': this.isActiveReturn == 'success' || this.isActiveReturn == 'failure'
-                    }
-                },
-                messageModalReturn : function () {
-                    return {
-                        'is-success': this.isActiveReturn == 'success',
-                        'is-danger':  this.isActiveReturn == 'failure',
-                    }
-                }
             },
             methods: {
                 onClickBurger() {
@@ -172,7 +147,7 @@
                     window.location.replace("/logout/")
                 },
                 onClickCancel() {
-                    switch(<?php echo $row['STATUS']; ?>) {
+                    switch(<?php echo $rowser['STATUS']; ?>) {
                         case 0:
                             window.location.replace("/customermenu/")
                             break;
@@ -185,19 +160,6 @@
                     }
                     
                 },
-                onClickButtonReturn() {
-                    switch(<?php echo $row['STATUS'] ?>) {
-                        case 0:
-                            window.location.replace("/customermenu/")
-                            break;
-                        case 1:
-                            window.location.replace("/pendingservices/")
-                            break;
-                        case 2:
-                            window.location.replace("/developmentservices/");
-                            break;
-                    }
-                }
             }
         })
     </script>

@@ -1,5 +1,6 @@
 {
     "require": {
-        "bjeavons/zxcvbn-php": "^1.2"
+        "bjeavons/zxcvbn-php": "^1.2",
+        "jansenfelipe/cpf-gratis": "^3.0"
     }
 }

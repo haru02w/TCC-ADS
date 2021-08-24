@@ -5,49 +5,61 @@
     require('connection.php');
     require('functions.php');
 
-    if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+    if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
         $email = $_COOKIE['EMAIL'];
         $type = $_COOKIE['TYPE'];
-    }
-    else if(isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
-        if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+    } 
+    else if (isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if (isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
             expiredReturn();
         }
         $_SESSION['LAST_ACTIVITY'] = time();
         $email = $_SESSION['EMAIL'];
-        $type = $_SESSION['TYPE'];
-    }
+        $type = $_SESSION['TYPE']; 
+    } 
     else {
         expiredReturn();
     }
 
     if (!isset($_GET['ids'])) {
-        header("Location: /".strtolower($type)."menu.php");
+        header("Location: /" . strtolower($type) . "menu.php");
         exit();
     }
     $ids = $_GET['ids'];
+
+    $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
+    $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
     
-    $result = searchServices($ids, $conn);
-    if ($result->num_rows <= 0) {
-        header("Location: /".strtolower($type)."menu.php");
+    if (is_null($rowuser)) {
+        expiredReturn();
+    }
+
+    if (is_null($rowser)) {
+        header("Location: /" . strtolower($type) . "menu/");
         exit();
     }
 
-    $row = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    $id = $rowuser["ID_$type"];
+    $iddev = $rowser['COD_DEVELOPER'];
+    $idcus = $rowser['COD_CUSTOMER'];
     
-    if(is_null($row)) {
-        expiredReturn();
+    if ($type == "CUSTOMER") {
+        if ($idcus !== $id) {
+            header("Location: /customermenu/");
+            exit();
+        }
+    } 
+    elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
+        if ($iddev !== $id) {
+            header("Location: /developermenu/");
+            exit();
+        }
     }
-    
-    $id = $row["ID_$type"];
-
-    $iddev = $row['COD_DEVELOPER'];
-    $idcus = $row['COD_CUSTOMER'];
 
     $infodev = searchInfoDev($iddev, $conn);
     $infocus = searchInfoCus($idcus, $conn);
 
-    if($row['STATUS'] >= 1) {
+    if ($rowser['STATUS'] >= 1) {
         $birthdev = explode("-", $infodev['BIRTH_DATE']);
         $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
     }
@@ -55,77 +67,70 @@
     $birthcus = explode("-", $infocus['BIRTH_DATE']);
     $infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
 
+    $stmt = mysqli_prepare($conn, "SELECT COD_SERVICE FROM TB_RATING");
+    $cod_service = mysqli_stmt_execute($stmt);
+
     if (isset($_POST['REQUEST'])) {
-        $status = searchServices($ids, $conn); $status = $status['STATUS'];
+        $status = $rowser['STATUS'];
 
         if ($status >= 1) {
             $_SESSION['detail'] = "takend";
             header("Location: /pendingservices/");
             exit();
-        }
-        else {
+        } else {
             $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
-            mysqli_stmt_bind_param($stmt, "ss", $id, $ids);
+            mysqli_stmt_bind_param($stmt, "is", $id, $ids);
             $bool = mysqli_stmt_execute($stmt);
 
             if ($bool) {
                 $_SESSION['detail'] = "successd";
                 header("Location: /pendingservices/");
                 exit();
-            } 
-            else {
+            } else {
                 $_SESSION['detail'] = "failured";
                 header("Location: /pendingservices/");
                 exit();
             }
         }
-    } 
-    elseif (isset($_POST['SEND'])) {
-        $stmt2 = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt2, "s", $ids);
-        $bool = mysqli_stmt_execute($stmt2);
+    }
+    else if (isset($_POST['SEND'])) {
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        $bool = mysqli_stmt_execute($stmt);
 
         if ($bool) {
             $_SESSION['send'] = "successs";
             header("Location: /developmentservices/");
             exit();
-        } 
-        else {
+        } else {
             $_SESSION['send'] = "failures";
             header("Location: /developmentservices/");
             exit();
         }
-    } 
-    elseif (isset($_POST['SENDRECUSE'])) {
-        $stmt3 = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt3, "s", $ids);
-        $bool = mysqli_stmt_execute($stmt3);
+    }
+    else if (isset($_POST['SENDRECUSE'])) {
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        $bool = mysqli_stmt_execute($stmt);
 
         if ($bool) {
             $_SESSION['recuse'] = "successre";
             header("Location: /pendingservices/");
             exit();
-        } 
-        else {
+        } else {
             $_SESSION['recuse'] = "failurere";
             header("Location: /pendingservices/");
             exit();
         }
-    }
-
-    if ($type == "CUSTOMER") {
-        if ($idcus !== $id) {
-            header("Location: /customermenu/");
-            exit();
-        }
     } 
-    elseif ($type == "DEVELOPER" AND $row['STATUS'] >= 1) {
-        if ($iddev !== $id) {
-            header("Location: /developermenu/");
-            exit();
-        }
+    elseif (isset($_POST['REPORT'])) {
+        $ids = $rowser['ID_SERVICE'];
+        $type_report = $_POST['cont'];
+        $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, TYPE_REPORT) VALUES (?,?)");
+        mysqli_stmt_bind_param($stmt, "ss", $ids, $type_report);
+        $bool = mysqli_stmt_execute($stmt);
     }
-
+    
     mysqli_close($conn);
 ?>
 
@@ -168,23 +173,59 @@
                                     <div class="field">
                                         <label class="label">Título do serviço</label>
                                         <div class="box">
-                                            <p class="subtitle is-5"><?php echo $row['TITLE']; ?></p>
+                                            <p class="subtitle is-5"><?php echo $rowser['TITLE']; ?></p>
                                         </div>
                                     </div>
                                     <div class="control">
                                         <label class="label" for="description">Descrição do serviço</label>
                                         <div class="box">
-                                            <p class="subtitle is-5"><?php echo $row['DESCRIPTION']; ?></p>
+                                            <p class="subtitle is-5"><?php echo $rowser['DESCRIPTION']; ?></p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="column is-5">
-                                    <div class="field">
-                                        <label class="label" for="contact">Contato</label>
-                                        <div class="box">
-                                            <p class="subtitle is-5"><?php echo $row['CONTACT']; ?></p>
+                                    <br>
+                                    <?php if ($rowser['STATUS'] < 3 AND $type == "DEVELOPER") { ?>
+                                        <a class="button is-danger is-medium" @click="onClickButtonModal">Reportar</a>
+                                        <div class="modal" :class="{'is-active': isActiveModal}">
+                                            <div class="modal-background"></div>
+                                            <div class="modal-card">
+                                                <header class="modal-card-head">
+                                                    <p class="modal-card-title">Reportar o Serviço</p>
+                                                    <button class="delete" aria-label="close" @click="onClickButtonModal"></button>
+                                                </header>
+                                                <section class="modal-card-body">
+                                                    <div class="control">
+                                                        <label class="radio is-large">
+                                                            <input type="radio" name="cont" value="cont-sexual">
+                                                            Conteúdo sexual
+                                                        </label>
+                                                        <br>
+                                                        <label class="radio">
+                                                            <input type="radio" name="cont" value="cont-violence">
+                                                            Conteúdo violento ou repulsivo
+                                                        </label>
+                                                        <br>
+                                                        <label class="radio">
+                                                            <input type="radio" name="cont" value="cont-rate-abuse">
+                                                            Conteúdo de incitação ao ódio ou abusivo
+                                                        </label>
+                                                        <br>
+                                                        <label class="radio">
+                                                            <input type="radio" name="cont" value="cont-spam">
+                                                            Spam ou enganoso
+                                                        </label>
+                                                        <br>
+                                                        <label class="radio">
+                                                            <input type="radio" name="cont" value="cont-other">
+                                                            Outro
+                                                        </label>
+                                                        <br>
+                                                        <button type="submit" class="button" name="REPORT">Enviar Denúncia</button>
+
+                                                    </div>
+                                                </section>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -197,44 +238,82 @@
                                 </div>
                             </section>
                             <div class="section">
-                                <?php if($row['STATUS'] >= 1) { ?>
-                                <div class="columns">
-                                    <div class="column is-3">
-                                        <div class="field">
-                                            <label class="label has-text-centered"> Foto do desenvolvedor </label>
-                                            <figure class="image is-square">
-                                                <img class="is-rounded" src="<?php echo $infodev['IMAGE']?>">
-                                            </figure>
+                                <?php if ($rowser['STATUS'] >= 1) { ?>
+                                    <div class="columns">
+                                        <div class="column is-3">
+                                            <div class="field">
+                                                <label class="label has-text-centered"> Foto do desenvolvedor </label>
+                                                <figure class="image is-square">
+                                                    <img class="is-rounded" src="/<?php echo $infodev['IMAGE'] ?>">
+                                                </figure>
+                                                <br>
+                                                <?php if ($rowser['STATUS'] == 3 and $rowser['ID_SERVICE'] == $cod_service) { ?>
+                                                    <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
+                                                    <div class="modal" :class="{'is-active': isActiveModal}">
+                                                        <div class="modal-background"></div>
+                                                        <div class="modal-card">
+                                                            <header class="modal-card-head">
+                                                                <p class="modal-card-title">Avaliar Desenvolvedor</p>
+                                                                <button class="delete" type="button" aria-label="close" @click="onClickButtonModal"></button>
+                                                            </header>
+                                                            <section class="modal-card-body">
+                                                                <form method="POST" action="" enctype="multipart/form-data">
+                                                                    <div class="estrelas">
+                                                                        <input type="radio" id="vazio" name="estrela" value="" checked>
+                                                                        <label for="estrela_1"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_1" name="estrela" value="1">
+
+                                                                        <label for="estrela_2"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_2" name="estrela" value="2">
+
+                                                                        <label for="estrela_3"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_3" name="estrela" value="3">
+
+                                                                        <label for="estrela_4"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_4" name="estrela" value="4">
+
+                                                                        <label for="estrela_5"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_5" name="estrela" value="5">
+
+                                                                        <label for="estrela_6"><i class="fas fa-star"></i></label>
+                                                                        <input type="radio" id="estrela_6" name="estrela" value="6">
+                                                                    </div>
+                                                                </form>
+                                                            </section>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
                                         </div>
+                                        <div class="column">
+                                            <div class="field">
+                                                <label class="label">Nome</label>
+                                                <div class="box">
+                                                    <p class="subtitle is-5"><?php echo $infodev['NAME']; ?></p>
+                                                </div>
+                                            </div>
+                                            <div class="field">
+                                                <label class="label" for="description">Email</label>
+                                                <div class="box">
+                                                    <p class="subtitle is-5"><?php echo $infodev['EMAIL']; ?></p>
+                                                </div>
+                                            </div>
+                                            <div class="field">
+                                                <label class="label" for="contact">Data de nascimento</label>
+                                                <div class="box">
+                                                    <p class="subtitle is-5"><?php echo $infodev['BIRTH_DATE']; ?></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
-                                    <div class="column">
-                                        <div class="field">
-                                            <label class="label">Nome</label>
-                                            <div class="box">
-                                                <p class="subtitle is-5"><?php echo $infodev['NAME']; ?></p>
-                                            </div>
-                                        </div>
-                                        <div class="field">
-                                            <label class="label" for="description">Email</label>
-                                            <div class="box">
-                                                <p class="subtitle is-5"><?php echo $infodev['EMAIL']; ?></p>
-                                            </div>
-                                        </div>
-                                        <div class="field">
-                                            <label class="label" for="contact">Data de nascimento</label>
-                                            <div class="box">
-                                                <p class="subtitle is-5"><?php echo $infodev['BIRTH_DATE']; ?></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <?php } ?>
-                                <?php if($row['STATUS'] <= 0) { ?>
+                                <?php if ($rowser['STATUS'] <= 0) { ?>
                                     <div class="box">
                                         <p class="title is-5"> Ainda não há um desenvolvedor! </p>
                                     </div>
                                 <?php } ?>
-                                <?php if ($row['STATUS'] == 1) { ?>
+                                <?php if ($rowser['STATUS'] == 1) { ?>
                                     <div class="section has-text-centered">
                                         <div class="field">
                                             <button class="button is-medium is-primary" name="SEND" type="submit">Aceitar pedido</button>
@@ -258,7 +337,7 @@
                                         <div class="field">
                                             <label class="label has-text-centered">Foto do cliente</label>
                                             <figure class="image is-square">
-                                                <img class="is-rounded" src='<?php echo $infocus['IMAGE']; ?>'>
+                                                <img class="is-rounded" src="/<?php echo $infocus['IMAGE']; ?>">
                                             </figure>
                                         </div>
                                     </div>
@@ -283,15 +362,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php if ($row['STATUS'] == 0) { ?>
+                                <?php if ($rowser['STATUS'] == 0) { ?>
                                     <div class="section has-text-centered">
                                         <div class="field">
                                             <button class="button is-medium is-primary" name="REQUEST" type="submit"> Enviar solicitação </button>
                                         </div>
                                     </div>
                                 <?php } ?>
-                                <?php if ($row['STATUS'] == 1) { ?>
-                                    <div class="section has-text-centered">                                        
+                                <?php if ($rowser['STATUS'] == 1) { ?>
+                                    <div class="section has-text-centered">
                                         <div class="notification is-primary">
                                             <p class="title is-5"> Aguardando a confirmação pelo cliente...</p>
                                         </div>
@@ -306,12 +385,13 @@
 
 
     </div>
-    <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
+    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',
             data: {
-                isActiveBurger: false
+                isActiveBurger: false,
+                isActiveModal: false,
             },
             methods: {
                 onClickBurger() {
@@ -319,6 +399,9 @@
                 },
                 onClickLogout() {
                     window.location.replace("/logout/")
+                },
+                onClickButtonModal() {
+                    this.isActiveModal = !this.isActiveModal
                 }
             }
         })
