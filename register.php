@@ -17,48 +17,45 @@
     $type = filter_input(INPUT_POST, 'TYPE_REGISTER', FILTER_SANITIZE_STRING);
 
     if(isEmptyInputRegister($name, $cpf, $email, $password1, $password2, $birthdate, $type)) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "Por favor, preencha todos os campos!";
         exit();
     }
 
     if(isValidEmail($email) ) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "O email não é válido!";
         exit();
     }
 
     if(isPasswordMatch($password1, $password2)) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "As senhas não conferem!";
         exit();
     }
 
     if(passwordStrength($password1)) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "Por favor, insira uma senha mais forte!";
         exit();
     }
 
     if(validateCpf($cpf)) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "O CPF não é válido!";
         exit();
     }
 
     if(validateDate($arraybirth[1], $arraybirth[2], $arraybirth[0], $yearphp)) {
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "A data inserida não é válida!";
+        exit();
+    }
+    
+    if(searchCpfEmail($email, $cpf, $conn)) {
+        echo "O CPF ou email inseridos já estão cadastrados no site!";
         exit();
     }
 
     if(!register($name, $cpf, $email, $password1, $birthdate, $type, $conn)) {
-        $_SESSION['r'] = "successr";
-        header("Location: /");
-        exit();
-    }else{
-        $_SESSION['r'] = "failurer";
-        header("Location: /");
+        echo "Sucesso";
+    }
+    else{
+        echo "Falha ao enviar os dados! Por favor, tente novamente mais tarde!";
         exit();
     }
 

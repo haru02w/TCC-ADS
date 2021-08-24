@@ -22,6 +22,7 @@
     }
 
     $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    
     if(is_null($rowuser)) {
         expiredReturn();
     }
@@ -32,6 +33,7 @@
     mysqli_stmt_execute($stmt);
     $resultserv = mysqli_stmt_get_result($stmt);
     mysqli_close($conn);
+    
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +65,7 @@
                         </div>
                     </section>
                     <div class="section is-fullheight">
-                        <?php if($resultserv->num_rows <= 0) { ?>
+                        <?php if(mysqli_num_rows($resultserv) <= 0) { ?>
                             <div class="box">
                                 <p class="title is-5"> Você não tem serviços pendentes! </p>
                             </div>
@@ -81,9 +83,9 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['TITLE'];?>/" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Ver detalhes</a>
                                         <?php if($type == "CUSTOMER") { ?>
-                                            <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['TITLE'];?>/" class="card-footer-item">Editar serviço</a>
+                                            <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
                                         <?php } ?>
                                     </footer>
                                 </div>

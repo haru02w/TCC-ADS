@@ -11,14 +11,12 @@
     if(isset($_POST['remember'])) { $remember = true; } else { $remember = false;}
 
     if(isEmptyInputLogin($email, $password, $type)) {
-        $_SESSION['l'] = "failurel";
-        header("Location: /");
+        echo "Por favor, preencha todos os campos!";
         exit();
     }
 
     if(isValidEmail($email)) {
-        $_SESSION['l'] = "failurel";
-        header("Location: /");
+        echo "O email não é valido!";
         exit();
     }
 
@@ -32,18 +30,11 @@
             $_SESSION['TYPE'] = $type;  
         }
         
-        if($type === "CUSTOMER") {
-            header("Location: /customermenu/");
-            exit();
-        }
-        else {
-            header("Location: /developermenu/");
-            exit();
-        }
+        echo $type;
+        exit();
     }
     else {
-        $_SESSION['l'] = "failurel";
-        header("Location: /?email=$email");
+        echo "O e-mail e a senha inseridos não correspondem aos nossos registros. Por favor, verifique os dados e tente novamente!";
         exit();
     }
 

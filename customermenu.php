@@ -26,13 +26,13 @@
         exit();
     }
 
-    $row = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+    $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
     
-    if(is_null($row)) {
+    if(is_null($rowuser)) {
         expiredReturn();
     }
     
-    $id = $row["ID_CUSTOMER"];
+    $id = $rowuser["ID_CUSTOMER"];
 
     $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_CUSTOMER = ? AND STATUS = 0");
     mysqli_stmt_bind_param($stmt, "i", $id);
@@ -76,20 +76,20 @@
                             </div>
                         <?php } ?>
                         <div class="columns is-variable is-multiline">
-                        <?php while ($row = mysqli_fetch_assoc($resultserv)) { ?>
+                        <?php while ($rowser = mysqli_fetch_assoc($resultserv)) { ?>
                             <div class="column is-4">
                                 <div class="card bm--card-equal-height">
                                     <header class="card-header">
-                                        <p class="card-header-title"><?php echo $row['TITLE']; ?></p>
+                                        <p class="card-header-title"><?php echo $rowser['TITLE']; ?></p>
                                     </header>
                                     <div class="card-content">
                                         <div class="content">
-                                            <?php echo $row['DESCRIPTION']; ?> 
+                                            <?php echo $rowser['DESCRIPTION']; ?> 
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="/details/<?php echo $row['ID_SERVICE'];?>/<?php echo $row['TITLE'];?>/" class="card-footer-item">Ver detalhes</a>
-                                        <a href="/updateservice/<?php echo $row['ID_SERVICE'];?>/<?php echo $row['TITLE'];?>/" class="card-footer-item">Editar serviço</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
                                     </footer>
                                 </div>
                             </div>

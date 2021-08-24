@@ -65,8 +65,7 @@
                 }
                 if(password_verify($password, $passwd)) {
                     if($row['VERIFIED'] === 0) {
-                        $_SESSION['l'] = "notverified";
-                        header("Location: /");
+                        echo "A sua conta ainda não foi verificada! Para verificar, entre em seu email e clique no link de verificação!";
                         exit();
                     }
                     else {
@@ -88,11 +87,6 @@
     }
 
     function register($name, $cpf, $email, $password1, $birthdate, $type, $conn) {
-        if(searchCpfEmail($email, $cpf, $conn) !== false) {
-            $_SESSION['r'] = "foundfailurer";
-            header("Location: /");
-            exit();
-        }
         if($type === "CUSTOMER" || $type === "DEVELOPER"){
             $token = bin2hex(random_bytes(50));
             $verified = '0';
@@ -235,7 +229,7 @@
     }
 
     function searchInfoCus($idcus, $conn) {
-        $stmt = mysqli_prepare($conn, "SELECT CU.NAME, CU.EMAIL, CU.BIRTH_DATE, CU.IMAGE FROM TB_CUSTOMER CU JOIN TB_SERVICES SE ON (CU.ID_CUSTOMER = SE.COD_CUSTOMER AND SE.COD_CUSTOMER = ?)");
+        $stmt = mysqli_prepare($conn, "SELECT CU.NAME, CU.EMAIL, CU.BIRTH_DATE, CU.IMAGE, CU.CONTACT FROM TB_CUSTOMER CU JOIN TB_SERVICES SE ON (CU.ID_CUSTOMER = SE.COD_CUSTOMER AND SE.COD_CUSTOMER = ?)");
         mysqli_stmt_bind_param($stmt, "s", $idcus);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);

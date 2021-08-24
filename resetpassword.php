@@ -37,8 +37,7 @@
                 $type = "DEVELOPER";
             }
             else if(mysqli_num_rows($result2) >= 1) {
-                $type = "CUSTOMER";
-                
+                $type = "CUSTOMER";   
             }
             $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
             $name = $rowuser['NAME'];

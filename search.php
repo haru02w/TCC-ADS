@@ -86,7 +86,7 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['TITLE'];?>/" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Ver detalhes</a>
                                     </footer>
                                 </div>
                             </div>
