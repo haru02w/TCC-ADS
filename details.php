@@ -1,137 +1,142 @@
 <?php
-    session_name("HATIDS");
-    session_start();
-    date_default_timezone_set('America/Sao_Paulo');
-    require('connection.php');
-    require('functions.php');
+session_name("HATIDS");
+session_start();
+date_default_timezone_set('America/Sao_Paulo');
+require('connection.php');
+require('functions.php');
 
-    if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
-        $email = $_COOKIE['EMAIL'];
-        $type = $_COOKIE['TYPE'];
-    } 
-    else if (isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
-        if (isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
-            expiredReturn();
-        }
-        $_SESSION['LAST_ACTIVITY'] = time();
-        $email = $_SESSION['EMAIL'];
-        $type = $_SESSION['TYPE']; 
-    } 
-    else {
+if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+    $email = $_COOKIE['EMAIL'];
+    $type = $_COOKIE['TYPE'];
+} else if (isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+    if (isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
         expiredReturn();
     }
+    $_SESSION['LAST_ACTIVITY'] = time();
+    $email = $_SESSION['EMAIL'];
+    $type = $_SESSION['TYPE'];
+} else {
+    expiredReturn();
+}
 
-    if (!isset($_GET['ids'])) {
-        header("Location: /" . strtolower($type) . "menu.php");
+if (!isset($_GET['ids'])) {
+    header("Location: /" . strtolower($type) . "menu.php");
+    exit();
+}
+$ids = $_GET['ids'];
+
+$rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
+$rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+
+if (is_null($rowuser)) {
+    expiredReturn();
+}
+
+if (is_null($rowser)) {
+    header("Location: /" . strtolower($type) . "menu/");
+    exit();
+}
+
+$id = $rowuser["ID_$type"];
+$iddev = $rowser['COD_DEVELOPER'];
+$idcus = $rowser['COD_CUSTOMER'];
+
+
+if ($type == "CUSTOMER") {
+    if ($idcus !== $id) {
+        header("Location: /customermenu/");
         exit();
     }
-    $ids = $_GET['ids'];
-
-    $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
-    $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
-    
-    if (is_null($rowuser)) {
-        expiredReturn();
-    }
-
-    if (is_null($rowser)) {
-        header("Location: /" . strtolower($type) . "menu/");
+} elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
+    if ($iddev !== $id) {
+        header("Location: /developermenu/");
         exit();
     }
+}
 
-    $id = $rowuser["ID_$type"];
-    $iddev = $rowser['COD_DEVELOPER'];
-    $idcus = $rowser['COD_CUSTOMER'];
-    
-    if ($type == "CUSTOMER") {
-        if ($idcus !== $id) {
-            header("Location: /customermenu/");
-            exit();
-        }
-    } 
-    elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
-        if ($iddev !== $id) {
-            header("Location: /developermenu/");
-            exit();
-        }
-    }
+$infodev = searchInfoDev($iddev, $conn);
+$infocus = searchInfoCus($idcus, $conn);
+$developer_exist = 0;
 
-    $infodev = searchInfoDev($iddev, $conn);
-    $infocus = searchInfoCus($idcus, $conn);
 
-    if ($rowser['STATUS'] >= 1) {
-        $birthdev = explode("-", $infodev['BIRTH_DATE']);
-        $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
-    }
+if ($rowser['STATUS'] >= 1) {
+    $birthdev = explode("-", $infodev['BIRTH_DATE']);
+    $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
+}
 
-    $birthcus = explode("-", $infocus['BIRTH_DATE']);
-    $infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
+$birthcus = explode("-", $infocus['BIRTH_DATE']);
+$infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
 
-    $stmt = mysqli_prepare($conn, "SELECT COD_SERVICE FROM TB_RATING");
-    $cod_service = mysqli_stmt_execute($stmt);
 
-    if (isset($_POST['REQUEST'])) {
-        $status = $rowser['STATUS'];
 
-        if ($status >= 1) {
-            $_SESSION['detail'] = "takend";
-            header("Location: /pendingservices/");
-            exit();
-        } else {
-            $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
-            mysqli_stmt_bind_param($stmt, "is", $id, $ids);
-            $bool = mysqli_stmt_execute($stmt);
+if (isset($_POST['REQUEST'])) {
+    $status = $rowser['STATUS'];
 
-            if ($bool) {
-                $_SESSION['detail'] = "successd";
-                header("Location: /pendingservices/");
-                exit();
-            } else {
-                $_SESSION['detail'] = "failured";
-                header("Location: /pendingservices/");
-                exit();
-            }
-        }
-    }
-    else if (isset($_POST['SEND'])) {
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "s", $ids);
+    if ($status >= 1) {
+        $_SESSION['detail'] = "takend";
+        header("Location: /pendingservices/");
+        exit();
+    } else {
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "is", $id, $ids);
         $bool = mysqli_stmt_execute($stmt);
 
         if ($bool) {
-            $_SESSION['send'] = "successs";
-            header("Location: /developmentservices/");
+            $_SESSION['detail'] = "successd";
+            header("Location: /pendingservices/");
             exit();
         } else {
-            $_SESSION['send'] = "failures";
-            header("Location: /developmentservices/");
+            $_SESSION['detail'] = "failured";
+            header("Location: /pendingservices/");
             exit();
         }
     }
-    else if (isset($_POST['SENDRECUSE'])) {
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "s", $ids);
-        $bool = mysqli_stmt_execute($stmt);
+} else if (isset($_POST['SEND'])) {
+    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
+    mysqli_stmt_bind_param($stmt, "s", $ids);
+    $bool = mysqli_stmt_execute($stmt);
 
-        if ($bool) {
-            $_SESSION['recuse'] = "successre";
-            header("Location: /pendingservices/");
-            exit();
-        } else {
-            $_SESSION['recuse'] = "failurere";
-            header("Location: /pendingservices/");
-            exit();
-        }
-    } 
-    elseif (isset($_POST['REPORT'])) {
-        $ids = $rowser['ID_SERVICE'];
+    if ($bool) {
+        $_SESSION['send'] = "successs";
+        header("Location: /developmentservices/");
+        exit();
+    } else {
+        $_SESSION['send'] = "failures";
+        header("Location: /developmentservices/");
+        exit();
+    }
+} else if (isset($_POST['SENDRECUSE'])) {
+    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
+    mysqli_stmt_bind_param($stmt, "s", $ids);
+    $bool = mysqli_stmt_execute($stmt);
+
+    if ($bool) {
+        $_SESSION['recuse'] = "successre";
+        header("Location: /pendingservices/");
+        exit();
+    } else {
+        $_SESSION['recuse'] = "failurere";
+        header("Location: /pendingservices/");
+        exit();
+    }
+    //codigo do report, com verificação se o developer já reportou
+} elseif (isset($_POST['REPORT'])) {
+    $idss = $rowser['ID_SERVICE'];
+    $result_report = mysqli_query($conn, "SELECT COD_DEVELOPER FROM TB_REPORT WHERE COD_DEVELOPER = '$id' AND COD_SERVICE = '$idss'");
+    if (mysqli_num_rows($result_report) == 1) {
+        $developer_exist = 1;
+    } else {
+        
         $type_report = $_POST['cont'];
-        $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, TYPE_REPORT) VALUES (?,?)");
-        mysqli_stmt_bind_param($stmt, "ss", $ids, $type_report);
-        $bool = mysqli_stmt_execute($stmt);
+        $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, COD_DEVELOPER,TYPE_REPORT) VALUES (?,?,?)");
+        mysqli_stmt_bind_param($stmt, "sss", $idss, $id, $type_report);
+        mysqli_stmt_execute($stmt);
     }
-    
-    mysqli_close($conn);
+}
+
+
+
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -183,7 +188,7 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <?php if ($rowser['STATUS'] < 3 AND $type == "DEVELOPER") { ?>
+                                    <?php if ($rowser['STATUS'] < 3 and $type == "DEVELOPER") { ?>
                                         <a class="button is-danger is-medium" @click="onClickButtonModal">Reportar</a>
                                         <div class="modal" :class="{'is-active': isActiveModal}">
                                             <div class="modal-background"></div>
@@ -220,11 +225,23 @@
                                                         </label>
                                                         <br>
                                                         <button type="submit" class="button" name="REPORT">Enviar Denúncia</button>
-
                                                     </div>
                                                 </section>
                                             </div>
                                         </div>
+                                        <br>
+                                        <!- codigo da mensagem do report caso o developer já tenha reportado->
+                                        <?php if ($developer_exist == 1) { ?>
+                                            <article class="message is-danger">
+                                                <div class="message-header">
+                                                    <p>Aviso</p>
+                                                    <button class="delete" aria-label="delete"></button>
+                                                </div>
+                                                <div class="message-body">
+                                                   Você já reportou esse serviço.
+                                                </div>
+                                            </article>
+                                        <?php } ?>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -282,6 +299,7 @@
                                                             </section>
                                                         </div>
                                                     </div>
+
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -385,7 +403,23 @@
 
 
     </div>
-    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
+    <noscript>
+        <style>
+            .script {
+                display: none;
+            }
+        </style>
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="box has-text-centered">
+                        <p class="title font-face"> JavaScript não habilitado! </p> <br>
+                        <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </noscript>
     <script>
         new Vue({
             el: '#app',
