@@ -1,5 +1,5 @@
 RewriteEngine on
-RewriteBase /
+RewriteBase /lalala/
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
@@ -12,7 +12,7 @@ RewriteRule createservice/ createservice.php [QSA,NC,L]
 
 RewriteRule customermenu/ customermenu.php [QSA,NC,L] 
 
-RewriteRule details/([0-9]+)/ details.php?ids=$1 [QSA,NC,L] 
+RewriteRule details/([0-9]+) details.php?ids=$1 [QSA,NC,L] 
 
 RewriteRule developermenu/ developermenu.php [QSA,NC,L] 
 
@@ -34,7 +34,7 @@ RewriteRule resetpassword/ resetpassword.php [QSA,NC,L]
 
 RewriteRule search/ search.php [QSA,NC,L] 
 
-RewriteRule updateservice/([0-9]+)/ updateservice.php?ids=$1 [QSA,NC,L]
+RewriteRule updateservice/([0-9]+) updateservice.php?ids=$1 [QSA,NC,L]
 
 RewriteRule verifyemail/([0-9a-zA-Z-]+)/ verifyemail.php?token=$1 [QSA,NC,L]
 

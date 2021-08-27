@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="./details/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Ver detalhes</a>
+                                        <a href="./details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
                                         <?php if($type == "CUSTOMER") { ?>
                                             <a href="./updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
                                         <?php } ?>

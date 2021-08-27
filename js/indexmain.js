@@ -36,7 +36,7 @@ formL.onsubmit = (e) => {
 postButtonR.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/register/", true);
+    xhr.open("POST", "./register/", true);
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -70,16 +70,16 @@ postButtonR.onclick = () => {
 postButtonL.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/login/", true);
+    xhr.open("POST", "./login/", true);
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 let data = xhr.response.trim();
                 if (data === "CUSTOMER") {
-                    window.location.replace("/customermenu/");
+                    window.location.replace("./customermenu/");
                 }
                 else if (data === "DEVELOPER") {
-                    window.location.replace("/developermenu/");
+                    window.location.replace("./developermenu/");
                 }
                 else {
                     messageDivL.style.display = "block";
@@ -158,5 +158,3 @@ function pwdShowL() {
         toggleIconL.classList.add("fa-eye");
     }
 }
-
-

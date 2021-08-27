@@ -74,7 +74,7 @@ if (isset($_POST['REQUEST'])) {
 
     if ($status >= 1) {
         $_SESSION['detail'] = "takend";
-        header("Location: ../../pendingservices/");
+        header("Location: ../pendingservices/");
         exit();
     } else {
         $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
@@ -83,11 +83,11 @@ if (isset($_POST['REQUEST'])) {
 
         if ($bool) {
             $_SESSION['detail'] = "successd";
-            header("Location: ../../pendingservices/");
+            header("Location: ../pendingservices/");
             exit();
         } else {
             $_SESSION['detail'] = "failured";
-            header("Location: ../../pendingservices/");
+            header("Location: ../pendingservices/");
             exit();
         }
     }
@@ -98,11 +98,11 @@ if (isset($_POST['REQUEST'])) {
 
     if ($bool) {
         $_SESSION['send'] = "successs";
-        header("Location: ../../developmentservices/");
+        header("Location: ../developmentservices/");
         exit();
     } else {
         $_SESSION['send'] = "failures";
-        header("Location: ../../developmentservices/");
+        header("Location: ../developmentservices/");
         exit();
     }
 } else if (isset($_POST['SENDRECUSE'])) {
@@ -112,11 +112,11 @@ if (isset($_POST['REQUEST'])) {
 
     if ($bool) {
         $_SESSION['recuse'] = "successre";
-        header("Location: ../../pendingservices/");
+        header("Location: ../pendingservices/");
         exit();
     } else {
         $_SESSION['recuse'] = "failurere";
-        header("Location: ../../pendingservices/");
+        header("Location: ../pendingservices/");
         exit();
     }
     //codigo do report, com verificação se o developer já reportou
@@ -142,11 +142,11 @@ mysqli_close($conn);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../../css/style.css">
-    <script src="../../js/vue.js"></script>
-    <script src="../../js/jscript.js"></script>
-    <script src="../../js/v-mask.min.js"></script>
-    <script src="../../js/moment.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/vue.js"></script>
+    <script src="../js/jscript.js"></script>
+    <script src="../js/v-mask.min.js"></script>
+    <script src="../js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -426,7 +426,7 @@ mysqli_close($conn);
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../../logout/")
+                    window.location.replace("../logout/")
                 },
                 onClickButtonModal() {
                     this.isActiveModal = !this.isActiveModal
