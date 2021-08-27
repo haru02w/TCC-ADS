@@ -1,7 +1,7 @@
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <img src="/images/logochick.png" alt="imagem da logo">
+            <img src="/images/logochick.png" alt="Logo do HatchFy" width="28" height="28">
             <p class="subtitle is-3 font-face">&nbsp HatchFy</p>
         </a>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">

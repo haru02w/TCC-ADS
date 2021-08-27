@@ -1,71 +1,61 @@
 <?php
-    date_default_timezone_set('America/Sao_Paulo');
-    require("connection.php");
-    require("functions.php");
+date_default_timezone_set('America/Sao_Paulo');
+require("connection.php");
+require("functions.php");
 
-    if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
-        header("Location: /");
-        exit();
-    }
+if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
+    header("Location: /");
+    exit();
+}
 
-    $selector = $_GET['selector'];
-    $validator = $_GET['validator'];
+$selector = $_GET['selector'];
+$validator = $_GET['validator'];
 
-    $cdate = date("U");
+$cdate = date("U");
 
-    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_PASSWORDRESET WHERE SELECTOR = ? AND EXPIRES >= ?");
-    mysqli_stmt_bind_param($stmt, "si", $selector, $cdate);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
+$stmt = mysqli_prepare($conn, "SELECT * FROM TB_PASSWORDRESET WHERE SELECTOR = ? AND EXPIRES >= ?");
+mysqli_stmt_bind_param($stmt, "si", $selector, $cdate);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($result);
 
-    $tokenb = hex2bin($validator);
-    $istoken = password_verify($tokenb, $row['TOKEN']);
+$tokenb = hex2bin($validator);
+$istoken = password_verify($tokenb, $row['TOKEN']);
 
-    if (isset($_POST["reset-password-submit"])) {
+if (isset($_POST["reset-password-submit"])) {
 
-        $selector = filter_input(INPUT_POST, "selector", FILTER_SANITIZE_STRING);
-        $validator = filter_input(INPUT_POST, "validator", FILTER_SANITIZE_STRING);
-        $password1 = filter_input(INPUT_POST, "PASSWORD1", FILTER_SANITIZE_STRING);
-        $password2 = filter_input(INPUT_POST, "PASSWORD2", FILTER_SANITIZE_STRING);
+    $selector = filter_input(INPUT_POST, "selector", FILTER_SANITIZE_STRING);
+    $validator = filter_input(INPUT_POST, "validator", FILTER_SANITIZE_STRING);
+    $password1 = filter_input(INPUT_POST, "PASSWORD1", FILTER_SANITIZE_STRING);
+    $password2 = filter_input(INPUT_POST, "PASSWORD2", FILTER_SANITIZE_STRING);
 
-        if (empty($password1) || empty($password2)) {
+    if (empty($password1) || empty($password2)) {
+        $resetpwdclass = "is-danger";
+        $resetpwd = "Preencha os dois campos!";
+    } else if ($password1 != $password2) {
+        $resetpwdclass = "is-danger";
+        $resetpwd = "As senhas não conferem!";
+    } else if (empty($selector) || empty($validator)) {
+        $istoken = false;
+        $row = null;
+    } else {
+        $tokenEmail = $row['EMAIL'];
+
+        $result1 = searchEmailType($tokenEmail, "DEVELOPER", $conn);
+        $result2 = searchEmailType($tokenEmail, "CUSTOMER", $conn);
+
+        if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
             $resetpwdclass = "is-danger";
-            $resetpwd = "Preencha os dois campos!";
-        } 
-        else if ($password1 != $password2) {
-            $resetpwdclass = "is-danger";
-            $resetpwd = "As senhas não conferem!";
-        } 
-        else {
-            $cdate = date("U");
-
-            $stmt = mysqli_prepare($conn, "SELECT * FROM TB_PASSWORDRESET WHERE SELECTOR = ? AND EXPIRES >= ?");
-            mysqli_stmt_bind_param($stmt, "si", $selector, $cdate);
-            mysqli_stmt_execute($stmt);
-            $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-
-            $tokenb = hex2bin($validator);
-            $istoken = password_verify($tokenb, $row['TOKEN']);
-
-            $tokenEmail = $row['EMAIL'];
-
-            $result1 = searchEmailType($tokenEmail, "DEVELOPER", $conn);
-            $result2 = searchEmailType($tokenEmail, "CUSTOMER", $conn);
-            
-            if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
-                $resetpwdclass = "is-danger";
-                $resetpwd = "Usuário não encontrado! Por favor, tente novamente mais tarde!";
-            }
-            
+            $resetpwd = "Usuário não encontrado! Por favor, tente novamente mais tarde!";
+        } else {
             if ($result1->num_rows >= 1) {
                 $type = "DEVELOPER";
-            } 
-            else if ($result2->num_rows >= 1) {
+            } else if ($result2->num_rows >= 1) {
                 $type = "CUSTOMER";
             }
             
-            $newpwdhash = password_hash($password1, PASSWORD_DEFAULT);
+            $options = ['cost' => 12];
+            $newpwdhash = password_hash($password1, PASSWORD_DEFAULT, $options);
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET PASSWORD = ? WHERE EMAIL = ?");
             mysqli_stmt_bind_param($stmt, "ss", $newpwdhash, $tokenEmail);
             $bool = mysqli_stmt_execute($stmt);
@@ -73,34 +63,35 @@
             $stmt = mysqli_prepare($conn, "DELETE FROM TB_PASSWORDRESET WHERE EMAIL = ?");
             mysqli_stmt_bind_param($stmt, "s", $tokenEmail);
             $bool2 = mysqli_stmt_execute($stmt);
-            
+
             session_name("HATIDS");
             session_start();
 
-            if($bool === true && $bool2 === true) {
+            if ($bool === true && $bool2 === true) {
                 $_SESSION['resetpwd'] = "A sua senha foi alterada com sucesso!";
                 $_SESSION['resetpwdclass'] = 'is-success';
                 header("Location: /resetpassword/");
                 exit();
-            }
-            else {
+            } else {
                 $_SESSION['resetpwd'] = "A sua senha não foi alterada! Por favor, tente novamente mais tarde!";
                 $_SESSION['resetpwdclass'] = 'is-danger';
                 header("Location: /resetpassword/");
                 exit();
             }
         }
-    } 
+    }
+}
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
     <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
     <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
     <script src="https://hatchfy.philadelpho.tk/js/zxcvbn.js"></script>
 </head>
@@ -111,7 +102,7 @@
             <div class="hero-body">
                 <div class="container">
                     <div class="columns is-centered">
-                        <div class="column is-6 is-vcentered">
+                        <div class="column is-7 is-vcentered">
                             <div class="box has-text-centered">
                                 <?php if (ctype_xdigit($selector) !== false && ctype_xdigit($validator) !== false) { ?>
                                     <?php if (is_null($row) || $istoken == false) { ?>
@@ -131,24 +122,27 @@
                                         <form action="" method="post">
                                             <input type="hidden" name="selector" value="<?php echo $selector ?>">
                                             <input type="hidden" name="validator" value="<?php echo $validator ?>">
-                                            <div class="field">
-                                                <label for="PASSWORD1" class="label">Nova senha</label>
-                                                <div class="control has-icons-left">
-                                                    <input type="password" class="input" :class="{'is-primary': validatePassword() == 4, 'is-success': validatePassword() == 3, 'is-warning': validatePassword() == 2, 'is-danger': validatePassword() <= 1}" placeholder="Digite a sua nova senha" v-model="passwd1" name="PASSWORD1" @input="validSubmit()" required>
+                                            <label for="PASSWORD1" class="label">Nova senha</label>
+                                            <div class="field has-addons">
+                                                <div class="control has-icons-left is-expanded">
+                                                    <input type="password" autocomplete="off" class="input" :class="{'is-primary': validatePassword() == 4, 'is-success': validatePassword() == 3, 'is-warning': validatePassword() == 2, 'is-danger': validatePassword() <= 1}" placeholder="Digite a sua nova senha" v-model="passwd1" name="PASSWORD1" @input="validSubmit()" required>
                                                     <span class="icon is-small is-left">
                                                         <i class="fa fa-lock"></i>
                                                     </span>
+                                                    <p class="help is-primary" v-show="validatePassword() == 4">Excelente</p>
+                                                    <p class="help is-success" v-show="validatePassword() == 3">Forte</p>
+                                                    <p class="help is-warning" v-show="validatePassword() == 2">Médio</p>
+                                                    <p class="help is-danger" v-show="validatePassword() == 1">Fraca. Insira uma senha mais forte!</p>
+                                                    <p class="help is-danger" v-show="validatePassword() == 0">Muito fraca. Insira uma senha mais forte!</p>
                                                 </div>
-                                                <p class="help is-primary" v-show="validatePassword() == 4">Excelente</p>
-                                                <p class="help is-success" v-show="validatePassword() == 3">Forte</p>
-                                                <p class="help is-warning" v-show="validatePassword() == 2">Médio</p>
-                                                <p class="help is-danger" v-show="validatePassword() == 1">Fraca. Insira uma senha mais forte!</p>
-                                                <p class="help is-danger" v-show="validatePassword() == 0">Muito fraca. Insira uma senha mais forte!</p>
+                                                <div class="control has-icons">
+                                                    <button tabindex="-1" type="button" id="toggleIcon" class="button fas fa-eye" onmousedown="pwdShow()" onmouseup="pwdShow()"></button>
+                                                </div>
                                             </div>
                                             <div class="field">
                                                 <label for="PASSWORD2" class="label">Confirmar a senha</label>
                                                 <div class="control has-icons-left has-icons-right">
-                                                    <input type="password" class="input" :class="{'is-danger': confirmPassword() == false}" placeholder="Confirme a sua senha" v-model="passwd2" name="PASSWORD2" @input="validSubmit()" required>
+                                                    <input type="password" autocomplete="off" class="input" :class="{'is-danger': confirmPassword() == false}" placeholder="Confirme a sua senha" v-model="passwd2" name="PASSWORD2" @input="validSubmit()" required>
                                                     <span class="icon is-small is-left">
                                                         <i class="fa fa-lock"></i>
                                                     </span>
@@ -175,7 +169,23 @@
             </div>
         </section>
     </div>
-    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
+    <noscript>
+        <style>
+            .script {
+                display: none;
+            }
+        </style>
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="box has-text-centered">
+                        <p class="title font-face"> JavaScript não habilitado! </p> <br>
+                        <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </noscript>
     <script>
         new Vue({
             el: '#app',
@@ -190,7 +200,6 @@
                 validSubmit() {
                     this.isConfirmPassword = this.confirmPassword();
                     this.isValidPassword = this.validatePassword();
-
                     if (this.isValidPassword >= 2 && this.isConfirmPassword == true) {
                         this.casePass = true;
                     } else {
@@ -214,6 +223,7 @@
             }
         })
     </script>
+    <script src="https://hatchfy.philadelpho.tk/js/pwdmain.js" async defer></script>
 </body>
 
 </html>
