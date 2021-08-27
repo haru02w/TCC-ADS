@@ -73,13 +73,14 @@
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
     <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
     <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
     <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
     <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>

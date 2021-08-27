@@ -1,47 +1,46 @@
 <?php
-    session_name("HATIDS");
-    session_start();
-    date_default_timezone_set('America/Sao_Paulo');
-    
-    if (isset($_POST["reset-request-submit"])) {
-        require("connection.php");
-        require("functions.php");
+session_name("HATIDS");
+session_start();
+date_default_timezone_set('America/Sao_Paulo');
 
-        $email = filter_input(INPUT_POST, "EMAILPWD_RESET", FILTER_VALIDATE_EMAIL);
+if (isset($_POST["reset-request-submit"])) {
+    require("connection.php");
+    require("functions.php");
 
-        $result1 = searchEmailType($email, "DEVELOPER", $conn);
-        $result2 = searchEmailType($email, "CUSTOMER", $conn);
-    
-        if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
-            $resetpwd = "Usuário não encontrado!";
-            $resetpwdclass = "is-danger";
-        } 
-        else {
-        
-            $selector = bin2hex(random_bytes(8));
-            $token = random_bytes(50);
-            $url = "https://hatchfy.philadelpho.tk/createnewpassword/" . $selector . "/" . bin2hex($token) . "/";
-            $expires = date("U") + 1800;
+    $email = filter_input(INPUT_POST, "EMAILPWD_RESET", FILTER_SANITIZE_EMAIL);
 
-            $stmt = mysqli_prepare($conn, "DELETE FROM TB_PASSWORDRESET WHERE EMAIL = ?");
-            mysqli_stmt_bind_param($stmt, "s", $email);
-            mysqli_stmt_execute($stmt);
+    $result1 = searchEmailType($email, "DEVELOPER", $conn);
+    $result2 = searchEmailType($email, "CUSTOMER", $conn);
 
-            $hashed = password_hash($token, PASSWORD_DEFAULT);
+    if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
+        $resetpwd = "Usuário não encontrado!";
+        $resetpwdclass = "is-danger";
+    } else {
 
-            $stmt = mysqli_prepare($conn, "INSERT INTO TB_PASSWORDRESET (EMAIL, SELECTOR, TOKEN, EXPIRES) VALUES (?,?,?,?)");
-            mysqli_stmt_bind_param($stmt, "ssss", $email, $selector, $hashed, $expires);
-            mysqli_stmt_execute($stmt);
-            
-            if(mysqli_num_rows($result1) >= 1) {
-                $type = "DEVELOPER";
-            }
-            else if(mysqli_num_rows($result2) >= 1) {
-                $type = "CUSTOMER";   
-            }
-            $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
-            $name = $rowuser['NAME'];
-            $content = '<!DOCTYPE html>
+        $selector = bin2hex(random_bytes(8));
+        $token = random_bytes(50);
+        $url = "https://hatchfy.philadelpho.tk/createnewpassword/" . $selector . "/" . bin2hex($token) . "/";
+        $expires = date("U") + 1800;
+
+        $stmt = mysqli_prepare($conn, "DELETE FROM TB_PASSWORDRESET WHERE EMAIL = ?");
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+
+        $options = ['cost' => 12];
+        $hashed = password_hash($token, PASSWORD_DEFAULT, $options);
+
+        $stmt = mysqli_prepare($conn, "INSERT INTO TB_PASSWORDRESET (EMAIL, SELECTOR, TOKEN, EXPIRES) VALUES (?,?,?,?)");
+        mysqli_stmt_bind_param($stmt, "ssss", $email, $selector, $hashed, $expires);
+        mysqli_stmt_execute($stmt);
+
+        if (mysqli_num_rows($result1) >= 1) {
+            $type = "DEVELOPER";
+        } else if (mysqli_num_rows($result2) >= 1) {
+            $type = "CUSTOMER";
+        }
+        $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+        $name = $rowuser['NAME'];
+        $content = '<!DOCTYPE html>
                 <html lang="pt-BR">
                 
                 <head>
@@ -73,37 +72,37 @@
                 </html>';
 
 
-            $subject = "Redefinição de senha do HatchFy!";
-            $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+        $subject = "Redefinição de senha do HatchFy!";
+        $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
-            if(!sendEmail($email, $subject, $content)) {
-                $resetpwd = "Um link para redefinir a sua senha foi enviado em seu email e irá expirar em 30 minutos!";
-                $resetpwdclass = "is-success";
-            }
-            else {
-                $resetpwd = "Falha ao solicitar a redefinição de senha, por favor, tente novamente mais tarde!";
-                $resetpwdclass = "is-danger";
-            }
-            mysqli_stmt_close($stmt);
+        if (!sendEmail($email, $subject, $content)) {
+            $resetpwd = "Um link para redefinir a sua senha foi enviado em seu email e irá expirar em 30 minutos!";
+            $resetpwdclass = "is-success";
+        } else {
+            $resetpwd = "Falha ao solicitar a redefinição de senha, por favor, tente novamente mais tarde!";
+            $resetpwdclass = "is-danger";
         }
-        
-        mysqli_close($conn);
+        mysqli_stmt_close($stmt);
     }
-    
-    if(isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
-        $resetpwd = $_SESSION['resetpwd'];
-        $resetpwdclass = $_SESSION['resetpwdclass'];
-    }
-    
+
+    mysqli_close($conn);
+}
+
+if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
+    $resetpwd = $_SESSION['resetpwd'];
+    $resetpwdclass = $_SESSION['resetpwdclass'];
+}
+
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
     <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
     <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
 </head>
 
@@ -128,13 +127,16 @@
                                     <div class="field">
                                         <label class="label has-text-left">Email</label>
                                         <div class="control has-icons-left">
-                                            <input type="text" class="input" placeholder="Insira o seu endereço de email" name="EMAILPWD_RESET" required v-model="Email" @input="validSubmit()">
+                                            <input type="email" class="input" placeholder="Insira o seu endereço de email" name="EMAILPWD_RESET" required v-model="Email" @input="validSubmit()">
                                             <span class="icon is-small is-left">
                                                 <i class="fa fa-envelope"></i>
                                             </span>
                                         </div>
                                     </div>
+                                    <div class="buttons is-centered">
                                     <button class="button is-info" type="submit" onclick="this.classList.add('is-loading')" name="reset-request-submit" v-bind:disabled="!casePass"> Enviar email</button>
+                                        <a href="/" class="button is-primary">Ir para a página inicial</a>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -143,7 +145,23 @@
             </div>
         </section>
     </div>
-    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
+    <noscript>
+        <style>
+            .script {
+                display: none;
+            }
+        </style>
+        <section class="hero is-fullheight">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="box has-text-centered">
+                        <p class="title font-face"> JavaScript não habilitado! </p> <br>
+                        <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </noscript>
     <script>
         new Vue({
             el: '#app',
@@ -165,7 +183,6 @@
                 },
                 validSubmit() {
                     this.isValidEmail = this.validateEmail();
-
                     if (this.isValidEmail == true) {
                         this.casePass = true;
                     } else {

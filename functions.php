@@ -60,13 +60,26 @@
         if($type === "DEVELOPER" || $type === "CUSTOMER") {
             $result = searchEmailType($email, $type, $conn);
             if(($result) and ($result->num_rows != 0)) {
-                if($row = mysqli_fetch_assoc($result)) {
-                    $passwd = $row['PASSWORD'];
-                }
+                $row = mysqli_fetch_assoc($result); 
+                $passwd = $row['PASSWORD'];
                 if(password_verify($password, $passwd)) {
+                    $options = ['cost' => 12];
                     if($row['VERIFIED'] === 0) {
                         echo "A sua conta ainda não foi verificada! Para verificar, entre em seu email e clique no link de verificação!";
                         exit();
+                    }
+                    if(password_needs_rehash($passwd, PASSWORD_DEFAULT, $options)) {
+                        $hash = password_hash($password, PASSWORD_DEFAULT, $options);
+                        $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET PASSWORD = ? WHERE ID_$type = ?");
+                        mysqli_stmt_bind_param($stmt, "ss", $hash, $row["ID_$type"]);
+                        $bool = mysqli_stmt_execute($stmt);
+                        
+                        if($bool) {
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
                     }
                     else {
                         return false;
@@ -91,7 +104,8 @@
             $token = bin2hex(random_bytes(50));
             $verified = '0';
             $image = "images/user.png";
-            $password1 = password_hash($password1, PASSWORD_DEFAULT);
+            $options = ['cost' => 12];
+            $password1 = password_hash($password1, PASSWORD_DEFAULT, $options);
             $contact = null;
             if($type == "CUSTOMER") {
                 $stmt = mysqli_prepare($conn, "INSERT INTO TB_CUSTOMER (NAME, EMAIL, BIRTH_DATE, PASSWORD, CPF, IMAGE, CONTACT, VERIFIED, TOKEN) VALUES (?,?,?,?,?,?,?,?,?)");
@@ -281,6 +295,15 @@
         $_SESSION['s'] = "expired";
         header("Location: /");
         exit();
+    }
+    
+    function isCaptchaComplete($hcapresponse) {
+        if(empty($hcapresponse) OR $hcapresponse == "") {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
 ?>

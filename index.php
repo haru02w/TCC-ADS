@@ -20,18 +20,21 @@ if (isset($_SESSION['TYPE'])) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HatchFy. Receba ou crie o seu programa agora! Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.">
   <title>Hatchfy</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/vue.js"></script>
-  <script src="/js/jscript.js"></script>
-  <script src="/js/v-mask.min.js"></script>
-  <script src="/js/moment.js"></script>
-  <script src="/js/zxcvbn.js"></script>
+  <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
+  <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+  <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
+  <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js" ></script>
+  <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
+  <script src="https://hatchfy.philadelpho.tk/js/zxcvbn.js"></script>
+  <script src="https://js.hcaptcha.com/1/api.js?hl=pt&onload=renderCaptcha"></script>
 </head>
 
 <body class="background">
@@ -118,7 +121,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="field">
               <label for="NAME_REGISTER" class="label">Nome Completo</label>
               <div class="control has-icons-left">
-                <input type="text" class="input" placeholder="Digite seu nome" name="NAME_REGISTER" id="NAME_REGISTER" @input="validSubmitRegister" required v-model="registerName">
+                <input type="text" class="input" autocomplete="off" placeholder="Digite seu nome" name="NAME_REGISTER" id="NAME_REGISTER" @input="validSubmitRegister" required v-model="registerName">
                 <span class="icon is-small is-left">
                   <i class="fa fa-user"></i>
                 </span>
@@ -127,7 +130,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="field">
               <label for="CPF_REGISTER" class="label">CPF</label>
               <div class="control has-icons-left has-icons-right">
-                <input type="tel" class="input" :class="{'is-success': validateCpf() == true, 'is-danger': validateCpf() == false}" placeholder="Digite seu CPF" id="CPF_REGISTER" name="CPF_REGISTER" v-model="registerCpf" v-mask="'###.###.###-##'" @input="validSubmitRegister" required>
+                <input type="tel" autocomplete="off" class="input" :class="{'is-success': validateCpf() == true, 'is-danger': validateCpf() == false}" placeholder="Digite seu CPF" id="CPF_REGISTER" name="CPF_REGISTER" v-model="registerCpf" v-mask="'###.###.###-##'" @input="validSubmitRegister" required>
                 <span class="icon is-small is-left">
                   <i class="fa fa-address-card"></i>
                 </span>
@@ -141,7 +144,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="field">
               <label for="EMAIL_REGISTER" class="label">Email</label>
               <div class="control has-icons-left has-icons-right">
-                <input type="email" class="input" :class="{'is-success': validateEmail() == true, 'is-danger': validateEmail() == false}" placeholder="Digite seu email" id="EMAIL_REGISTER" name="EMAIL_REGISTER" @input="validSubmitRegister" required v-model="registerEmail">
+                <input type="email" autocomplete="off" class="input" :class="{'is-success': validateEmail() == true, 'is-danger': validateEmail() == false}" placeholder="Digite seu email" id="EMAIL_REGISTER" name="EMAIL_REGISTER" @input="validSubmitRegister" required v-model="registerEmail">
                 <span class="icon is-small is-left">
                   <i class="fa fa-envelope"></i>
                 </span>
@@ -155,7 +158,7 @@ if (isset($_SESSION['TYPE'])) {
             <label for="PASSWORD1" class="label">Senha</label>
             <div class="field has-addons">
               <div class="control has-icons-left is-expanded">
-                <input type="password" class="input" :class="{'is-primary': validatePassword() == 4, 'is-success': validatePassword() == 3, 'is-warning': validatePassword() == 2, 'is-danger': validatePassword() <= 1}" placeholder="Digite sua senha" v-model="passwd1" id="PASSWORD1" name="PASSWORD1" @input="validSubmitRegister" required>
+                <input type="password" autocomplete="off" class="input" :class="{'is-primary': validatePassword() == 4, 'is-success': validatePassword() == 3, 'is-warning': validatePassword() == 2, 'is-danger': validatePassword() <= 1}" placeholder="Digite sua senha" v-model="passwd1" id="PASSWORD1" name="PASSWORD1" @input="validSubmitRegister" required>
                 <span class="icon is-small is-left">
                   <i class="fa fa-lock"></i>
                 </span>
@@ -166,13 +169,13 @@ if (isset($_SESSION['TYPE'])) {
                 <p class="help is-danger" v-show="validatePassword() == 0">Muito fraca. Insira uma senha mais forte!</p>
               </div>
               <div class="control has-icons">
-                <button tabindex="-1" type="button" id="toggleIconR" class="button fas fa-eye" onmousedown="pwdShowR()" onmouseup="pwdShowR()" ontouchstart="pwdShowR()" ontouchend="pwdShowR()"></button>
+                <button tabindex="-1" type="button" id="toggleIconR" class="button fas fa-eye" onmousedown="pwdShowR()" onmouseup="pwdShowR()"></button>
               </div>
             </div>
             <div class="field">
               <label for="PASSWORD2" class="label">Confirmar a senha</label>
               <div class="control has-icons-left has-icons-right">
-                <input type="password" class="input" :class="{'is-danger': confirmPassword() == false}" placeholder="Confirme a sua senha" v-model="passwd2" id="PASSWORD2" name="PASSWORD2" @input="validSubmitRegister" required>
+                <input type="password" autocomplete="off" class="input" :class="{'is-danger': confirmPassword() == false}" placeholder="Confirme a sua senha" v-model="passwd2" id="PASSWORD2" name="PASSWORD2" @input="validSubmitRegister" required>
                 <span class="icon is-small is-left">
                   <i class="fa fa-lock"></i>
                 </span>
@@ -185,7 +188,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="field">
               <label for="BIRTH_DATE" class="label">Data de nascimento</label>
               <div class="control has-icons-left has-icons-right">
-                <input type="tel" class="input" :class="{'is-success': validateDate() == true, 'is-danger': validateDate() == false}" placeholder="Digite sua data de nascimento" id="BIRTH_DATE" name="BIRTH_DATE" v-model="registerDate" required v-mask="'##/##/####'" @input="validSubmitRegister">
+                <input type="tel" autocomplete="off" class="input" :class="{'is-success': validateDate() == true, 'is-danger': validateDate() == false}" placeholder="Digite sua data de nascimento" id="BIRTH_DATE" name="BIRTH_DATE" v-model="registerDate" required v-mask="'##/##/####'" @input="validSubmitRegister">
                 <span class="icon is-small is-left">
                   <i class="fa fa-birthday-cake"></i>
                 </span>
@@ -211,6 +214,12 @@ if (isset($_SESSION['TYPE'])) {
             </div>
             <br>
             <div class="field">
+              <div class="control">
+                <div id="registerCaptcha"></div>
+              </div>
+            </div>
+            <br>
+            <div class="field">
               <div class="buttons is-right">
                 <button type="submit" id="register" @click="onClickRegisterLoading()" v-bind:disabled="!casesRegister" class="button is-success" :class="{'is-loading' : isActiveLoadingRegister}">Cadastrar</button>
               </div>
@@ -229,14 +238,14 @@ if (isset($_SESSION['TYPE'])) {
         </header>
         <section class="modal-card-body">
           <form action="#" class="box" method="POST" id="loginForm">
-            <article class="message is-danger" style="display: none;">
+            <article tabindex="-1" class="message is-danger" style="display: none;">
               <div class="message-body">
               </div>
             </article>
             <div class="field">
               <label for="EMAIL_LOGIN" class="label">Email</label>
               <div class="control has-icons-left">
-                <input type="email" class="input" placeholder="Digite seu e-mail" id="EMAIL_LOGIN" name="EMAIL_LOGIN" v-model="loginEmail" required @input="validSubmitLogin">
+                <input type="email" autocomplete="off" class="input" placeholder="Digite seu e-mail" id="EMAIL_LOGIN" name="EMAIL_LOGIN" v-model="loginEmail" required @input="validSubmitLogin">
                 <span class="icon is-small is-left">
                   <i class="fa fa-envelope"></i>
                 </span>
@@ -245,13 +254,13 @@ if (isset($_SESSION['TYPE'])) {
             <label for="PASSWORD_LOGIN" class="label">Senha</label>
             <div class="field has-addons">
               <div class="control has-icons-left is-expanded">
-                <input type="password" class="input" placeholder="Digite sua senha" id="PASSWORD_LOGIN" name="PASSWORD_LOGIN" required v-model="loginPasswd" @input="validSubmitLogin">
+                <input type="password" autocomplete="off" class="input" placeholder="Digite sua senha" id="PASSWORD_LOGIN" name="PASSWORD_LOGIN" required v-model="loginPasswd" @input="validSubmitLogin">
                 <span class="icon is-small is-left">
                   <i class="fa fa-lock"></i>
                 </span>
               </div>
               <div class="control has-icons">
-                <button tabindex="-1" type="button" id="toggleIconL" class="button fas fa-eye" onmousedown="pwdShowL()" onmouseup="pwdShowL()" ontouchstart="pwdShowL()" ontouchend="pwdShowL()"></button>
+                <button tabindex="-1" type="button" id="toggleIconL" class="button fas fa-eye" onmousedown="pwdShowL()" onmouseup="pwdShowL()"></button>
               </div>
             </div>
             <div class="control has-icons-left">
@@ -268,6 +277,11 @@ if (isset($_SESSION['TYPE'])) {
               </div>
             </div>
             <br>
+            <div class="field">
+              <div class="control">
+                <div id="loginCaptcha"></div>
+              </div>
+            </div>
             <div class="field">
               <div class="control">
                 <label class="checkbox">
@@ -316,158 +330,9 @@ if (isset($_SESSION['TYPE'])) {
     </div>
   </div>
   <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
-  <script>
-    Vue.directive('mask', VueMask.VueMaskDirective);
-    var vue = new Vue({
-      el: '#app',
-      data: {
-        isActiveLoadingRegister: false,
-        isActiveLoadingLogin: false,
-        isActiveRegister: false,
-        isActiveLogin: false,
-        isActiveBurger: false,
-        isActiveReturn: "<?php if (isset($_SESSION['s'])) { $s = $_SESSION['s']; echo "$s"; session_destroy(); } else if (isset($_SESSION['v'])) { $v = $_SESSION['v']; echo $v; session_destroy(); } ?>",
-        registerName: "",
-        registerCpf: "",
-        registerEmail: "",
-        passwd1: "",
-        passwd2: "",
-        registerDate: "",
-        registerSelect: "",
-        isValidDateRegister: "",
-        isValidEmailRegister: "",
-        isValidCpfRegister: "",
-        isValidPassword: "",
-        isConfirmPassword: "",
-        loginEmail: "<?php if (isset($_GET['email'])) { $email = $_GET['email']; echo "$email"; } ?>",
-        loginPasswd: "",
-        loginSelect: "",
-        casesRegister: false,
-        casesLogin: false,
-      },
-      computed: {
-        topModalReturn: function() {
-          return {
-            'is-active': this.isActiveReturn == "expired" || this.isActiveReturn == "verified" || this.isActiveReturn == 'averified',
-          }
-        },
-        messageModalReturn: function() {
-          return {
-            'is-success': this.isActiveReturn == "verified",
-            'is-warning': this.isActiveReturn == "expired" || this.isActiveReturn == 'averified',
-          }
-        }
-      },
-      methods: {
-        onClickRegisterLoading() {
-          if (this.casesRegister === true) {
-            this.isActiveLoadingRegister = !this.isActiveLoadingRegister;
-          }
-        },
-        onClickLoginLoading() {
-          if (this.casesLogin === true) {
-            this.isActiveLoadingLogin = !this.isActiveLoadingLogin;
-          }
-        },
-        onClickButtonRegister() {
-          this.isActiveRegister = !this.isActiveRegister;
-        },
-        onClickButtonLogin() {
-          this.isActiveLogin = !this.isActiveLogin;
-        },
-        onClickBurger() {
-          this.isActiveBurger = !this.isActiveBurger;
-        },
-        onClickButtonReturn() {
-          this.isActiveReturn = !this.isActiveReturn;
-        },
-        validateCpf() {
-          if (this.registerCpf != "" && this.registerCpf.length == 14) {
-            if (validar(this.registerCpf)) {
-              this.isValidCpfRegister = true;
-              return true;
-            } else {
-              this.isValidCpfRegister = false;
-              return false;
-            }
-          }
-        },
-        validateEmail() {
-          var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-          if (this.registerEmail != "") {
-            if (this.registerEmail.match(mailformat)) {
-              this.isValidEmailRegister = true;
-              return true;
-            } else {
-              this.isValidEmailRegister = false;
-              return false;
-            }
-          }
-        },
-        validatePassword() {
-          if (this.passwd1 != "") {
-            resultado = zxcvbn(this.passwd1);
-            return resultado.score;
-          }
-        },
-        confirmPassword() {
-          if (this.passwd1 != "" && this.passwd2 != "") {
-            if (this.passwd1 != this.passwd2) {
-              return false;
-            }
-            return true;
-          }
-        },
-        validateDate() {
-          let registerDateArray = this.registerDate.split('/');
-          if (this.registerDate != "" && this.registerDate.length == 10) {
-            if (registerDateArray[2] < <?php echo "$year - 100" ?> || registerDateArray[2] > <?php echo "$year" ?>) {
-              this.isValidDateRegister = false;
-              return false;
-            } else {
-              this.isValidDateRegister = moment(this.registerDate, 'DD/MM/YYYY').isValid();
-              if (this.isValidDateRegister != true) {
-                this.isValidDateRegister = false;
-                return false;
-              } else {
-                this.isValidDateRegister = true;
-                return true;
-              }
-            }
-          }
-        },
-        validSubmitRegister() {
-          if (this.registerName != "" && this.registerCpf != "" && this.registerEmail != "" && this.passwd1 != "" && this.passwd2 != "" && this.registerDate != "" && this.registerSelect != "") {
-            this.isValidCpfRegister = this.validateCpf();
-            this.isValidDateRegister = this.validateDate();
-            this.isValidEmailRegister = this.validateEmail();
-            this.isConfirmPassword = this.confirmPassword();
-            this.isValidPassword = this.validatePassword();
-            if (this.isValidCpfRegister == true && this.isValidDateRegister == true && this.isValidEmailRegister == true && this.isConfirmPassword == true && this.isValidPassword >= 1) {
-              this.casesRegister = true;
-            } else {
-              this.casesRegister = false;
-            }
-          } else {
-            this.casesRegister = false;
-          }
-        },
-        validSubmitLogin() {
-          if (this.loginEmail != "" && this.loginPasswd != "" && this.loginSelect != "") {
-            var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-            if (this.loginEmail.match(mailformat)) {
-              this.casesLogin = true;
-            } else {
-              this.casesLogin = false;
-            }
-          } else {
-            this.casesLogin = false;
-          }
-        },
-      }
-    })
-  </script>
-  <script src="/js/indexmain.js"></script>
+  <script> Vue.directive('mask', VueMask.VueMaskDirective); var vue = new Vue({ el: '#app', data: { isActiveLoadingRegister: false, isActiveLoadingLogin: false, isActiveRegister: false, isActiveLogin: false, isActiveBurger: false, isActiveReturn: "<?php if (isset($_SESSION['s'])) { $s = $_SESSION['s']; echo "$s"; session_destroy(); } else if (isset($_SESSION['v'])) { $v = $_SESSION['v']; echo $v; session_destroy(); } ?>", registerName: "", registerCpf: "", registerEmail: "", passwd1: "", passwd2: "", registerDate: "", registerSelect: "", isValidDateRegister: "", isValidEmailRegister: "", isValidCpfRegister: "", isValidPassword: "", isConfirmPassword: "", loginEmail: "<?php if (isset($_GET['email'])) { $email = $_GET['email']; echo "$email"; } ?>", loginPasswd: "", loginSelect: "", casesRegister: false, casesLogin: false, }, computed: { topModalReturn: function() { return { 'is-active': this.isActiveReturn == "expired" || this.isActiveReturn == "verified" || this.isActiveReturn == 'averified', } }, messageModalReturn: function() { return { 'is-success': this.isActiveReturn == "verified", 'is-warning': this.isActiveReturn == "expired" || this.isActiveReturn == 'averified', } } }, methods: { onClickRegisterLoading() { if (this.casesRegister === true) { this.isActiveLoadingRegister = !this.isActiveLoadingRegister; } }, onClickLoginLoading() { if (this.casesLogin === true) { this.isActiveLoadingLogin = !this.isActiveLoadingLogin; } }, onClickButtonRegister() { this.isActiveRegister = !this.isActiveRegister; }, onClickButtonLogin() { this.isActiveLogin = !this.isActiveLogin; }, onClickBurger() { this.isActiveBurger = !this.isActiveBurger; }, onClickButtonReturn() { this.isActiveReturn = !this.isActiveReturn; }, validateCpf() { if (this.registerCpf != "" && this.registerCpf.length == 14) { if (validar(this.registerCpf)) { this.isValidCpfRegister = true; return true; } else { this.isValidCpfRegister = false; return false; } } }, validateEmail() { var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/; if (this.registerEmail != "") { if (this.registerEmail.match(mailformat)) { this.isValidEmailRegister = true; return true; } else { this.isValidEmailRegister = false; return false; } } }, validatePassword() { if (this.passwd1 != "") { resultado = zxcvbn(this.passwd1); return resultado.score; } }, confirmPassword() { if (this.passwd1 != "" && this.passwd2 != "") { if (this.passwd1 != this.passwd2) { return false; } return true; } }, validateDate() { let registerDateArray = this.registerDate.split('/'); if (this.registerDate != "" && this.registerDate.length == 10) { if (registerDateArray[2] < <?php echo "$year - 100" ?> || registerDateArray[2] > <?php echo "$year" ?>) { this.isValidDateRegister = false; return false; } else { this.isValidDateRegister = moment(this.registerDate, 'DD/MM/YYYY').isValid(); if (this.isValidDateRegister != true) { this.isValidDateRegister = false; return false; } else { this.isValidDateRegister = true; return true; } } } }, validSubmitRegister() { if (this.registerName != "" && this.registerCpf != "" && this.registerEmail != "" && this.passwd1 != "" && this.passwd2 != "" && this.registerDate != "" && this.registerSelect != "") { this.isValidCpfRegister = this.validateCpf(); this.isValidDateRegister = this.validateDate(); this.isValidEmailRegister = this.validateEmail(); this.isConfirmPassword = this.confirmPassword(); this.isValidPassword = this.validatePassword(); if (this.isValidCpfRegister == true && this.isValidDateRegister == true && this.isValidEmailRegister == true && this.isConfirmPassword == true && this.isValidPassword >= 1) { this.casesRegister = true; } else { this.casesRegister = false; } } else { this.casesRegister = false; } }, validSubmitLogin() { if (this.loginEmail != "" && this.loginPasswd != "" && this.loginSelect != "") { var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/; if (this.loginEmail.match(mailformat)) { this.casesLogin = true; } else { this.casesLogin = false; } } else { this.casesLogin = false; } }, } }) </script>
+  <script src="https://hatchfy.philadelpho.tk/js/indexmain.js" async defer></script>
+  <script> function renderCaptcha() { var params = { "sitekey": "4e9fd5af-ad94-43d0-8888-cf905e63b65f", }; lCaptcha = hcaptcha.render("loginCaptcha", params); rCaptcha = hcaptcha.render("registerCaptcha", params); } </script>
 </body>
 
 </html>
