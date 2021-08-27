@@ -1,7 +1,7 @@
 <?php
     session_name("HATIDS");
     session_start();
-    require("connection.php");
+    require("./connection.php");
 
     if (isset($_GET['token'])) {
         $token = $_GET['token'];
@@ -22,7 +22,7 @@
             if ($row['VERIFIED'] == 1) {
                 session_unset();
                 $_SESSION['v'] = "averified";
-                header("Location: /");
+                header("Location: ../");
                 exit();
             }
 
@@ -30,7 +30,7 @@
             if (mysqli_query($conn, $query)) {
                 session_unset();
                 $_SESSION['v'] = "verified";
-                header("Location: /");
+                header("Location: ../");
                 exit();
             }
         } else if (mysqli_num_rows($result2) > 0) {
@@ -39,7 +39,7 @@
             if ($row['VERIFIED'] == 1) {
                 session_unset();
                 $_SESSION['v'] = "averified";
-                header("Location: /");
+                header("Location: ../");
                 exit();
             }
 
@@ -47,7 +47,7 @@
             if (mysqli_query($conn, $query)) {
                 session_unset();
                 $_SESSION['v'] = "verified";
-                header("Location: /");
+                header("Location: ../");
                 exit();
             }
         } else {
@@ -56,4 +56,3 @@
     } else {
         exit("Não há nenhum token!");
     }
-?>

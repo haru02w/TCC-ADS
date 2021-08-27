@@ -57,7 +57,8 @@ postButtonR.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedR);
-    xhr.open("POST", "/register/", true);
+    xhr.open("POST", "./register/", true);
+
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -100,16 +101,17 @@ postButtonL.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedL);
-    xhr.open("POST", "/login/", true);
+    xhr.open("POST", "./login/", true);
+
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 let data = xhr.response.trim();
                 if (data === "CUSTOMER") {
-                    window.location.replace("/customermenu/");
+                    window.location.replace("./customermenu/");
                 }
                 else if (data === "DEVELOPER") {
-                    window.location.replace("/developermenu/");
+                    window.location.replace("./developermenu/");
                 }
                 else {
                     messageDivL.style.display = "block";
@@ -196,11 +198,7 @@ function pwdShowL() {
         toggleIconL.classList.add("fa-eye");
     }
 }
-
 toggleIconL.addEventListener("touchstart", pwdShowL, { passive: true});
 toggleIconL.addEventListener("touchend", pwdShowL, { passive: true});
 toggleIconR.addEventListener("touchstart", pwdShowR, { passive: true});
 toggleIconR.addEventListener("touchend", pwdShowR, { passive: true});
-
-
-

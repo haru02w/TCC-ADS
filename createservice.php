@@ -2,8 +2,8 @@
     session_name("HATIDS");
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
-    require('connection.php');
-    require('functions.php');
+    require('./connection.php');
+    require('./functions.php');
 
     if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
         $email = $_COOKIE['EMAIL'];
@@ -22,7 +22,7 @@
     }
 
     if ($type == "DEVELOPER") {
-        header("Location: /developermenu/");
+        header("Location: ./developermenu/");
         exit();
     }
 ?>
@@ -33,16 +33,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/jscript.js"></script>
+    <script src="../js/v-mask.min.js"></script>
+    <script src="../js/moment.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
-        <?php require("headercustomer.php"); ?>
+        <?php require("./headercustomer.php"); ?>
         <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
@@ -84,7 +84,7 @@
                                     <button type="submit" name="submit" class="button is-primary">Criar</button>
                                 </p>
                                 <p class="control">
-                                    <button type="button" class="button is-danger" onclick="window.location.replace('/customermenu/')">Cancelar criação</button>
+                                    <button type="button" class="button is-danger" onclick="window.location.replace('../customermenu/')">Cancelar criação</button>
                                 </p>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("/logout/")
+                    window.location.replace("../logout/")
                 }
             }
         })

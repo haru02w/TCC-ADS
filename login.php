@@ -2,7 +2,7 @@
     session_name("HATIDS");
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
-    require('functions.php');
+    require('./functions.php');
 
     $email = filter_input(INPUT_POST, 'EMAIL_LOGIN', FILTER_SANITIZE_EMAIL);
     $password = filter_input(INPUT_POST, 'PASSWORD_LOGIN', FILTER_SANITIZE_STRING);
@@ -63,4 +63,3 @@
             exit();
         }
     }
-?>

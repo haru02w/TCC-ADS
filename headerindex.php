@@ -1,7 +1,7 @@
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img src="/images/logochick.png" alt="Logo do HatchFy" width="28" height="28">
+        <a class="navbar-item" href="./">
+            <img src="./images/logochick.png" alt="Logo do HatchFy" width="28" height="28">
             <p class="subtitle is-3 font-face">&nbsp HatchFy</p>
         </a>
         <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
@@ -12,10 +12,10 @@
     </div>
     <div id="navbarMenuPage" class="navbar-menu is-transparent" :class="{'is-active': isActiveBurger}">
         <div class="navbar-start">
-            <a class="navbar-item" href="/whoweare/">
+            <a class="navbar-item" href="./whoweare/">
                 Quem somos?
             </a>
-            <a class="navbar-item" href="/privacypolicy/">
+            <a class="navbar-item" href="./privacypolicy/">
                 LGPD
             </a>
         </div>
