@@ -33,10 +33,32 @@ formL.onsubmit = (e) => {
     e.preventDefault();
 }
 
+function transferFailedR(evt) {
+    delLoading();
+    messageDivR.classList.remove("is-success");
+    messageDivR.classList.add("is-danger");
+    messageDivR.style.display = "block";
+    messageDivR.querySelector(".message-body").textContent = "Erro ao conectar com o servidor! Por favor, verifique sua conexão com a internet e tente novamente mais tarde!";
+    if (vue.$data.isActiveLoadingRegister === true) {
+        vue.$data.isActiveLoadingRegister = !vue.$data.isActiveLoadingRegister;
+    }
+}
+
+function transferFailedL(evt) {
+    delLoading();
+    messageDivL.style.display = "block";
+    messageDivL.querySelector(".message-body").textContent = "Erro ao conectar com o servidor! Por favor, verifique sua conexão com a internet e tente novamente mais tarde!";
+    if (vue.$data.isActiveLoadingLogin === true) {
+        vue.$data.isActiveLoadingLogin = !vue.$data.isActiveLoadingLogin;
+    }
+}
+
 postButtonR.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
+    xhr.addEventListener("error", transferFailedR);
     xhr.open("POST", "./register/", true);
+
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -54,12 +76,20 @@ postButtonR.onclick = () => {
                 }
                 messageDivR.style.display = "block";
                 messageDivR.querySelector(".message-body").textContent = data;
-
                 if (vue.$data.isActiveLoadingRegister === true) {
                     vue.$data.isActiveLoadingRegister = !vue.$data.isActiveLoadingRegister;
                 }
-                messageDivR.focus();
                 delLoading();
+                setTimeout(function () {
+                    messageDivR.style.display = "none";
+                    messageDivR.querySelector(".message-body").textContent = "";
+                    messageDivR.classList.remove("is-danger");
+                    messageDivR.classList.remove("is-success");
+                }, 10000);
+                hcaptcha.reset(rCaptcha);
+                setTimeout(function () {
+                    messageDivR.focus();
+                }, 100); 
             }
         }
     }
@@ -70,7 +100,9 @@ postButtonR.onclick = () => {
 postButtonL.onclick = () => {
     showLoading();
     let xhr = new XMLHttpRequest();
+    xhr.addEventListener("error", transferFailedL);
     xhr.open("POST", "./login/", true);
+
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -90,6 +122,14 @@ postButtonL.onclick = () => {
                     resetL();
                     vue.$data.casesLogin = false;
                     delLoading();
+                    setTimeout(function () {
+                        messageDivL.style.display = "none";
+                        messageDivL.querySelector(".message-body").textContent = "";
+                    }, 10000);
+                    hcaptcha.reset(lCaptcha);
+                    setTimeout(function() {
+                        messageDivL.focus();
+                    }, 100);
                 }
             }
         }
@@ -158,3 +198,7 @@ function pwdShowL() {
         toggleIconL.classList.add("fa-eye");
     }
 }
+toggleIconL.addEventListener("touchstart", pwdShowL, { passive: true});
+toggleIconL.addEventListener("touchend", pwdShowL, { passive: true});
+toggleIconR.addEventListener("touchstart", pwdShowR, { passive: true});
+toggleIconR.addEventListener("touchend", pwdShowR, { passive: true});
