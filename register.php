@@ -1,7 +1,7 @@
 <?php
     session_name("HATIDS");
     session_start();
-    require('functions.php');
+    require('./functions.php');
 
     date_default_timezone_set('America/Sao_Paulo'); 
     $yearphp = date('Y');
@@ -20,7 +20,7 @@
         exit();
     }
     else if(isCaptchaComplete($hcapresponse) === false) {
-        require('connection.php');
+        require('./connection.php');
         
         $hcaptchadata = array(
             'secret' => "0x1efB46BAf71d1877579b7e89c9909fde5F35e0cc",
@@ -84,4 +84,3 @@
             exit();
         }
     }
-?>

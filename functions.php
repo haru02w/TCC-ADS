@@ -103,7 +103,7 @@
         if($type === "CUSTOMER" || $type === "DEVELOPER"){
             $token = bin2hex(random_bytes(50));
             $verified = '0';
-            $image = "images/user.png";
+            $image = "./images/user.png";
             $options = ['cost' => 12];
             $password1 = password_hash($password1, PASSWORD_DEFAULT, $options);
             $contact = null;
@@ -293,7 +293,7 @@
         setcookie("EMAIL", '', time()-86400*30, "/");
         setcookie("TYPE", '', time()-86400*30, "/");
         $_SESSION['s'] = "expired";
-        header("Location: /");
+        header("Location: ../../");
         exit();
     }
     
@@ -305,7 +305,3 @@
             return false;
         }
     }
-
-?>
-    
-    

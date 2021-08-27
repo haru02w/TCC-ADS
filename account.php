@@ -2,8 +2,8 @@
     session_name("HATIDS");
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
-    require('connection.php');
-    require('functions.php');
+    require('./connection.php');
+    require('./functions.php');
     
     if(isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
         $email = $_COOKIE['EMAIL'];
@@ -40,16 +40,16 @@
                 
                 if(in_array(strtolower($fileext), $alloext)) {
                     
-                    if ($row['IMAGE'] !== "images/user.png") {
+                    if ($row['IMAGE'] !== "./images/user.png") {
                         unlink($row['IMAGE']);
-                        $row['IMAGE'] = "images/user.png";
+                        $row['IMAGE'] = "./images/user.png";
                     }
                     
                     $date = date("m/d/Yh:i:sa", time());
                     $rand = rand(0, 99999);
                     $encname = $date . $rand;
                     $filename = md5($encname) . '.' . $fileext;
-                    $filepath = 'allimages/' . $filename;
+                    $filepath = './allimages/' . $filename;
                     
                     if (move_uploaded_file($temp, $filepath)) {
                         
@@ -73,14 +73,14 @@
         }
     }
     elseif(isset($_POST['delete'])) {
-        if($row['IMAGE'] != "images/user.png") {
+        if($row['IMAGE'] != "./images/user.png") {
             
             unlink($row['IMAGE']);
-            $filepath = "images/user.png";
+            $filepath = "./images/user.png";
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
             mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
             mysqli_stmt_execute($stmt);
-            header("Location: /account/");
+            header("Location: ../account/");
             exit();
         }
     }
@@ -93,16 +93,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="../js/vue.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
         <?php if ($type == "CUSTOMER") {
-            require("headercustomer.php");
+            require("./headercustomer.php");
         } else {
-            require("headerdeveloper.php");
+            require("./headerdeveloper.php");
         } ?>
         <br>
         <section class="hero is-fullheight">
@@ -121,7 +121,7 @@
                                 <div class="columns is-vcentered">
                                     <div class="column">
                                         <figure class="image is-square ">
-                                            <img style="object-fit: cover;" class="is-rounded" src='/<?php echo $row['IMAGE']; ?>'>
+                                            <img style="object-fit: cover;" class="is-rounded" src='../<?php echo $row['IMAGE']; ?>'>
                                         </figure>
                                     </div>
                                     <div class="column">
@@ -151,7 +151,7 @@
                                                 <div v-show="isActiveButtonImage" class="field">
                                                     <button name="submit" class="button is-link"> Enviar foto de perfil </button>
                                                 </div>
-                                                <?php if ($row['IMAGE'] != "images/user.png") { ?>
+                                                <?php if ($row['IMAGE'] != "./images/user.png") { ?>
                                                     <div class="field">
                                                         <button name="delete" class="button is-danger"> Remover foto de perfil </button>
                                                     </div>
@@ -217,7 +217,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("/logout/")
+                    window.location.replace("../logout/")
                 },
                 nameImage() {
                     const fileInput = document.querySelector('#file-image input[type=file]');
@@ -230,11 +230,10 @@
                     }
                 },
                 onClickButtonReturn() {
-                    window.location.replace("/account/");
+                    window.location.replace("../account/");
                 }
             }
         })
     </script>
 </body>
-
 </html>

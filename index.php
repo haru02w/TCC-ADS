@@ -7,15 +7,15 @@ $year = date('Y');
 
 if (isset($_SESSION['TYPE'])) {
   if ($_SESSION['TYPE'] == "CUSTOMER") {
-    header("Location: /customermenu/");
+    header("Location: ./customermenu/");
   } else if ($_SESSION['TYPE'] == "DEVELOPER") {
-    header("Location: /developermenu/");
+    header("Location: ./developermenu/");
   }
 } else if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
   if ($_COOKIE['TYPE'] == "CUSTOMER") {
-    header("Location: /customermenu/");
+    header("Location: ./customermenu/");
   } else if ($_COOKIE['TYPE'] == "DEVELOPER") {
-    header("Location: /developermenu/");
+    header("Location: ./developermenu/");
   }
 }
 ?>
@@ -27,19 +27,20 @@ if (isset($_SESSION['TYPE'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="HatchFy. Receba ou crie o seu programa agora! Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.">
   <title>Hatchfy</title>
-  <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+  <link rel="stylesheet" href="./css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-  <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js" ></script>
-  <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
-  <script src="https://hatchfy.philadelpho.tk/js/zxcvbn.js"></script>
+  <script src="./js/vue.js"></script>
+  <script src="./js/jscript.js"></script>
+  <script src="./js/v-mask.min.js" ></script>
+  <script src="./js/moment.js"></script>
+  <script src="./js/zxcvbn.js"></script>
   <script src="https://js.hcaptcha.com/1/api.js?hl=pt&onload=renderCaptcha"></script>
 </head>
 
 <body class="background">
+  
   <div id="app" class="script">
-    <?php require("headerindex.php"); ?>
+    <?php require("./headerindex.php"); ?>
     <section class="hero is-fullheight">
       <div class="hero-body">
         <div class="container has-text-centered">
@@ -292,7 +293,7 @@ if (isset($_SESSION['TYPE'])) {
             </div>
             <div class="field">
               <div class="control">
-                <a href="/resetpassword/"> Esqueceu a senha? </a>
+                <a href="../resetpassword/"> Esqueceu a senha? </a>
               </div>
             </div>
             <br>
@@ -331,8 +332,7 @@ if (isset($_SESSION['TYPE'])) {
   </div>
   <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
   <script> Vue.directive('mask', VueMask.VueMaskDirective); var vue = new Vue({ el: '#app', data: { isActiveLoadingRegister: false, isActiveLoadingLogin: false, isActiveRegister: false, isActiveLogin: false, isActiveBurger: false, isActiveReturn: "<?php if (isset($_SESSION['s'])) { $s = $_SESSION['s']; echo "$s"; session_destroy(); } else if (isset($_SESSION['v'])) { $v = $_SESSION['v']; echo $v; session_destroy(); } ?>", registerName: "", registerCpf: "", registerEmail: "", passwd1: "", passwd2: "", registerDate: "", registerSelect: "", isValidDateRegister: "", isValidEmailRegister: "", isValidCpfRegister: "", isValidPassword: "", isConfirmPassword: "", loginEmail: "<?php if (isset($_GET['email'])) { $email = $_GET['email']; echo "$email"; } ?>", loginPasswd: "", loginSelect: "", casesRegister: false, casesLogin: false, }, computed: { topModalReturn: function() { return { 'is-active': this.isActiveReturn == "expired" || this.isActiveReturn == "verified" || this.isActiveReturn == 'averified', } }, messageModalReturn: function() { return { 'is-success': this.isActiveReturn == "verified", 'is-warning': this.isActiveReturn == "expired" || this.isActiveReturn == 'averified', } } }, methods: { onClickRegisterLoading() { if (this.casesRegister === true) { this.isActiveLoadingRegister = !this.isActiveLoadingRegister; } }, onClickLoginLoading() { if (this.casesLogin === true) { this.isActiveLoadingLogin = !this.isActiveLoadingLogin; } }, onClickButtonRegister() { this.isActiveRegister = !this.isActiveRegister; }, onClickButtonLogin() { this.isActiveLogin = !this.isActiveLogin; }, onClickBurger() { this.isActiveBurger = !this.isActiveBurger; }, onClickButtonReturn() { this.isActiveReturn = !this.isActiveReturn; }, validateCpf() { if (this.registerCpf != "" && this.registerCpf.length == 14) { if (validar(this.registerCpf)) { this.isValidCpfRegister = true; return true; } else { this.isValidCpfRegister = false; return false; } } }, validateEmail() { var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/; if (this.registerEmail != "") { if (this.registerEmail.match(mailformat)) { this.isValidEmailRegister = true; return true; } else { this.isValidEmailRegister = false; return false; } } }, validatePassword() { if (this.passwd1 != "") { resultado = zxcvbn(this.passwd1); return resultado.score; } }, confirmPassword() { if (this.passwd1 != "" && this.passwd2 != "") { if (this.passwd1 != this.passwd2) { return false; } return true; } }, validateDate() { let registerDateArray = this.registerDate.split('/'); if (this.registerDate != "" && this.registerDate.length == 10) { if (registerDateArray[2] < <?php echo "$year - 100" ?> || registerDateArray[2] > <?php echo "$year" ?>) { this.isValidDateRegister = false; return false; } else { this.isValidDateRegister = moment(this.registerDate, 'DD/MM/YYYY').isValid(); if (this.isValidDateRegister != true) { this.isValidDateRegister = false; return false; } else { this.isValidDateRegister = true; return true; } } } }, validSubmitRegister() { if (this.registerName != "" && this.registerCpf != "" && this.registerEmail != "" && this.passwd1 != "" && this.passwd2 != "" && this.registerDate != "" && this.registerSelect != "") { this.isValidCpfRegister = this.validateCpf(); this.isValidDateRegister = this.validateDate(); this.isValidEmailRegister = this.validateEmail(); this.isConfirmPassword = this.confirmPassword(); this.isValidPassword = this.validatePassword(); if (this.isValidCpfRegister == true && this.isValidDateRegister == true && this.isValidEmailRegister == true && this.isConfirmPassword == true && this.isValidPassword >= 1) { this.casesRegister = true; } else { this.casesRegister = false; } } else { this.casesRegister = false; } }, validSubmitLogin() { if (this.loginEmail != "" && this.loginPasswd != "" && this.loginSelect != "") { var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/; if (this.loginEmail.match(mailformat)) { this.casesLogin = true; } else { this.casesLogin = false; } } else { this.casesLogin = false; } }, } }) </script>
-  <script src="https://hatchfy.philadelpho.tk/js/indexmain.js" async defer></script>
+  <script src="./js/indexmain.js" async defer></script>
   <script> function renderCaptcha() { var params = { "sitekey": "4e9fd5af-ad94-43d0-8888-cf905e63b65f", }; lCaptcha = hcaptcha.render("loginCaptcha", params); rCaptcha = hcaptcha.render("registerCaptcha", params); } </script>
 </body>
-
 </html>

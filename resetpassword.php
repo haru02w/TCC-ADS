@@ -4,8 +4,8 @@ session_start();
 date_default_timezone_set('America/Sao_Paulo');
 
 if (isset($_POST["reset-request-submit"])) {
-    require("connection.php");
-    require("functions.php");
+    require("./connection.php");
+    require("./functions.php");
 
     $email = filter_input(INPUT_POST, "EMAILPWD_RESET", FILTER_SANITIZE_EMAIL);
 
@@ -84,10 +84,8 @@ if (isset($_POST["reset-request-submit"])) {
         }
         mysqli_stmt_close($stmt);
     }
-
     mysqli_close($conn);
 }
-
 if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
     $resetpwd = $_SESSION['resetpwd'];
     $resetpwdclass = $_SESSION['resetpwdclass'];
@@ -101,11 +99,10 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
-    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="stylesheet" href="..tk/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
+    <script src="../js/vue.js"></script>
 </head>
-
 <body class="background">
     <div id="app" class="script">
         <section class="hero is-fullheight">
@@ -135,7 +132,7 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
                                     </div>
                                     <div class="buttons is-centered">
                                     <button class="button is-info" type="submit" onclick="this.classList.add('is-loading')" name="reset-request-submit" v-bind:disabled="!casePass"> Enviar email</button>
-                                        <a href="/" class="button is-primary">Ir para a página inicial</a>
+                                        <a href="../" class="button is-primary">Ir para a página inicial</a>
                                     </div>
                                 </form>
                             </div>
@@ -193,5 +190,4 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
         })
     </script>
 </body>
-
 </html>

@@ -1,7 +1,7 @@
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img src="/images/logochick.png" alt="imagem da logo">
+        <a class="navbar-item" href="../../">
+            <img src="../../images/logochick.png" alt="imagem da logo">
             <p class="subtitle is-3 font-face">&nbsp HatchFy</p>
         </a>
 
@@ -19,28 +19,28 @@
                     Serviços
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/developermenu/">
+                    <a class="navbar-item" href="../../developermenu/">
                         Meus serviços
                     </a>
-                    <a class="navbar-item" href="/search/" >
+                    <a class="navbar-item" href="../../search/" >
                         Serviços disponíveis
                     </a>
-                    <a class="navbar-item" href="/pendingservices/">
+                    <a class="navbar-item" href="../../pendingservices/">
                         Serviços pendentes
                     </a>
-                    <a  class="navbar-item" href="/developmentservices/">
+                    <a  class="navbar-item" href="../../developmentservices/">
                         Serviços em desenvolvimento
                     </a>
-                    <a class="navbar-item" href="/doneservices/">
+                    <a class="navbar-item" href="../../doneservices/">
                         Serviços concluídos
                     </a>
                 </div>
             </div>
-            <a class="navbar-item" href="/account/"> Minha conta </a>
+            <a class="navbar-item" href="../../account/"> Minha conta </a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
-                <form action="/search/" method="GET">
+                <form action="../search/" method="GET">
                     <div class="field has-addons">
                         <div class="control">
                             <input type="search" class="input is-rounded" placeholder="Procurar serviços..." name="q">
@@ -62,4 +62,3 @@
         </div>
     </div>
 </nav>
-

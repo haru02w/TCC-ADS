@@ -2,8 +2,8 @@
 session_name("HATIDS");
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
-require('connection.php');
-require('functions.php');
+require('./connection.php');
+require('./functions.php');
 
 if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
     $email = $_COOKIE['EMAIL'];
@@ -20,7 +20,7 @@ if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
 }
 
 if (!isset($_GET['ids'])) {
-    header("Location: /" . strtolower($type) . "menu.php");
+    header("Location: ./" . strtolower($type) . "menu.php");
     exit();
 }
 $ids = $_GET['ids'];
@@ -33,7 +33,7 @@ if (is_null($rowuser)) {
 }
 
 if (is_null($rowser)) {
-    header("Location: /" . strtolower($type) . "menu/");
+    header("Location: ./" . strtolower($type) . "menu/");
     exit();
 }
 
@@ -44,12 +44,12 @@ $idcus = $rowser['COD_CUSTOMER'];
 
 if ($type == "CUSTOMER") {
     if ($idcus !== $id) {
-        header("Location: /customermenu/");
+        header("Location: ../customermenu/");
         exit();
     }
 } elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
     if ($iddev !== $id) {
-        header("Location: /developermenu/");
+        header("Location: ../developermenu/");
         exit();
     }
 }
@@ -74,7 +74,7 @@ if (isset($_POST['REQUEST'])) {
 
     if ($status >= 1) {
         $_SESSION['detail'] = "takend";
-        header("Location: /pendingservices/");
+        header("Location: ../../pendingservices/");
         exit();
     } else {
         $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
@@ -83,11 +83,11 @@ if (isset($_POST['REQUEST'])) {
 
         if ($bool) {
             $_SESSION['detail'] = "successd";
-            header("Location: /pendingservices/");
+            header("Location: ../../pendingservices/");
             exit();
         } else {
             $_SESSION['detail'] = "failured";
-            header("Location: /pendingservices/");
+            header("Location: ../../pendingservices/");
             exit();
         }
     }
@@ -98,11 +98,11 @@ if (isset($_POST['REQUEST'])) {
 
     if ($bool) {
         $_SESSION['send'] = "successs";
-        header("Location: /developmentservices/");
+        header("Location: ../../developmentservices/");
         exit();
     } else {
         $_SESSION['send'] = "failures";
-        header("Location: /developmentservices/");
+        header("Location: ../../developmentservices/");
         exit();
     }
 } else if (isset($_POST['SENDRECUSE'])) {
@@ -112,11 +112,11 @@ if (isset($_POST['REQUEST'])) {
 
     if ($bool) {
         $_SESSION['recuse'] = "successre";
-        header("Location: /pendingservices/");
+        header("Location: ../../pendingservices/");
         exit();
     } else {
         $_SESSION['recuse'] = "failurere";
-        header("Location: /pendingservices/");
+        header("Location: ../../pendingservices/");
         exit();
     }
     //codigo do report, com verificação se o developer já reportou
@@ -133,12 +133,8 @@ if (isset($_POST['REQUEST'])) {
         mysqli_stmt_execute($stmt);
     }
 }
-
-
-
 mysqli_close($conn);
 ?>
-
 <!DOCTYPE html>
 <html>
 
@@ -146,19 +142,19 @@ mysqli_close($conn);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
-    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/jscript.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/v-mask.min.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/moment.js"></script>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/jscript.js"></script>
+    <script src="../../js/v-mask.min.js"></script>
+    <script src="../../js/moment.js"></script>
 </head>
 
 <body class="background">
     <div id="app" class="script">
         <?php if ($type == "CUSTOMER") {
-            require("headercustomer.php");
+            require("./headercustomer.php");
         } else {
-            require("headerdeveloper.php");
+            require("./headerdeveloper.php");
         } ?>
         <br>
         <section class="hero is-fullheight">
@@ -230,7 +226,7 @@ mysqli_close($conn);
                                             </div>
                                         </div>
                                         <br>
-                                        <!- codigo da mensagem do report caso o developer já tenha reportado->
+                                        <!-- codigo da mensagem do report caso o developer já tenha reportado -->
                                         <?php if ($developer_exist == 1) { ?>
                                             <article class="message is-danger">
                                                 <div class="message-header">
@@ -261,7 +257,7 @@ mysqli_close($conn);
                                             <div class="field">
                                                 <label class="label has-text-centered"> Foto do desenvolvedor </label>
                                                 <figure class="image is-square">
-                                                    <img class="is-rounded" src="/<?php echo $infodev['IMAGE'] ?>">
+                                                    <img class="is-rounded" src="../<?php echo $infodev['IMAGE'] ?>">
                                                 </figure>
                                                 <br>
                                                 <?php if ($rowser['STATUS'] == 3 and $rowser['ID_SERVICE'] == $cod_service) { ?>
@@ -355,7 +351,7 @@ mysqli_close($conn);
                                         <div class="field">
                                             <label class="label has-text-centered">Foto do cliente</label>
                                             <figure class="image is-square">
-                                                <img class="is-rounded" src="/<?php echo $infocus['IMAGE']; ?>">
+                                                <img class="is-rounded" src="../<?php echo $infocus['IMAGE']; ?>">
                                             </figure>
                                         </div>
                                     </div>
@@ -400,8 +396,6 @@ mysqli_close($conn);
                 </div>
             </div>
         </section>
-
-
     </div>
     <noscript>
         <style>
@@ -432,7 +426,7 @@ mysqli_close($conn);
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("/logout/")
+                    window.location.replace("../../logout/")
                 },
                 onClickButtonModal() {
                     this.isActiveModal = !this.isActiveModal
@@ -441,5 +435,4 @@ mysqli_close($conn);
         })
     </script>
 </body>
-
 </html>

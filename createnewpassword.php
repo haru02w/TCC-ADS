@@ -1,10 +1,10 @@
 <?php
 date_default_timezone_set('America/Sao_Paulo');
-require("connection.php");
-require("functions.php");
+require("./connection.php");
+require("./functions.php");
 
 if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
-    header("Location: /");
+    header("Location: ./");
     exit();
 }
 
@@ -70,19 +70,18 @@ if (isset($_POST["reset-password-submit"])) {
             if ($bool === true && $bool2 === true) {
                 $_SESSION['resetpwd'] = "A sua senha foi alterada com sucesso!";
                 $_SESSION['resetpwdclass'] = 'is-success';
-                header("Location: /resetpassword/");
+                header("Location: ./resetpassword/");
                 exit();
             } else {
                 $_SESSION['resetpwd'] = "A sua senha não foi alterada! Por favor, tente novamente mais tarde!";
                 $_SESSION['resetpwdclass'] = 'is-danger';
-                header("Location: /resetpassword/");
+                header("Location: ./resetpassword/");
                 exit();
             }
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -90,10 +89,10 @@ if (isset($_POST["reset-password-submit"])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
-    <link rel="stylesheet" href="https://hatchfy.philadelpho.tk/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="https://hatchfy.philadelpho.tk/js/vue.js"></script>
-    <script src="https://hatchfy.philadelpho.tk/js/zxcvbn.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/zxcvbn.js"></script>
 </head>
 
 <body class="background">
@@ -223,7 +222,6 @@ if (isset($_POST["reset-password-submit"])) {
             }
         })
     </script>
-    <script src="https://hatchfy.philadelpho.tk/js/pwdmain.js" async defer></script>
+    <script src="../js/pwdmain.js" async defer></script>
 </body>
-
 </html>
