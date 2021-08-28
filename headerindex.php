@@ -23,7 +23,7 @@
                Mais
              </a> 
         <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="./support">
+            <a class="navbar-item" href="./support/">
               Suporte
             </a>
         </div>
