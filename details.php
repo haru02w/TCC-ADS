@@ -57,6 +57,7 @@ if ($type == "CUSTOMER") {
 $infodev = searchInfoDev($iddev, $conn);
 $infocus = searchInfoCus($idcus, $conn);
 $developer_exist = 0;
+$service_exist = 0;
 
 
 if ($rowser['STATUS'] >= 1) {
@@ -126,10 +127,24 @@ if (isset($_POST['REQUEST'])) {
     if (mysqli_num_rows($result_report) == 1) {
         $developer_exist = 1;
     } else {
-        
+        $developer_exist =2;
         $type_report = $_POST['cont'];
         $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, COD_DEVELOPER,TYPE_REPORT) VALUES (?,?,?)");
         mysqli_stmt_bind_param($stmt, "sss", $idss, $id, $type_report);
+        mysqli_stmt_execute($stmt);
+    }
+//codigo do rating, com verificação se o serviço já foi avaliado
+} elseif (isset($_POST['RATING'])) {
+    $id_ratings = $rowser['ID_SERVICE'];
+    $result_rating = mysqli_query($conn, "SELECT COD_SERVICE FROM TB_RATING WHERE COD_CUSTOMER = '$id' AND COD_SERVICE = '$id_ratings'");
+    if (mysqli_num_rows($result_rating) == 1) {
+        $service_exist = 1;
+    } else {
+        $service_exist =2;
+        $note = $_POST['av'];
+        $review = $_POST['review'];
+        $stmt = mysqli_prepare($conn, "INSERT INTO TB_RATING(COD_SERVICE, COD_CUSTOMER, NOTE, REVIEW) VALUES (?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "ssss", $id_ratings, $id, $note, $review);
         mysqli_stmt_execute($stmt);
     }
 }
@@ -184,7 +199,7 @@ mysqli_close($conn);
                                         </div>
                                     </div>
                                     <br>
-                                    <?php if ($rowser['STATUS'] < 3 and $type == "DEVELOPER") { ?>
+                                    <?php if ($rowser['STATUS'] == 0 and $type == "DEVELOPER") { ?>
                                         <a class="button is-danger is-medium" @click="onClickButtonModal">Reportar</a>
                                         <div class="modal" :class="{'is-active': isActiveModal}">
                                             <div class="modal-background"></div>
@@ -226,7 +241,7 @@ mysqli_close($conn);
                                             </div>
                                         </div>
                                         <br>
-                                        <!-- codigo da mensagem do report caso o developer já tenha reportado -->
+                                        <!-- codigo da mensagem do report caso o developer já tenha reportado e quando o report é feito-->
                                         <?php if ($developer_exist == 1) { ?>
                                             <article class="message is-danger">
                                                 <div class="message-header">
@@ -234,10 +249,20 @@ mysqli_close($conn);
                                                     <button class="delete" aria-label="delete"></button>
                                                 </div>
                                                 <div class="message-body">
-                                                   Você já reportou esse serviço.
+                                                    Você já reportou esse serviço.
                                                 </div>
                                             </article>
-                                        <?php } ?>
+                                        <?php } elseif($developer_exist == 2){ ?>
+                                            <article class="message is-sucess">
+                                                <div class="message-header">
+                                                    <p>Aviso</p>
+                                                    <button class="delete" aria-label="delete"></button>
+                                                </div>
+                                                <div class="message-body">
+                                                    Reporte feito com sucesso.
+                                                </div>
+                                            </article>
+                                            <?php }?>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -257,45 +282,62 @@ mysqli_close($conn);
                                             <div class="field">
                                                 <label class="label has-text-centered"> Foto do desenvolvedor </label>
                                                 <figure class="image is-square">
-                                                    <img class="is-rounded" src="../<?php echo $infodev['IMAGE'] ?>">
+                                                    <img style="object-fit: cover;" class="is-rounded" src=".<?php echo $infodev['IMAGE'] ?>">
                                                 </figure>
                                                 <br>
-                                                <?php if ($rowser['STATUS'] == 3 and $rowser['ID_SERVICE'] == $cod_service) { ?>
+                                                <?php if ($rowser['STATUS'] == 3 and $rowser['ID_SERVICE'] == $id) { ?>
                                                     <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
                                                     <div class="modal" :class="{'is-active': isActiveModal}">
                                                         <div class="modal-background"></div>
                                                         <div class="modal-card">
                                                             <header class="modal-card-head">
-                                                                <p class="modal-card-title">Avaliar Desenvolvedor</p>
+                                                                <p class="modal-card-title">Avaliar Serviço</p>
                                                                 <button class="delete" type="button" aria-label="close" @click="onClickButtonModal"></button>
                                                             </header>
-                                                            <section class="modal-card-body">
-                                                                <form method="POST" action="" enctype="multipart/form-data">
-                                                                    <div class="estrelas">
-                                                                        <input type="radio" id="vazio" name="estrela" value="" checked>
-                                                                        <label for="estrela_1"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_1" name="estrela" value="1">
-
-                                                                        <label for="estrela_2"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_2" name="estrela" value="2">
-
-                                                                        <label for="estrela_3"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_3" name="estrela" value="3">
-
-                                                                        <label for="estrela_4"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_4" name="estrela" value="4">
-
-                                                                        <label for="estrela_5"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_5" name="estrela" value="5">
-
-                                                                        <label for="estrela_6"><i class="fas fa-star"></i></label>
-                                                                        <input type="radio" id="estrela_6" name="estrela" value="6">
-                                                                    </div>
-                                                                </form>
+                                                            <section class="modal-card-body has-text-centered">
+                                                                <div class="estrelas">
+                                                                    <input type="radio" id="cm_star-empty" name="av" value="" checked />
+                                                                    <label for="cm_star-1"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-1" name="av" value="1" />
+                                                                    <label for="cm_star-2"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-2" name="av" value="2" />
+                                                                    <label for="cm_star-3"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-3" name="av" value="3" />
+                                                                    <label for="cm_star-4"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-4" name="av" value="4" />
+                                                                    <label for="cm_star-5"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-5" name="av" value="5" />
+                                                                </div>
+                                                                <br>
+                                                                <label class="label" for="description">Sua review do serviço</label>
+                                                                <textarea class="textarea has-fixed-size" placeholder="Digite aqui" name="review"></textarea>
+                                                                <br>
+                                                                <button type="submit" class="button" name="RATING">Avaliar</button>
                                                             </section>
                                                         </div>
                                                     </div>
-
+                                                    <!-- codigo da mensagem de avaliação quando a avaliação já foi feita ou quando é a primeira vez -->
+                                                    <?php if ($service_exist == 1) {  ?>
+                                                        <article class="message is-danger">
+                                                            <div class="message-header">
+                                                                <p>Aviso</p>
+                                                                <button class="delete" aria-label="delete"></button>
+                                                            </div>
+                                                            <div class="message-body">
+                                                                Você já avaliou esse serviço.
+                                                            </div>
+                                                        </article>
+                                                    <?php } elseif($service_exist == 2){ ?>
+                                                        <article class="message is-success">
+                                                            <div class="message-header">
+                                                                <p>Aviso</p>
+                                                                <button class="delete" aria-label="delete"></button>
+                                                            </div>
+                                                            <div class="message-body">
+                                                                Serviço avaliado com sucesso.
+                                                            </div>
+                                                        </article>
+                                                   <?php }?>
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -435,4 +477,5 @@ mysqli_close($conn);
         })
     </script>
 </body>
+
 </html>
