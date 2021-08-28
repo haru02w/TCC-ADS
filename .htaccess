@@ -40,3 +40,4 @@ RewriteRule verifyemail/([0-9a-zA-Z-]+)/ verifyemail.php?token=$1 [QSA,NC,L]
 
 RewriteRule whoweare/ whoweare.php [QSA,NC,L]
 
+RewriteRule support/ support.php [QSA,NC,L]

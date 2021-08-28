@@ -90,3 +90,11 @@ body::-webkit-scrollbar-thumb {
 #textColorTwo {
   color: #1c2731;
 }
+
+.backgroundTwo{
+    background-color: rgb(245, 247, 248); 
+}
+
+b{
+  color: #2263cc;
+}
