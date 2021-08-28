@@ -12,22 +12,22 @@
     </div>
     <div id="navbarMenuPage" class="navbar-menu is-transparent" :class="{'is-active': isActiveBurger}">
         <div class="navbar-start">
-            <a class="navbar-item" href="./whoweare/">
-                Quem somos?
-            </a>
-            <a class="navbar-item" href="./privacypolicy/">
-                LGPD
-            </a>
             <div class="navbar-item has-dropdown is-hoverable">
              <a class="navbar-link" href="">
                Mais
              </a> 
-        <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="./support/">
-              Suporte
-            </a>
-        </div>
-      </div>
+                <div class="navbar-dropdown is-boxed">
+                    <a class="navbar-item" href="./whoweare/">
+                        Quem somos?
+                    </a>
+                    <a class="navbar-item" href="./privacypolicy/">
+                        LGPD
+                    </a>
+                    <a class="navbar-item" href="./support/">
+                    Suporte
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
