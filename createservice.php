@@ -25,6 +25,25 @@
         header("Location: ./developermenu/");
         exit();
     }
+$rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+$id = $rowuser["ID_$type"];
+$result_category = "SELECT * FROM TB_CATEGORY";
+$result_cat = mysqli_query($conn, $result_category);
+
+
+$status = 0;
+$id_developer = null;
+
+if (isset($_POST['CREATE'])){
+    $title = $_POST['title'];
+    $desc = $_POST['description'];
+    $category  = $_POST['category_service'];
+    $stmt = mysqli_prepare($conn, "INSERT INTO TB_SERVICES (COD_CUSTOMER, COD_DEVELOPER, COD_CATEGORY, TITLE, DESCRIPTION, STATUS) VALUES (?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "ssssss", $id, $id_developer,  $category, $title, $desc, $status);
+    mysqli_stmt_execute($stmt);
+    unset($_POST);
+}
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -71,9 +90,9 @@
                                     <div class="field">
                                         <label class="label" for="category">Tipo de serviço</label>
                                         <div class="select">
-                                            <select name="category">
+                                            <select name="category_service">
                                                 <option disabled selected>Selecione o tipo do serviço</option>
-                                                <option>Padaria</option>
+                                                <?php while($row_category = mysqli_fetch_assoc($result_cat)){?><option name="category" value="<?php echo $row_category['ID_CATEGORY'];?>"><?php echo $row_category['NAME'];?></option> <?php }?>
                                             </select>
                                         </div>
                                     </div>
@@ -81,7 +100,7 @@
                             </div>
                             <div class="field is-grouped is-grouped-centered is-grouped-multiline">
                                 <p class="control">
-                                    <button type="submit" name="submit" class="button is-primary">Criar</button>
+                                    <button type="submit" name="CREATE" class="button is-primary">Criar</button>
                                 </p>
                                 <p class="control">
                                     <button type="button" class="button is-danger" onclick="window.location.replace('../customermenu/')">Cancelar criação</button>
