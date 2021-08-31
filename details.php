@@ -393,7 +393,7 @@ mysqli_close($conn);
                                         <div class="field">
                                             <label class="label has-text-centered">Foto do cliente</label>
                                             <figure class="image is-square">
-                                                <img class="is-rounded" src="../<?php echo $infocus['IMAGE']; ?>">
+                                                <img style="object-fit: cover;" class="is-rounded" src="../<?php echo $infocus['IMAGE']; ?>">
                                             </figure>
                                         </div>
                                     </div>
