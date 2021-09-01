@@ -74,7 +74,6 @@
     }
     elseif(isset($_POST['delete'])) {
         if($row['IMAGE'] != "./images/user.png") {
-            
             unlink($row['IMAGE']);
             $filepath = "./images/user.png";
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");

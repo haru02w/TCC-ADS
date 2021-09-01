@@ -158,10 +158,10 @@ mysqli_close($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
     <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/vue.js"></script>
-    <script src="../js/jscript.js"></script>
-    <script src="../js/v-mask.min.js"></script>
-    <script src="../js/moment.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../js/jscript.js"></script>
+    <script src="../../js/v-mask.min.js"></script>
+    <script src="../../js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -285,7 +285,7 @@ mysqli_close($conn);
                                                     <img style="object-fit: cover;" class="is-rounded" src=".<?php echo $infodev['IMAGE'] ?>">
                                                 </figure>
                                                 <br>
-                                                <?php if ($rowser['STATUS'] == 3 and $rowser['ID_SERVICE'] == $id) { ?>
+                                                <?php if ($rowser['STATUS'] == 3) { ?>
                                                     <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
                                                     <div class="modal" :class="{'is-active': isActiveModal}">
                                                         <div class="modal-background"></div>
@@ -468,7 +468,7 @@ mysqli_close($conn);
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("../../logout/")
                 },
                 onClickButtonModal() {
                     this.isActiveModal = !this.isActiveModal

@@ -290,9 +290,10 @@
     
     function expiredReturn() {
         session_unset();
-        setcookie("EMAIL", '', time()-86400*30, "/");
-        setcookie("TYPE", '', time()-86400*30, "/");
-        $_SESSION['s'] = "expired";
+        setcookie("EMAIL", '', 1, "/", "", true);
+        setcookie("TYPE", '', 1, "/", "", true);
+        $_SESSION['indexmsg'] = "A sua sessão expirou! Por favor, logue no sistema novamente!";
+        $_SESSION['indexclass'] = "warning";
         header("Location: ../../");
         exit();
     }

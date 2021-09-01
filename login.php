@@ -14,7 +14,7 @@
         exit();
     }
     else if(isCaptchaComplete($hcapresponse) === false) {
-        require('connection.php');
+        require('./connection.php');
         
         $hcaptchadata = array(
             'secret' => "0x1efB46BAf71d1877579b7e89c9909fde5F35e0cc",
@@ -42,14 +42,13 @@
         if($responseData->success) {
             if(!login($email, $password, $type, $conn)) {
                 if($remember == true) {
-                    setcookie('EMAIL', $email, time()+86400*30, '/');
-                    setcookie('TYPE', $type, time()+86400*30, '/');
+                    setcookie('EMAIL', $email, time()+86400*30, '/', "", true);
+                    setcookie('TYPE', $type, time()+86400*30, '/', "", true);
                 }
                 else {
                     $_SESSION['EMAIL'] = $email;
                     $_SESSION['TYPE'] = $type;  
                 }
-                
                 echo $type;
                 exit();
             }

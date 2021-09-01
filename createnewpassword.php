@@ -1,86 +1,90 @@
 <?php
-date_default_timezone_set('America/Sao_Paulo');
-require("./connection.php");
-require("./functions.php");
+    date_default_timezone_set('America/Sao_Paulo');
+    require("./connection.php");
+    require("./functions.php");
 
-if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
-    header("Location: ../../../");
-    exit();
-}
+    if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
+        header("Location: ../../../");
+        exit();
+    }
 
-$selector = $_GET['selector'];
-$validator = $_GET['validator'];
+    $selector = $_GET['selector'];
+    $validator = $_GET['validator'];
 
-$cdate = date("U");
+    $cdate = date("U");
 
-$stmt = mysqli_prepare($conn, "SELECT * FROM TB_PASSWORDRESET WHERE SELECTOR = ? AND EXPIRES >= ?");
-mysqli_stmt_bind_param($stmt, "si", $selector, $cdate);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_PASSWORDRESET WHERE SELECTOR = ? AND EXPIRES >= ?");
+    mysqli_stmt_bind_param($stmt, "si", $selector, $cdate);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
 
-$tokenb = hex2bin($validator);
-$istoken = password_verify($tokenb, $row['TOKEN']);
+    $tokenb = hex2bin($validator);
+    $istoken = password_verify($tokenb, $row['TOKEN']);
 
-if (isset($_POST["reset-password-submit"])) {
+    if (isset($_POST["reset-password-submit"])) {
 
-    $selector = filter_input(INPUT_POST, "selector", FILTER_SANITIZE_STRING);
-    $validator = filter_input(INPUT_POST, "validator", FILTER_SANITIZE_STRING);
-    $password1 = filter_input(INPUT_POST, "PASSWORD1", FILTER_SANITIZE_STRING);
-    $password2 = filter_input(INPUT_POST, "PASSWORD2", FILTER_SANITIZE_STRING);
+        $selector = filter_input(INPUT_POST, "selector", FILTER_SANITIZE_STRING);
+        $validator = filter_input(INPUT_POST, "validator", FILTER_SANITIZE_STRING);
+        $password1 = filter_input(INPUT_POST, "PASSWORD1", FILTER_SANITIZE_STRING);
+        $password2 = filter_input(INPUT_POST, "PASSWORD2", FILTER_SANITIZE_STRING);
 
-    if (empty($password1) || empty($password2)) {
-        $resetpwdclass = "is-danger";
-        $resetpwd = "Preencha os dois campos!";
-    } else if ($password1 != $password2) {
-        $resetpwdclass = "is-danger";
-        $resetpwd = "As senhas não conferem!";
-    } else if (empty($selector) || empty($validator)) {
-        $istoken = false;
-        $row = null;
-    } else {
-        $tokenEmail = $row['EMAIL'];
-
-        $result1 = searchEmailType($tokenEmail, "DEVELOPER", $conn);
-        $result2 = searchEmailType($tokenEmail, "CUSTOMER", $conn);
-
-        if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
+        if (empty($password1) || empty($password2)) {
             $resetpwdclass = "is-danger";
-            $resetpwd = "Usuário não encontrado! Por favor, tente novamente mais tarde!";
-        } else {
-            if ($result1->num_rows >= 1) {
-                $type = "DEVELOPER";
-            } else if ($result2->num_rows >= 1) {
-                $type = "CUSTOMER";
-            }
-            
-            $options = ['cost' => 12];
-            $newpwdhash = password_hash($password1, PASSWORD_DEFAULT, $options);
-            $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET PASSWORD = ? WHERE EMAIL = ?");
-            mysqli_stmt_bind_param($stmt, "ss", $newpwdhash, $tokenEmail);
-            $bool = mysqli_stmt_execute($stmt);
+            $resetpwd = "Preencha os dois campos!";
+        } 
+        else if ($password1 != $password2) {
+            $resetpwdclass = "is-danger";
+            $resetpwd = "As senhas não conferem!";
+        } 
+        else if (empty($selector) || empty($validator)) {
+            $istoken = false;
+            $row = null;
+        } 
+        else {
+        
+            $tokenEmail = $row['EMAIL'];
 
-            $stmt = mysqli_prepare($conn, "DELETE FROM TB_PASSWORDRESET WHERE EMAIL = ?");
-            mysqli_stmt_bind_param($stmt, "s", $tokenEmail);
-            $bool2 = mysqli_stmt_execute($stmt);
+            $result1 = searchEmailType($tokenEmail, "DEVELOPER", $conn);
+            $result2 = searchEmailType($tokenEmail, "CUSTOMER", $conn);
 
-            session_name("HATIDS");
-            session_start();
-
-            if ($bool === true && $bool2 === true) {
-                $_SESSION['resetpwd'] = "A sua senha foi alterada com sucesso!";
-                $_SESSION['resetpwdclass'] = 'is-success';
-                header("Location: ../../../resetpassword/");
-                exit();
+            if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
+                $resetpwdclass = "is-danger";
+                $resetpwd = "Usuário não encontrado! Por favor, tente novamente mais tarde!";
             } else {
-                $_SESSION['resetpwd'] = "A sua senha não foi alterada! Por favor, tente novamente mais tarde!";
-                $_SESSION['resetpwdclass'] = 'is-danger';
-                header("Location: ../../../resetpassword/");
-                exit();
+                if ($result1->num_rows >= 1) {
+                    $type = "DEVELOPER";
+                } else if ($result2->num_rows >= 1) {
+                    $type = "CUSTOMER";
+                }
+            
+                $options = ['cost' => 12];
+                $newpwdhash = password_hash($password1, PASSWORD_DEFAULT, $options);
+                $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET PASSWORD = ? WHERE EMAIL = ?");
+                mysqli_stmt_bind_param($stmt, "ss", $newpwdhash, $tokenEmail);
+                $bool = mysqli_stmt_execute($stmt);
+
+                $stmt = mysqli_prepare($conn, "DELETE FROM TB_PASSWORDRESET WHERE EMAIL = ?");
+                mysqli_stmt_bind_param($stmt, "s", $tokenEmail);
+                $bool2 = mysqli_stmt_execute($stmt);
+
+                session_name("HATIDS");
+                session_start();
+
+                if ($bool === true && $bool2 === true) {
+                    $_SESSION['indexmsg'] = "A sua senha foi alterada com sucesso!";
+                    $_SESSION['indexclass'] = 'success';
+                    header("Location: /");
+                    exit();
+                } else {
+                    $_SESSION['indexmsg'] = "A sua senha não foi alterada! Por favor, tente novamente mais tarde!";
+                    $_SESSION['indexclass'] = 'danger';
+                    header("Location: /");
+                    exit();
+                }
             }
         }
     }
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

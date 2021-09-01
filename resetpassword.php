@@ -142,23 +142,7 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
             </div>
         </section>
     </div>
-    <noscript>
-        <style>
-            .script {
-                display: none;
-            }
-        </style>
-        <section class="hero is-fullheight">
-            <div class="hero-body">
-                <div class="container has-text-centered">
-                    <div class="box has-text-centered">
-                        <p class="title font-face"> JavaScript não habilitado! </p> <br>
-                        <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </noscript>
+    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
         new Vue({
             el: '#app',

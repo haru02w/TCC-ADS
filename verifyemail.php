@@ -21,16 +21,18 @@
 
             if ($row['VERIFIED'] == 1) {
                 session_unset();
-                $_SESSION['v'] = "averified";
-                header("Location: ../");
+                $_SESSION['indexmsg'] = "A sua conta já foi verificada!";
+                $_SESSION['indexclass'] = "warning";
+                header("Location: /");
                 exit();
             }
 
             $query = "UPDATE TB_DEVELOPER SET VERIFIED = 1 WHERE TOKEN = '$token'";
             if (mysqli_query($conn, $query)) {
                 session_unset();
-                $_SESSION['v'] = "verified";
-                header("Location: ../");
+                $_SESSION['indexmsg'] = "A sua conta foi verificada com sucesso!";
+                $_SESSION['indexclass'] = "success";
+                header("Location: /");
                 exit();
             }
         } else if (mysqli_num_rows($result2) > 0) {
@@ -38,16 +40,18 @@
 
             if ($row['VERIFIED'] == 1) {
                 session_unset();
-                $_SESSION['v'] = "averified";
-                header("Location: ../");
+                $_SESSION['indexmsg'] = "A sua conta já foi verificada!";
+                $_SESSION['indexclass'] = "warning";
+                header("Location: /");
                 exit();
             }
 
             $query = "UPDATE TB_CUSTOMER SET VERIFIED = 1 WHERE TOKEN = '$token'";
             if (mysqli_query($conn, $query)) {
                 session_unset();
-                $_SESSION['v'] = "verified";
-                header("Location: ../");
+                $_SESSION['indexmsg'] = "A sua conta foi verificada com sucesso!";
+                $_SESSION['indexclass'] = "success";
+                header("Location: /");
                 exit();
             }
         } else {
