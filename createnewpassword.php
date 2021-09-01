@@ -69,6 +69,14 @@
                 $bool2 = mysqli_stmt_execute($stmt);
 
                 session_name("HATIDS");
+                session_set_cookie_params([
+                    'lifetime' => 0,
+                    'path' => '/',
+                    'domain' => "",
+                    'secure' => true,
+                    'httponly' => false,
+                    'samesite' => 'None'
+                  ]);
                 session_start();
 
                 if ($bool === true && $bool2 === true) {

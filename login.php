@@ -1,5 +1,13 @@
 <?php
     session_name("HATIDS");
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => "",
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'None'
+      ]);
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
     require('./functions.php');
@@ -42,8 +50,9 @@
         if($responseData->success) {
             if(!login($email, $password, $type, $conn)) {
                 if($remember == true) {
-                    setcookie('EMAIL', $email, time()+86400*30, '/', "", true);
-                    setcookie('TYPE', $type, time()+86400*30, '/', "", true);
+                    $cookieopt = array ( 'expires' => time()+86400*30, 'path' => '/', 'domain' => '', 'secure' => true, 'httponly' => false, 'samesite' => 'None');
+                    setcookie('EMAIL', $email, $cookieopt);
+                    setcookie('TYPE', $type, $cookieopt);
                 }
                 else {
                     $_SESSION['EMAIL'] = $email;

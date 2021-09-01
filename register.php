@@ -1,5 +1,13 @@
 <?php
     session_name("HATIDS");
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => "",
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'None'
+      ]);
     session_start();
     require('./functions.php');
 

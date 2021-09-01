@@ -101,15 +101,15 @@ body::-webkit-scrollbar-thumb {
   border-radius: 14px;
   transition-timing-function: cubic-bezier(.17,.67,.83,.67);
   transform: translateY(0);
-  transition: all 1000ms;
+  transition: all 500ms;
   opacity: 0;
-  z-index: 1;
+  z-index: 3;
 }
 
 .notification-alert.show {
   opacity: 1;
   transform: translateY(100%);
-  transition: all 1000ms;
+  transition: all 500ms;
 }
 
 .notification-alert.success {

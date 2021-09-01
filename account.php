@@ -1,5 +1,13 @@
 <?php
     session_name("HATIDS");
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => "",
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'None'
+      ]);
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
     require('./connection.php');
@@ -28,6 +36,8 @@
     }
     
     $id = $row["ID_$type"];
+    $rowrat = searchRating($id, $conn);
+    $avgrating = mysqli_fetch_assoc(avgRating($id, $conn));
 
     if (isset($_POST['submit'])) {
         if (($_FILES['image']['name'] != "")) {
@@ -160,6 +170,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php if($type == "DEVELOPER"){ ?>
+                            <div class="box">     
+                                <label class="label is-large">Avaliações <i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
+                                <?php while($rating = mysqli_fetch_assoc($rowrat)) {?> 
+                                    <div class="box has-background-info">
+                                    <p class="title is-5 has-text-white"><?php echo $rating['NAME']?> Nota:<?php echo $rating['NOTE']?></p>
+                                    <p class="subtitle is-5 has-text-white"><?php echo $rating['REVIEW']?></p>
+                                    </div>
+                                <?php }?>
+                            </div>
+                            <?php }?>
                         </div>
                     </div>
                 </div>
