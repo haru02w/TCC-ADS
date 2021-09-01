@@ -7,6 +7,6 @@
     <title>Quem somos?</title>
 </head>
 <body>
-    test
+    Teste
 </body>
 </html>

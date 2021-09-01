@@ -24,7 +24,6 @@ function delLoading() {
     }
 }
 
-
 formR.onsubmit = (e) => {
     e.preventDefault();
 }
@@ -58,7 +57,6 @@ postButtonR.onclick = () => {
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedR);
     xhr.open("POST", "./register/", true);
-
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
@@ -102,7 +100,6 @@ postButtonL.onclick = () => {
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedL);
     xhr.open("POST", "./login/", true);
-
     xhr.onload = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
