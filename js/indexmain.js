@@ -4,23 +4,17 @@ let postButtonR = formR.querySelector(".field .buttons #register");
 let postButtonL = formL.querySelector(".field .buttons #login");
 let messageDivR = formR.querySelector(".message");
 let messageDivL = formL.querySelector(".message");
+var pgload = document.querySelector('#app .pageloader');
 
 function showLoading() {
     if (vue.$data.casesLogin == true || vue.$data.casesRegister == true) {
-        let div = document.createElement("div");
-        div.className += "wrapper-loading";
-        div.id += "loader";
-        let body = document.body;
-        body.appendChild(div);
-        document.getElementById("loader").innerHTML = '<div class="half-circle-spinner"> <div class="circle circle-1"></div> <div class="circle circle-2"></div> </div>';
-        document.getElementById("app").style.cssText = "opacity: 0.1;";
+        pgload.classList.add("is-active");
     }
 }
 
 function delLoading() {
-    if (document.contains(document.getElementById("loader"))) {
-        document.getElementById("loader").remove();
-        document.getElementById("app").style.cssText = "opacity: 1";
+    if (pgload.classList.contains("is-active")) {
+        pgload.classList.remove("is-active");
     }
 }
 
@@ -38,22 +32,17 @@ function transferFailedR(evt) {
     messageDivR.classList.add("is-danger");
     messageDivR.style.display = "block";
     messageDivR.querySelector(".message-body").textContent = "Erro ao conectar com o servidor! Por favor, verifique sua conexão com a internet e tente novamente mais tarde!";
-    if (vue.$data.isActiveLoadingRegister === true) {
-        vue.$data.isActiveLoadingRegister = !vue.$data.isActiveLoadingRegister;
-    }
 }
 
 function transferFailedL(evt) {
     delLoading();
     messageDivL.style.display = "block";
     messageDivL.querySelector(".message-body").textContent = "Erro ao conectar com o servidor! Por favor, verifique sua conexão com a internet e tente novamente mais tarde!";
-    if (vue.$data.isActiveLoadingLogin === true) {
-        vue.$data.isActiveLoadingLogin = !vue.$data.isActiveLoadingLogin;
-    }
 }
 
 postButtonR.onclick = () => {
     showLoading();
+    setTimeout(function () {
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedR);
     xhr.open("POST", "./register/", true);
@@ -74,9 +63,6 @@ postButtonR.onclick = () => {
                 }
                 messageDivR.style.display = "block";
                 messageDivR.querySelector(".message-body").textContent = data;
-                if (vue.$data.isActiveLoadingRegister === true) {
-                    vue.$data.isActiveLoadingRegister = !vue.$data.isActiveLoadingRegister;
-                }
                 delLoading();
                 setTimeout(function () {
                     messageDivR.style.display = "none";
@@ -93,10 +79,12 @@ postButtonR.onclick = () => {
     }
     let formData = new FormData(formR);
     xhr.send(formData);
+    }, 1000);
 }
 
 postButtonL.onclick = () => {
     showLoading();
+    setTimeout(function () {
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("error", transferFailedL);
     xhr.open("POST", "./login/", true);
@@ -113,9 +101,6 @@ postButtonL.onclick = () => {
                 else {
                     messageDivL.style.display = "block";
                     messageDivL.querySelector(".message-body").textContent = data;
-                    if (vue.$data.isActiveLoadingLogin === true) {
-                        vue.$data.isActiveLoadingLogin = !vue.$data.isActiveLoadingLogin;
-                    }
                     resetL();
                     vue.$data.casesLogin = false;
                     delLoading();
@@ -133,6 +118,7 @@ postButtonL.onclick = () => {
     }
     let formData = new FormData(formL);
     xhr.send(formData);
+    }, 1000);
 }
 
 function resetR() {

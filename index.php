@@ -47,6 +47,7 @@ if (isset($_SESSION['TYPE'])) {
 
 <body class="background">
   <div id="app" class="script">
+    <div class="pageloader is-link is-active"><span class="title">Carregando...</span></div>
     <?php require("./headerindex.php"); ?>
     <section class="hero is-fullheight">
       <div class="notification-alert"></div>
@@ -212,7 +213,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="control has-icons-left">
               <div class="select">
                 <select name="TYPE_REGISTER" id="TYPE_REGISTER" required @change="validSubmitRegister" v-model="registerSelect">
-                  <option value="" disabled selected>Selecione</option>
+                  <option disabled selected>Selecione</option>
                   <option value="CUSTOMER">Cliente</option>
                   <option value="DEVELOPER">Desenvolvedor</option>
                 </select>
@@ -230,7 +231,7 @@ if (isset($_SESSION['TYPE'])) {
             <br>
             <div class="field">
               <div class="buttons is-right">
-                <button type="submit" id="register" @click="onClickRegisterLoading()" v-bind:disabled="!casesRegister" class="button is-success" :class="{'is-loading' : isActiveLoadingRegister}">Cadastrar</button>
+                <button type="submit" id="register" v-bind:disabled="!casesRegister" class="button is-success">Cadastrar</button>
               </div>
             </div>
           </form>
@@ -307,7 +308,7 @@ if (isset($_SESSION['TYPE'])) {
             <br>
             <div class="field">
               <div class="buttons is-right">
-                <button type="submit" id="login" @click="onClickLoginLoading()" class="button is-success" :class="{'is-loading' : isActiveLoadingLogin}" :disabled="!casesLogin">Logar</button>
+                <button type="submit" id="login" class="button is-success" :disabled="!casesLogin">Logar</button>
               </div>
             </div>
           </form>
@@ -315,30 +316,12 @@ if (isset($_SESSION['TYPE'])) {
       </div>
     </div>
   </div>
-  <noscript>
-    <style>
-      .script {
-        display: none;
-      }
-    </style>
-    <section class="hero is-fullheight">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <div class="box has-text-centered">
-            <p class="title font-face"> JavaScript não habilitado! </p> <br>
-            <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </noscript>
+  <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
   <script>
     Vue.directive('mask', VueMask.VueMaskDirective);
     var vue = new Vue({
       el: '#app',
       data: {
-        isActiveLoadingRegister: false,
-        isActiveLoadingLogin: false,
         isActiveRegister: false,
         isActiveLogin: false,
         isActiveBurger: false,
@@ -361,16 +344,6 @@ if (isset($_SESSION['TYPE'])) {
         casesLogin: false,
       },
       methods: {
-        onClickRegisterLoading() {
-          if (this.casesRegister === true) {
-            this.isActiveLoadingRegister = !this.isActiveLoadingRegister;
-          }
-        },
-        onClickLoginLoading() {
-          if (this.casesLogin === true) {
-            this.isActiveLoadingLogin = !this.isActiveLoadingLogin;
-          }
-        },
         onClickButtonRegister() {
           this.isActiveRegister = !this.isActiveRegister;
         },
@@ -468,14 +441,24 @@ if (isset($_SESSION['TYPE'])) {
   </script>
   <script src="./js/indexmain.js" async defer></script>
   <script> function renderCaptcha() { var params = { "sitekey": "4e9fd5af-ad94-43d0-8888-cf905e63b65f", }; lCaptcha = hcaptcha.render("loginCaptcha", params); rCaptcha = hcaptcha.render("registerCaptcha", params); } </script>
-  <?php if (isset($_SESSION['indexmsg'])) {
-    $indexclass = $_SESSION['indexclass'];
-    $indexmsg = $_SESSION['indexmsg'];
-    echo "<script> var notif = document.querySelector('#app .hero .notification-alert'); notif.classList.add('$indexclass'); notif.innerHTML = '$indexmsg';</script>";
-    unset($_SESSION['indexmsg']);
-    unset($_SESSION['indexclass']);
-    echo "<script> window.onload = () => { notif.classList.add('show'); setTimeout(function () { document.querySelector('#app .hero .notification-alert').classList.remove('show');} , 6000);}; </script>";
-  } ?>
+  <script>
+    <?php if (isset($_SESSION['indexmsg'])) {
+      $indexclass = $_SESSION['indexclass'];
+      $indexmsg = $_SESSION['indexmsg'];
+      echo "var notif = document.querySelector('#app .hero .notification-alert'); notif.classList.add('$indexclass'); notif.innerHTML = '$indexmsg';";
+      unset($_SESSION['indexmsg']);
+      unset($_SESSION['indexclass']);
+    } ?>
+    var pgload = document.querySelector('#app .pageloader');
+    window.onload = () => {
+      pgload.classList.remove('is-active');
+      <?php 
+        if(isset($indexmsg)) {
+          echo "notif.classList.add('show'); setTimeout(function () { document.querySelector('#app .hero .notification-alert').classList.remove('show');} , 6000);";
+        }
+      ?>
+    }
+  </script>  
 </body>
 
 </html>
