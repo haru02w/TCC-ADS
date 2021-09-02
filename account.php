@@ -173,11 +173,16 @@
                             <?php if($type == "DEVELOPER"){ ?>
                             <div class="box">     
                                 <label class="label is-large">Avaliações <i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
-                                <?php while($rating = mysqli_fetch_assoc($rowrat)) {?> 
+                                <?php if($avgrating['MEDIA'] == 0){?>
+                                    <div class="box has-background-primary">
+                                    <p class="title is-5 has-text-white">Você não possui Avaliações ainda. <a href="../search.php/" class="is-link">Clique aqui</a>para procurar um serviço!</p>
+                                    </div> <?php } else{?>
+                                   <?php while($rating = mysqli_fetch_assoc($rowrat)) {?> 
                                     <div class="box has-background-info">
-                                    <p class="title is-5 has-text-white"><?php echo $rating['NAME']?> Nota:<?php echo $rating['NOTE']?></p>
+                                    <p class="title is-5 has-text-white"><?php echo $rating['NAME']?> Nota: <?php echo $rating['NOTE']?></p>
                                     <p class="subtitle is-5 has-text-white"><?php echo $rating['REVIEW']?></p>
                                     </div>
+                                    <?php }?>
                                 <?php }?>
                             </div>
                             <?php }?>
