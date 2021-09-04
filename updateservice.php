@@ -30,11 +30,11 @@
     }
     
     if ($type != "CUSTOMER") {
-        header("Location: ../");
+        header("Location: /");
     }
     
     if (!isset($_GET['ids'])) {
-        header("Location: ../customermenu/");
+        header("Location: /customermenu/");
         exit();
     }
     $ids = $_GET['ids'];
@@ -47,7 +47,7 @@
     }
     
     if(is_null($rowser)) {
-        header("Location: ../customermenu/");
+        header("Location: /customermenu/");
         exit();
     }
     
@@ -55,7 +55,7 @@
     $idcus = $rowser['COD_CUSTOMER'];
     
     if ($id !== $idcus OR $rowser['STATUS'] == 3) {
-        header("Location: ../customermenu/");
+        header("Location: /customermenu/");
         exit();
     }
 
@@ -85,12 +85,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../js/vue.js"></script>
-    <script src="../js/jscript.js"></script>
-    <script src="../js/v-mask.min.js"></script>
-    <script src="../js/moment.js"></script>
+    <script src="/js/vue.js"></script>
+    <script src="/js/jscript.js"></script>
+    <script src="/js/v-mask.min.js"></script>
+    <script src="/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -151,18 +151,18 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("/logout/")
                 },
                 onClickCancel() {
                     switch(<?php echo $rowser['STATUS']; ?>) {
                         case 0:
-                            window.location.replace("../customermenu/")
+                            window.location.replace("/customermenu/")
                             break;
                         case 1:
-                            window.location.replace("../pendingservices/")
+                            window.location.replace("/pendingservices/")
                             break;
                         case 2:
-                            window.location.replace("../developmentservices/");
+                            window.location.replace("/developmentservices/");
                             break;
                     }
                     

@@ -107,9 +107,9 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../js/vue.js"></script>
+    <script src="/js/vue.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -140,7 +140,7 @@ if (isset($_SESSION['resetpwd']) && isset($_SESSION['resetpwdclass'])) {
                                     </div>
                                     <div class="buttons is-centered">
                                     <button class="button is-info" type="submit" onclick="this.classList.add('is-loading')" name="reset-request-submit" v-bind:disabled="!casePass"> Enviar email</button>
-                                        <a href="../" class="button is-primary">Ir para a página inicial</a>
+                                        <a href="/" class="button is-primary">Ir para a página inicial</a>
                                     </div>
                                 </form>
                             </div>

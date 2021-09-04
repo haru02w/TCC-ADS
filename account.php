@@ -50,16 +50,16 @@
                 
                 if(in_array(strtolower($fileext), $alloext)) {
                     
-                    if ($row['IMAGE'] !== "./images/user.png") {
+                    if ($row['IMAGE'] !== "/images/user.png") {
                         unlink($row['IMAGE']);
-                        $row['IMAGE'] = "./images/user.png";
+                        $row['IMAGE'] = "/images/user.png";
                     }
                     
                     $date = date("m/d/Yh:i:sa", time());
                     $rand = rand(0, 99999);
                     $encname = $date . $rand;
                     $filename = md5($encname) . '.' . $fileext;
-                    $filepath = 'allimages/' . $filename;
+                    $filepath = '/allimages/' . $filename;
                     
                     if (move_uploaded_file($temp, $filepath)) {
                         
@@ -83,13 +83,13 @@
         }
     }
     elseif(isset($_POST['delete'])) {
-        if($row['IMAGE'] != "./images/user.png") {
+        if($row['IMAGE'] != "/images/user.png") {
             unlink($row['IMAGE']);
-            $filepath = "./images/user.png";
+            $filepath = "/images/user.png";
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
             mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
             mysqli_stmt_execute($stmt);
-            header("Location: ../account/");
+            header("Location: /account/");
             exit();
         }
     }
@@ -102,9 +102,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../js/vue.js"></script>
+    <script src="/js/vue.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -160,7 +160,7 @@
                                                 <div v-show="isActiveButtonImage" class="field">
                                                     <button name="submit" class="button is-link"> Enviar foto de perfil </button>
                                                 </div>
-                                                <?php if ($row['IMAGE'] != "./images/user.png") { ?>
+                                                <?php if ($row['IMAGE'] != "/images/user.png") { ?>
                                                     <div class="field">
                                                         <button name="delete" class="button is-danger"> Remover foto de perfil </button>
                                                     </div>
@@ -175,7 +175,7 @@
                                 <label class="label is-large">Avaliações <i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
                                 <?php if($avgrating['MEDIA'] == 0){?>
                                     <div class="box has-background-primary">
-                                    <p class="title is-5 has-text-white">Você não possui Avaliações ainda. <a href="../search.php/" class="is-link">Clique aqui</a>para procurar um serviço!</p>
+                                    <p class="title is-5 has-text-white">Você não possui Avaliações ainda. <a href="/search.php/" class="is-link">Clique aqui</a>para procurar um serviço!</p>
                                     </div> <?php } else{?>
                                    <?php while($rating = mysqli_fetch_assoc($rowrat)) {?> 
                                     <div class="box has-background-info">
@@ -242,7 +242,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("/logout/")
                 },
                 nameImage() {
                     const fileInput = document.querySelector('#file-image input[type=file]');
@@ -255,7 +255,7 @@
                     }
                 },
                 onClickButtonReturn() {
-                    window.location.replace("../account/");
+                    window.location.replace("/account/");
                 }
             }
         })
