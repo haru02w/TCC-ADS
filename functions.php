@@ -103,7 +103,7 @@
         if($type === "CUSTOMER" || $type === "DEVELOPER"){
             $token = bin2hex(random_bytes(50));
             $verified = '0';
-            $image = "./images/user.png";
+            $image = "/images/user.png";
             $options = ['cost' => 12];
             $password1 = password_hash($password1, PASSWORD_DEFAULT, $options);
             $contact = null;
@@ -295,7 +295,7 @@
         setcookie("TYPE", '', $cookieopt);
         $_SESSION['indexmsg'] = "A sua sessão expirou! Por favor, logue no sistema novamente!";
         $_SESSION['indexclass'] = "warning";
-        header("Location: ../../");
+        header("Location: /");
         exit();
     }
     

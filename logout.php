@@ -13,5 +13,5 @@
     $cookieopt = array ( 'expires' => 1, 'path' => '/', 'domain' => '', 'secure' => true, 'httponly' => false, 'samesite' => 'None'); 
     setcookie("EMAIL", '', $cookieopt);
     setcookie("TYPE", '', $cookieopt);
-    header("Location: ../");
+    header("Location: /");
     exit();

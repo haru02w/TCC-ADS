@@ -102,10 +102,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Redefinir a senha</title>
-    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../../../js/vue.js"></script>
-    <script src="../../../js/zxcvbn.js"></script>
+    <script src="/js/vue.js"></script>
+    <script src="/js/zxcvbn.js"></script>
 </head>
 
 <body class="background">
@@ -235,6 +235,6 @@
             }
         })
     </script>
-    <script src="../../../js/pwdmain.js" async defer></script>
+    <script src="/js/pwdmain.js" async defer></script>
 </body>
 </html>

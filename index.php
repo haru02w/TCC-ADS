@@ -37,11 +37,11 @@ if (isset($_SESSION['TYPE'])) {
   <title>Hatchfy</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-  <script src="https://medina.philadelpho.tk/js/vue.js"></script>
-  <script src="https://medina.philadelpho.tk/js/jscript.js"></script>
-  <script src="https://medina.philadelpho.tk/js/v-mask.min.js"></script>
-  <script src="https://medina.philadelpho.tk/js/moment.js"></script>
-  <script src="https://medina.philadelpho.tk/js/zxcvbn.js"></script>
+  <script src="/js/vue.js"></script>
+  <script src="/js/jscript.js"></script>
+  <script src="/js/v-mask.min.js"></script>
+  <script src="/js/moment.js"></script>
+  <script src="/js/zxcvbn.js"></script>
   <script src="https://js.hcaptcha.com/1/api.js?hl=pt&onload=renderCaptcha"></script>
 </head>
 
@@ -302,7 +302,7 @@ if (isset($_SESSION['TYPE'])) {
             </div>
             <div class="field">
               <div class="control">
-                <a href="../resetpassword/"> Esqueceu a senha? </a>
+                <a href="/resetpassword/"> Esqueceu a senha? </a>
               </div>
             </div>
             <br>
@@ -439,7 +439,7 @@ if (isset($_SESSION['TYPE'])) {
       }
     })
   </script>
-  <script src="./js/indexmain.js" async defer></script>
+  <script src="/js/indexmain.js" async defer></script>
   <script> function renderCaptcha() { var params = { "sitekey": "4e9fd5af-ad94-43d0-8888-cf905e63b65f", }; lCaptcha = hcaptcha.render("loginCaptcha", params); rCaptcha = hcaptcha.render("registerCaptcha", params); } </script>
   <script>
     <?php if (isset($_SESSION['indexmsg'])) {
@@ -460,5 +460,4 @@ if (isset($_SESSION['TYPE'])) {
     }
   </script>  
 </body>
-
 </html>

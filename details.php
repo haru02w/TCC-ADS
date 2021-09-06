@@ -28,7 +28,7 @@ if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
 }
 
 if (!isset($_GET['ids'])) {
-    header("Location: ./" . strtolower($type) . "menu.php");
+    header("Location: /" . strtolower($type) . "menu.php");
     exit();
 }
 $ids = $_GET['ids'];
@@ -41,7 +41,7 @@ if (is_null($rowuser)) {
 }
 
 if (is_null($rowser)) {
-    header("Location: ./" . strtolower($type) . "menu/");
+    header("Location: /" . strtolower($type) . "menu/");
     exit();
 }
 
@@ -52,12 +52,12 @@ $idcus = $rowser['COD_CUSTOMER'];
 
 if ($type == "CUSTOMER") {
     if ($idcus !== $id) {
-        header("Location: ../customermenu/");
+        header("Location: /customermenu/");
         exit();
     }
 } elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
     if ($iddev !== $id) {
-        header("Location: ../developermenu/");
+        header("Location: /developermenu/");
         exit();
     }
 }
@@ -81,7 +81,7 @@ if (isset($_POST['REQUEST'])) {
     if ($status >= 1) {
         $_SESSION['servicemsg'] = "O serviço já foi solicitado por outro desenvolvedor! Por favor, solicite outro serviço!";
         $_SESSION['serviceclass'] = "is-warning";
-        header("Location: ../pendingservices/");
+        header("Location: /pendingservices/");
         exit();
     } else {
         $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
@@ -91,12 +91,12 @@ if (isset($_POST['REQUEST'])) {
         if ($bool) {
             $_SESSION['servicemsg'] = "Solicitação enviada com sucesso! Por favor, aguarde a confirmação do cliente!";
             $_SESSION['serviceclass'] = "is-success";
-            header("Location: ../pendingservices/");
+            header("Location: /pendingservices/");
             exit();
         } else {
             $_SESSION['servicemsg'] = "Falha ao enviar a solicitação! Por favor, tente novamente mais tarde!";
             $_SESSION['serviceclass'] = "is-danger";
-            header("Location: ../pendingservices/");
+            header("Location: /pendingservices/");
             exit();
         }
     }
@@ -108,12 +108,12 @@ if (isset($_POST['REQUEST'])) {
     if ($bool) {
         $_SESSION['servicemsg'] = "A proposta de serviço foi aceita! Para começar o desenvolvimento, entre em contato com o desenvolvedor!";
         $_SESSION['serviceclass'] = "is-success";
-        header("Location: ../developmentservices/");
+        header("Location: /developmentservices/");
         exit();
     } else {
         $_SESSION['servicemsg'] = "A proposta de serviço não foi aceita! Por favor, tente novamente mais tarde!";
         $_SESSION['serviceclass'] = "is-danger";
-        header("Location: ../developmentservices/");
+        header("Location: /developmentservices/");
         exit();
     }
 } else if (isset($_POST['SENDRECUSE'])) {
@@ -124,13 +124,13 @@ if (isset($_POST['REQUEST'])) {
     if ($bool) {
         $_SESSION['servicemsg'] = "A proposta de serviço foi recusada com sucesso!";
         $_SESSION['serviceclass'] = "is-success";
-        header("Location: ../pendingservices/");
+        header("Location: /pendingservices/");
         exit();
         
     } else {
         $_SESSION['servicemsg'] = "A proposta de serviço não foi recusada! Por favor, tente novamente mais tarde!";
         $_SESSION['serviceclass'] = "is-danger";
-        header("Location: ../pendingservices/");
+        header("Location: /pendingservices/");
         exit();
     }
     //codigo do report, com verificação se o developer já reportou
@@ -170,11 +170,11 @@ mysqli_close($conn);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="../../js/vue.js"></script>
-    <script src="../../js/jscript.js"></script>
-    <script src="../../js/v-mask.min.js"></script>
-    <script src="../../js/moment.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/vue.js"></script>
+    <script src="/js/jscript.js"></script>
+    <script src="/js/v-mask.min.js"></script>
+    <script src="/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -295,7 +295,7 @@ mysqli_close($conn);
                                             <div class="field">
                                                 <label class="label has-text-centered"> Foto do desenvolvedor </label>
                                                 <figure class="image is-square">
-                                                    <img style="object-fit: cover;" class="is-rounded" src=".<?php echo $infodev['IMAGE'] ?>">
+                                                    <img style="object-fit: cover;" class="is-rounded" src="<?php echo $infodev['IMAGE'] ?>">
                                                 </figure>
                                                 <br>
                                                 <?php if ($rowser['STATUS'] == 3) { ?>
@@ -398,7 +398,7 @@ mysqli_close($conn);
                                         <div class="field">
                                             <label class="label has-text-centered">Foto do cliente</label>
                                             <figure class="image is-square">
-                                                <img style="object-fit: cover;" class="is-rounded" src="../<?php echo $infocus['IMAGE']; ?>">
+                                                <img style="object-fit: cover;" class="is-rounded" src="<?php echo $infocus['IMAGE']; ?>">
                                             </figure>
                                         </div>
                                     </div>
@@ -479,7 +479,7 @@ mysqli_close($conn);
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../../logout/")
+                    window.location.replace("/logout/")
                 },
                 onClickButtonModal() {
                     this.isActiveModal = !this.isActiveModal
@@ -488,5 +488,4 @@ mysqli_close($conn);
         })
     </script>
 </body>
-
 </html>

@@ -30,7 +30,7 @@
     }
 
     if($type != "CUSTOMER") {
-        header("Location: ../");
+        header("Location: /");
         exit();
     }
 
@@ -56,13 +56,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../js/vue.js"></script>
-    <script src="../js/jscript.js"></script>
-    <script src="../js/v-mask.min.js"></script>
-    <script src="../js/moment.js"></script>
-    <script src="../js/bulma-toast.min.js"></script>
+    <script src="/js/vue.js"></script>
+    <script src="/js/jscript.js"></script>
+    <script src="/js/v-mask.min.js"></script>
+    <script src="/js/moment.js"></script>
+    <script src="/js/bulma-toast.min.js"></script>
 </head>
 
 <body class="background">
@@ -82,7 +82,7 @@
                     <div class="section is-fullheight">   
                         <?php if($resultserv->num_rows <= 0) { ?>
                             <div class="box">
-                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="../createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
+                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
                             </div>
                         <?php } ?>
                         <div class="columns is-variable is-multiline">
@@ -98,8 +98,8 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="../details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
-                                        <a href="../updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
                                     </footer>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("/logout/")
                 },
             }
         })

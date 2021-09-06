@@ -47,13 +47,13 @@ mysqli_close($conn);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
     <script src="../js/bulma-toast.min.js"></script>
-    <script src="../js/vue.js"></script>
-    <script src="../js/jscript.js"></script>
-    <script src="../js/v-mask.min.js"></script>
-    <script src="../js/moment.js"></script>
+    <script src="/js/vue.js"></script>
+    <script src="/js/jscript.js"></script>
+    <script src="/js/v-mask.min.js"></script>
+    <script src="/js/moment.js"></script>
 </head>
 
 <body class="background">
@@ -93,12 +93,18 @@ mysqli_close($conn);
                                             </div>
                                         </div>
                                         <footer class="card-footer">
-                                            <a href="../details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
+                                            <a href="/details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
                                             <?php if ($type == "CUSTOMER") { ?>
-                                                <a href="../updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
+                                                <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
                                             <?php } ?>
                                         </footer>
                                     </div>
+                                    <footer class="card-footer">
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <?php if($type == "CUSTOMER") { ?>
+                                            <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
+                                        <?php } ?>
+                                    </footer>
                                 </div>
                             <?php } ?>
                         </div>
@@ -119,7 +125,7 @@ mysqli_close($conn);
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("/logout/")
                 },
             }
         })
@@ -134,5 +140,4 @@ mysqli_close($conn);
     echo "</script>";
     } ?>
 </body>
-
 </html>

@@ -107,6 +107,7 @@
                 $_SESSION['servicemsg'] = "Falha ao remover a imagem! Por favor, tente novamente mais tarde";
                 $_SESSION['serviceclass'] = "is-danger";
             }
+
             header("Location: /account/");
             exit();
         }
@@ -119,12 +120,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Minha conta</title>
-    <link rel="stylesheet" href="https://medina.philadelpho.tk/css/style.css">
+    <title>Hatchfy</title>
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="https://medina.philadelpho.tk/js/vue.js"></script>
-    <script src="https://medina.philadelpho.tk/js/bulma-toast.min.js"></script>
-    
+    <script src="/js/vue.js"></script>
+   <script src="/js/bulma-toast.min.js"></script>
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -201,7 +201,7 @@
                                     <label class="label is-large">Avaliações<i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
                                     <?php if($avgrating['MEDIA'] == 0) { ?>
                                         <div class="box has-background-primary">
-                                            <p class="title is-5 has-text-white">Você ainda não possui avaliações! <a href="../search/" class="is-link">Clique aqui</a> para procurar um serviço!</p>
+                                            <p class="title is-5 has-text-white">Você ainda não possui avaliações! <a href="/search/" class="is-link">Clique aqui</a> para procurar um serviço!</p>
                                         </div> 
                                     <?php } 
                                     else { ?>
