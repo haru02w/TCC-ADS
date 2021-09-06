@@ -59,7 +59,7 @@
                     $rand = rand(0, 99999);
                     $encname = $date . $rand;
                     $filename = md5($encname) . '.' . $fileext;
-                    $filepath = '/allimages/' . $filename;
+                    $filepath = 'allimages/' . $filename;
                     
                     try {
                         if(!move_uploaded_file($temp, $filepath)) {
