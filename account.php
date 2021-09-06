@@ -45,51 +45,69 @@
                 
                 $temp = $_FILES['image']['tmp_name'];
                 $filename = $_FILES['image']['name'];
-                $fileext = explode('.', $filename); $fileext = array_pop($fileext);
+                $fileext = strtolower(array_pop(explode('.', $filename)));
                 $alloext = array("png", "pjp", "jpg", "pjpeg", "jpeg", "jfif");
                 
-                if(in_array(strtolower($fileext), $alloext)) {
+                if(in_array($fileext, $alloext)) {
                     
-                    if ($row['IMAGE'] !== "./images/user.png") {
+                    if ($row['IMAGE'] !== "/images/user.png") {
                         unlink($row['IMAGE']);
-                        $row['IMAGE'] = "./images/user.png";
+                        $row['IMAGE'] = "/images/user.png";
                     }
                     
                     $date = date("m/d/Yh:i:sa", time());
                     $rand = rand(0, 99999);
                     $encname = $date . $rand;
                     $filename = md5($encname) . '.' . $fileext;
-                    $filepath = 'allimages/' . $filename;
+                    $filepath = '/allimages/' . $filename;
                     
-                    if (move_uploaded_file($temp, $filepath)) {
+                    try {
+                        if(!move_uploaded_file($temp, $filepath)) {
+                            throw new Exception("Falha ao mover o arquivo!");
+                        }
                         
                         $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
                         mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
                         $bool = mysqli_stmt_execute($stmt);
-                        if ($bool) {
-                            $image = "success";
-                        } else {
-                            $image = "failure";
+                        
+                        if(!$bool) {
+                            throw new Exception("Falha ao enviar o link do arquivo ao banco de dados!");
                         }
-                    }
-                    else {
-                        $image = "failure";
-                    }
+                        
+                        $_SESSION['servicemsg'] = "A imagem foi inserida com sucesso!";
+                        $_SESSION['serviceclass'] = "is-success";
+                    } 
+                    catch (Exception $e) {
+                        $_SESSION['servicemsg'] = "Falha ao inserir a imagem! Por favor, tente novamente mais tarde!";
+                        $_SESSION['serviceclass'] = "is-danger";
+                    }            
                 }
                 else {
-                    $image = "failuretype";
-                }   
+                    $_SESSION['servicemsg'] = "Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.";
+                    $_SESSION['serviceclass'] = "is-danger";
+                }
+                header("Location: /account/");
+                exit();
             }
         }
     }
     elseif(isset($_POST['delete'])) {
-        if($row['IMAGE'] != "./images/user.png") {
-            unlink($row['IMAGE']);
-            $filepath = "./images/user.png";
+        if($row['IMAGE'] != "/images/user.png") {
+            $boolun = unlink($row['IMAGE']);
+            $filepath = "/images/user.png";
             $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
             mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
-            mysqli_stmt_execute($stmt);
-            header("Location: ../account/");
+            $bool = mysqli_stmt_execute($stmt);
+            
+            if($bool && $boolun) {
+                $_SESSION['servicemsg'] = "A imagem foi removida com sucesso!";
+                $_SESSION['serviceclass'] = "is-success";
+            }
+            else {
+                $_SESSION['servicemsg'] = "Falha ao remover a imagem! Por favor, tente novamente mais tarde";
+                $_SESSION['serviceclass'] = "is-danger";
+            }
+            header("Location: /account/");
             exit();
         }
     }
@@ -101,10 +119,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hatchfy</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Minha conta</title>
+    <link rel="stylesheet" href="https://medina.philadelpho.tk/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-    <script src="../js/vue.js"></script>
+    <script src="https://medina.philadelpho.tk/js/vue.js"></script>
+    <script src="https://medina.philadelpho.tk/js/bulma-toast.min.js"></script>
+    
 </head>
 <body class="background">
     <div id="app" class="script">
@@ -130,7 +150,7 @@
                                 <div class="columns is-vcentered">
                                     <div class="column">
                                         <figure class="image is-square ">
-                                            <img style="object-fit: cover;" class="is-rounded" src='../<?php echo $row['IMAGE']; ?>'>
+                                            <img id="image" style="object-fit: cover;" class="is-rounded" src='<?php echo $row['IMAGE']; ?>'>
                                         </figure>
                                     </div>
                                     <div class="column">
@@ -141,7 +161,13 @@
                                             <p class="subtitle is-5"><?php echo $row['EMAIL']; ?></p>
                                             <label class="label is-medium">Data de Nascimento</label>
                                             <p class="subtitle is-5"><?php echo(implode('/',array_reverse(explode('-',$row['BIRTH_DATE']),FALSE)));?></p>
-                                            <form method="post" enctype="multipart/form-data" action="">
+                                            <form id="formFile" method="post" enctype="multipart/form-data" action="">
+                                                <label class="label is-medium">Foto de perfil</label>
+                                                <div class="box has-text-centered" id="imgpreview" style="display: none;">
+                                                    <div class="title">
+                                                        <p class="title is-5 has-text-danger"> Você está vendo apenas uma prévia da imagem! Para aplica-la, por favor, clique no botão "Enviar foto de perfil"!</p>
+                                                    </div>
+                                                </div>
                                                 <div id="file-image" class="file has-name is-boxed is-centered">
                                                     <label class="file-label">
                                                         <input class="file-input" @click="nameImage" type="file" name="image" accept="image/png, image/jpeg">
@@ -158,11 +184,11 @@
                                                 </div>
                                                 <br>
                                                 <div v-show="isActiveButtonImage" class="field">
-                                                    <button name="submit" class="button is-link"> Enviar foto de perfil </button>
+                                                    <button type="submit" name="submit" class="button is-link"> Enviar foto de perfil </button>
                                                 </div>
-                                                <?php if ($row['IMAGE'] != "./images/user.png") { ?>
+                                                <?php if ($row['IMAGE'] != "/images/user.png") { ?>
                                                     <div class="field">
-                                                        <button name="delete" class="button is-danger"> Remover foto de perfil </button>
+                                                        <button type="submit" name="delete" class="button is-danger"> Remover foto de perfil </button>
                                                     </div>
                                                 <?php } ?>
                                             </form>
@@ -170,95 +196,121 @@
                                     </div>
                                 </div>
                             </div>
-                            <?php if($type == "DEVELOPER"){ ?>
-                            <div class="box">     
-                                <label class="label is-large">Avaliações <i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
-                                <?php if($avgrating['MEDIA'] == 0){?>
-                                    <div class="box has-background-primary">
-                                    <p class="title is-5 has-text-white">Você não possui Avaliações ainda. <a href="../search.php/" class="is-link">Clique aqui</a>para procurar um serviço!</p>
-                                    </div> <?php } else{?>
-                                   <?php while($rating = mysqli_fetch_assoc($rowrat)) {?> 
-                                    <div class="box has-background-info">
-                                    <p class="title is-5 has-text-white"><?php echo $rating['NAME']?> Nota: <?php echo $rating['NOTE']?></p>
-                                    <p class="subtitle is-5 has-text-white"><?php echo $rating['REVIEW']?></p>
-                                    </div>
-                                    <?php }?>
-                                <?php }?>
-                            </div>
+                            <?php if($type == "DEVELOPER") { ?>
+                                <div class="box">     
+                                    <label class="label is-large">Avaliações<i class="fas fa-star" style="color:#FC0;"></i> <?php echo number_format($avgrating['MEDIA'], 1)?></label>
+                                    <?php if($avgrating['MEDIA'] == 0) { ?>
+                                        <div class="box has-background-primary">
+                                            <p class="title is-5 has-text-white">Você ainda não possui avaliações! <a href="../search/" class="is-link">Clique aqui</a> para procurar um serviço!</p>
+                                        </div> 
+                                    <?php } 
+                                    else { ?>
+                                        <?php while($rating = mysqli_fetch_assoc($rowrat)) { ?> 
+                                            <div class="box has-background-info">
+                                                <p class="title is-5 has-text-white"> <?php echo $rating['NAME']?> Nota: <?php echo $rating['NOTE'] ?></p>
+                                                <p class="subtitle is-5 has-text-white"> <?php echo $rating['REVIEW']?> </p>
+                                            </div>
+                                        <?php }?>
+                                    <?php } ?>
+                                </div>
                             <?php }?>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <div class="modal" :class="topModalReturn">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                <div class="box">
-                    <article class="message" :class="messageModalReturn">
-                        <div class="message-header">
-                            <p v-if="isActiveReturn == 'success'">Sucesso</p>
-                            <p v-else if="isActiveReturn == 'failure' || isActiveReturn == 'failuretype'">Falha</p>
-                            <button class="delete" aria-label="close" @click="onClickButtonReturn"></button>
-                        </div>
-                        <div v-if="isActiveReturn == 'success'" class="message-body">
-                            A imagem foi inserida com sucesso!
-                        </div>
-                        <div v-else-if="isActiveReturn == 'failure'" class="message-body">
-                            Falha ao inserir a imagem! Por favor, tente novamente mais tarde!
-                        </div>
-                        <div v-else-if="isActiveReturn == 'failuretype'" class="message-body">
-                            Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
-        new Vue({
+    var profilePicSrc = document.querySelector("#image").src;
+    var vue = new Vue({
             el: '#app',
             data: {
                 isActiveBurger: false,
                 isActiveButtonImage: false,
-                isActiveReturn: "<?php if (isset($image)) { echo $image; } ?>",
-            },
-            computed: {
-                topModalReturn: function() {
-                    return {
-                        'is-active': this.isActiveReturn == 'success' || this.isActiveReturn == 'failure' || this.isActiveReturn == 'failuretype'
-                    }
-                },
-                messageModalReturn: function() {
-                    return {
-                        'is-success': this.isActiveReturn == 'success',
-                        'is-danger': this.isActiveReturn == 'failure' || this.isActiveReturn == "failuretype",
-                    }
-                }
             },
             methods: {
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
                 },
                 onClickLogout() {
-                    window.location.replace("../logout/")
+                    window.location.replace("/logout/")
                 },
                 nameImage() {
                     const fileInput = document.querySelector('#file-image input[type=file]');
-                    fileInput.onchange = () => {
+                    const fileName = document.querySelector('#file-image .file-name');
+                    const profilePic = document.querySelector("#image");
+                    const previewWarning = document.querySelector("#imgpreview");
+                    
+                    function resetNameImage() {
+                        fileInput.value = null;
+                        previewWarning.style = "display: none;";
+                        vue.$data.isActiveButtonImage = false;
+                        profilePic.src = profilePicSrc;
+                        fileName.textContent = "";
+                    }   
+                    
+                    fileInput.onchange = (evt) => {
                         if (fileInput.files.length > 0) {
-                            const fileName = document.querySelector('#file-image .file-name');
-                            fileName.textContent = fileInput.files[0].name;
-                            this.isActiveButtonImage = true;
+                            const fileInputFirst = fileInput.files[0];
+                            let fileext = fileInputFirst.name.split('.');
+                            fileext = fileext[fileext.length - 1]; fileext = fileext.toLowerCase();
+                            let alloext = ["png", "pjp", "jpg", "pjpeg", "jpeg", "jfif"];
+                            
+                            if(alloext.includes(fileext)) {
+                                var url = window.URL || window.webkitURL;
+                                const image = new Image();
+                                image.onload = function () {
+                                    const fileReader = new FileReader();
+                                    fileReader.onerror = function (evt) {
+                                        fileReader.abort();
+                                        resetNameImage();
+                                        vue.showMessage('Ocorreu um erro ao ler a imagem! Por favor, tente novamente!', 'is-danger', 'bottom-center');
+                                    }
+                                    fileReader.onload = function() {
+                                        profilePic.src = fileReader.result;
+                                        previewWarning.style = "display: block;";
+                                        fileName.textContent = fileInputFirst.name;
+                                        vue.$data.isActiveButtonImage = true;
+                                    }
+                                    fileReader.readAsDataURL(fileInputFirst);
+                                }
+                                image.onerror = function () {
+                                    resetNameImage();
+                                    vue.showMessage('A imagem selecionada está com problemas! Por favor, tente novamente ou selecione outra imagem!', 'is-danger', 'bottom-center');
+                                }
+                                image.src = url.createObjectURL(fileInputFirst);
+                            }
+                            else {
+                                resetNameImage();
+                                vue.showMessage('Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.', 'is-danger', 'bottom-center');
+                            }
                         }
                     }
                 },
-                onClickButtonReturn() {
-                    window.location.replace("../account/");
+                showMessage(message, messageclass, position) {
+                    bulmaToast.toast({ 
+                        message: message,
+                        type: messageclass, 
+                        duration: 5000, 
+                        position: position, 
+                        dismissible: true, 
+                        pauseOnHover: true, 
+                        closeOnClick: false,
+                        animate: { in: 'fadeIn', out: 'fadeOut' }, 
+                    })
                 }
             }
         })
     </script>
+    <?php if (isset($_SESSION['servicemsg'])) {
+        echo "<script>";
+        $serviceclass = $_SESSION['serviceclass'];
+        $servicemsg = $_SESSION['servicemsg'];
+        echo "vue.showMessage('$servicemsg', '$serviceclass', 'bottom-center')";
+        unset($_SESSION['servicemsg']);
+        unset($_SESSION['serviceclass']);
+        echo "</script>";
+    } ?>
 </body>
 </html>

@@ -15,15 +15,15 @@ $year = date('Y');
 
 if (isset($_SESSION['TYPE'])) {
   if ($_SESSION['TYPE'] == "CUSTOMER") {
-    header("Location: ./customermenu/");
+    header("Location: /customermenu/");
   } else if ($_SESSION['TYPE'] == "DEVELOPER") {
-    header("Location: ./developermenu/");
+    header("Location: /developermenu/");
   }
 } else if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
   if ($_COOKIE['TYPE'] == "CUSTOMER") {
-    header("Location: ./customermenu/");
+    header("Location: /customermenu/");
   } else if ($_COOKIE['TYPE'] == "DEVELOPER") {
-    header("Location: ./developermenu/");
+    header("Location: /developermenu/");
   }
 }
 ?>
@@ -35,13 +35,13 @@ if (isset($_SESSION['TYPE'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="HatchFy. Receba ou crie o seu programa agora! Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.">
   <title>Hatchfy</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
-  <script src="./js/vue.js"></script>
-  <script src="./js/jscript.js"></script>
-  <script src="./js/v-mask.min.js"></script>
-  <script src="./js/moment.js"></script>
-  <script src="./js/zxcvbn.js"></script>
+  <script src="https://medina.philadelpho.tk/js/vue.js"></script>
+  <script src="https://medina.philadelpho.tk/js/jscript.js"></script>
+  <script src="https://medina.philadelpho.tk/js/v-mask.min.js"></script>
+  <script src="https://medina.philadelpho.tk/js/moment.js"></script>
+  <script src="https://medina.philadelpho.tk/js/zxcvbn.js"></script>
   <script src="https://js.hcaptcha.com/1/api.js?hl=pt&onload=renderCaptcha"></script>
 </head>
 
@@ -213,7 +213,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="control has-icons-left">
               <div class="select">
                 <select name="TYPE_REGISTER" id="TYPE_REGISTER" required @change="validSubmitRegister" v-model="registerSelect">
-                  <option disabled selected>Selecione</option>
+                  <option value="" disabled selected>Selecione</option>
                   <option value="CUSTOMER">Cliente</option>
                   <option value="DEVELOPER">Desenvolvedor</option>
                 </select>
