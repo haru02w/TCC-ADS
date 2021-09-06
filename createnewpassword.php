@@ -42,7 +42,6 @@
             $row = null;
         } 
         else {
-        
             $tokenEmail = $row['EMAIL'];
 
             $result1 = searchEmailType($tokenEmail, "DEVELOPER", $conn);
@@ -51,10 +50,12 @@
             if (is_null(mysqli_fetch_assoc($result1)) && is_null(mysqli_fetch_assoc($result2))) {
                 $resetpwdclass = "is-danger";
                 $resetpwd = "Usuário não encontrado! Por favor, tente novamente mais tarde!";
-            } else {
+            } 
+            else {
                 if ($result1->num_rows >= 1) {
                     $type = "DEVELOPER";
-                } else if ($result2->num_rows >= 1) {
+                } 
+                else if ($result2->num_rows >= 1) {
                     $type = "CUSTOMER";
                 }
             

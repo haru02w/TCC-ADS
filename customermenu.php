@@ -62,6 +62,7 @@
     <script src="/js/jscript.js"></script>
     <script src="/js/v-mask.min.js"></script>
     <script src="/js/moment.js"></script>
+    <script src="/js/bulma-toast.min.js"></script>
 </head>
 
 <body class="background">
@@ -78,10 +79,10 @@
                             </p>
                         </div>
                     </section>
-                    <div class="section is-fullheight">
+                    <div class="section is-fullheight">   
                         <?php if($resultserv->num_rows <= 0) { ?>
                             <div class="box">
-                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="../createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
+                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
                             </div>
                         <?php } ?>
                         <div class="columns is-variable is-multiline">
@@ -97,8 +98,8 @@
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Ver detalhes</a>
-                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
                                     </footer>
                                 </div>
                             </div>
@@ -126,5 +127,14 @@
             }
         })
     </script>
+    <?php if (isset($_SESSION['servicemsg'])) {
+    echo "<script>";
+            $serviceclass = $_SESSION['serviceclass'];
+            $servicemsg = $_SESSION['servicemsg'];
+            echo "bulmaToast.toast({ message: '$servicemsg', type: '$serviceclass', duration: 6000, position: 'bottom-center', dismissible: true, pauseOnHover: true, closeOnClick: false, animate: { in: 'fadeIn', out: 'fadeOut' }, })";
+            unset($_SESSION['servicemsg']);
+            unset($_SESSION['serviceclass']);
+    echo "</script>";
+    } ?>
 </body>
 </html>

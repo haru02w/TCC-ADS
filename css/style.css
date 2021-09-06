@@ -1,3 +1,4 @@
+@import "animate.min.css";
 @import "bulma-pageloader.min.css";
 @import "fontawesome.css";
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap');
@@ -36,52 +37,6 @@ body::-webkit-scrollbar-thumb {
 
 .bm--card-equal-height .card-footer {
   margin-top: auto;
-}
-
-.half-circle-spinner, .half-circle-spinner * {
-  box-sizing: border-box;
-}
-
-.half-circle-spinner, .half-circle-spinner * {
-  box-sizing: border-box;
-}
-
-.half-circle-spinner {
-  width: 70px;
-  height: 70px;
-  border-radius: 100%;
-  position: fixed;
-  left: 47%;
-  bottom: 50%;
-}
-
-.half-circle-spinner .circle {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-  border: calc(70px / 10) solid transparent;
-}
-
-.half-circle-spinner .circle.circle-1 {
-  border-top-color: #9b12ad;
-  animation: half-circle-spinner-animation 1s infinite;
-}
-
-.half-circle-spinner .circle.circle-2 {
-  border-bottom-color: #9b12ad;
-  animation: half-circle-spinner-animation 1s infinite alternate;
-}
-
-@keyframes half-circle-spinner-animation {
-  0% {
-    transform: rotate(0deg);
-
-  }
-  100%{
-    transform: rotate(360deg);
-  }
 }
 
 #textColorOne {

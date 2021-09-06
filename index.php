@@ -213,7 +213,7 @@ if (isset($_SESSION['TYPE'])) {
             <div class="control has-icons-left">
               <div class="select">
                 <select name="TYPE_REGISTER" id="TYPE_REGISTER" required @change="validSubmitRegister" v-model="registerSelect">
-                  <option disabled selected>Selecione</option>
+                  <option value="" disabled selected>Selecione</option>
                   <option value="CUSTOMER">Cliente</option>
                   <option value="DEVELOPER">Desenvolvedor</option>
                 </select>

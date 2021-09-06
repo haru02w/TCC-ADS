@@ -7,7 +7,7 @@ session_set_cookie_params([
     'secure' => true,
     'httponly' => false,
     'samesite' => 'None'
-  ]);
+]);
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
 require('./connection.php');
@@ -67,7 +67,6 @@ $infocus = searchInfoCus($idcus, $conn);
 $developer_exist = 0;
 $service_exist = 0;
 
-
 if ($rowser['STATUS'] >= 1) {
     $birthdev = explode("-", $infodev['BIRTH_DATE']);
     $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
@@ -76,13 +75,12 @@ if ($rowser['STATUS'] >= 1) {
 $birthcus = explode("-", $infocus['BIRTH_DATE']);
 $infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
 
-
-
 if (isset($_POST['REQUEST'])) {
     $status = $rowser['STATUS'];
 
     if ($status >= 1) {
-        $_SESSION['detail'] = "takend";
+        $_SESSION['servicemsg'] = "O serviço já foi solicitado por outro desenvolvedor! Por favor, solicite outro serviço!";
+        $_SESSION['serviceclass'] = "is-warning";
         header("Location: /pendingservices/");
         exit();
     } else {
@@ -91,11 +89,13 @@ if (isset($_POST['REQUEST'])) {
         $bool = mysqli_stmt_execute($stmt);
 
         if ($bool) {
-            $_SESSION['detail'] = "successd";
+            $_SESSION['servicemsg'] = "Solicitação enviada com sucesso! Por favor, aguarde a confirmação do cliente!";
+            $_SESSION['serviceclass'] = "is-success";
             header("Location: /pendingservices/");
             exit();
         } else {
-            $_SESSION['detail'] = "failured";
+            $_SESSION['servicemsg'] = "Falha ao enviar a solicitação! Por favor, tente novamente mais tarde!";
+            $_SESSION['serviceclass'] = "is-danger";
             header("Location: /pendingservices/");
             exit();
         }
@@ -106,11 +106,13 @@ if (isset($_POST['REQUEST'])) {
     $bool = mysqli_stmt_execute($stmt);
 
     if ($bool) {
-        $_SESSION['send'] = "successs";
+        $_SESSION['servicemsg'] = "A proposta de serviço foi aceita! Para começar o desenvolvimento, entre em contato com o desenvolvedor!";
+        $_SESSION['serviceclass'] = "is-success";
         header("Location: /developmentservices/");
         exit();
     } else {
-        $_SESSION['send'] = "failures";
+        $_SESSION['servicemsg'] = "A proposta de serviço não foi aceita! Por favor, tente novamente mais tarde!";
+        $_SESSION['serviceclass'] = "is-danger";
         header("Location: /developmentservices/");
         exit();
     }
@@ -120,11 +122,14 @@ if (isset($_POST['REQUEST'])) {
     $bool = mysqli_stmt_execute($stmt);
 
     if ($bool) {
-        $_SESSION['recuse'] = "successre";
+        $_SESSION['servicemsg'] = "A proposta de serviço foi recusada com sucesso!";
+        $_SESSION['serviceclass'] = "is-success";
         header("Location: /pendingservices/");
         exit();
+        
     } else {
-        $_SESSION['recuse'] = "failurere";
+        $_SESSION['servicemsg'] = "A proposta de serviço não foi recusada! Por favor, tente novamente mais tarde!";
+        $_SESSION['serviceclass'] = "is-danger";
         header("Location: /pendingservices/");
         exit();
     }
