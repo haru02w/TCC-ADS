@@ -51,6 +51,7 @@
     <title>Hatchfy</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
+    <script src="../js/bulma-toast.min.js"></script>
     <script src="../js/vue.js"></script>
     <script src="../js/jscript.js"></script>
     <script src="../js/v-mask.min.js"></script>
@@ -71,7 +72,7 @@
                             </p>
                         </div>
                     </section>
-                    <div class="section is-fullheight">
+                    <div class="section is-fullheight">    
                         <?php if(mysqli_num_rows($resultserv) <= 0) { ?>
                             <div class="box">
                                 <p class="title is-5"> Você não tem serviços pendentes! </p>
@@ -92,7 +93,7 @@
                                     <footer class="card-footer">
                                         <a href="../details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
                                         <?php if($type == "CUSTOMER") { ?>
-                                            <a href="../updateservice/<?php echo $rowser['ID_SERVICE'];?>/" class="card-footer-item">Editar serviço</a>
+                                            <a href="../updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
                                         <?php } ?>
                                     </footer>
                                 </div>
@@ -103,30 +104,6 @@
                 </div>
             </div>
         </section>
-        <div class="modal" :class="topModalReturn">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                <div class="box">
-                    <article class="message" :class="messageModalReturn">
-                        <div class="message-header">
-                            <p v-if="isActiveReturn == 'successd'">Sucesso</p>
-                            <p v-else-if="isActiveReturn == 'failured'">Falha</p>
-                            <p v-else-if="isActiveReturn == 'takend'"> Aviso </p>
-                            <button class="delete" aria-label="close" @click="onClickButtonReturn" v-if="isActiveReturn == 'successd' || isActiveReturn == 'failured' || isActiveReturn == 'takend'"></button>
-                        </div>
-                        <div v-if="isActiveReturn == 'successd'" class="message-body">
-                            Solicitação enviada com sucesso! Por favor, aguarde a confirmação do cliente!
-                        </div>
-                        <div v-else-if="isActiveReturn == 'failured'" class="message-body">
-                            Falha ao enviar a solicitação! Por favor, tente novamente mais tarde!
-                        </div>
-                        <div v-else-if="isActiveReturn == 'takend'" class="message-body">
-                            O serviço já foi solicitado por outro desenvolvedor! Por favor, solicite outro serviço!
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
@@ -134,22 +111,6 @@
             el: '#app',
             data: {
                 isActiveBurger: false,
-                isActiveReturn: "<?php if(isset($_SESSION['detail'])){ $d = $_SESSION['detail']; echo "$d"; $_SESSION['detail'] = ""; }?>"
-
-            },
-            computed: {
-                topModalReturn : function () {
-                    return {
-                        'is-active': this.isActiveReturn == "failured" || this.isActiveReturn == "successd" || this.isActiveReturn == "takend" 
-                    }
-                },
-                messageModalReturn : function () {
-                    return {
-                        'is-success': this.isActiveReturn == "successd",
-                        'is-danger':  this.isActiveReturn == "failured",
-                        'is-warning': this.isActiveReturn == "takend",
-                    }
-                }
             },
             methods: {
                 onClickBurger() {
@@ -158,11 +119,17 @@
                 onClickLogout() {
                     window.location.replace("../logout/")
                 },
-                onClickButtonReturn() {
-                    this.isActiveReturn = !this.isActiveReturn
-                },
             }
         })
     </script>
+    <?php if (isset($_SESSION['servicemsg'])) {
+    echo "<script>";
+            $serviceclass = $_SESSION['serviceclass'];
+            $servicemsg = $_SESSION['servicemsg'];
+            echo "bulmaToast.toast({ message: '$servicemsg', type: '$serviceclass', duration: 6000, position: 'bottom-center', dismissible: true, pauseOnHover: true, closeOnClick: false, animate: { in: 'fadeIn', out: 'fadeOut' }, })";
+            unset($_SESSION['servicemsg']);
+            unset($_SESSION['serviceclass']);
+    echo "</script>";
+    } ?>
 </body>
 </html>

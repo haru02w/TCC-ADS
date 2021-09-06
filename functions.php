@@ -308,7 +308,7 @@
         }
     }
     
-    function searchRating($id, $conn){
+    function searchRating($id, $conn) { 
         $stmt = mysqli_prepare($conn, "SELECT CU.NAME, R.NOTE, R.REVIEW FROM TB_DEVELOPER DE
         JOIN TB_SERVICES S ON (S.COD_DEVELOPER = ?)
         JOIN TB_CUSTOMER CU ON (S.COD_CUSTOMER = CU.ID_CUSTOMER)
@@ -319,11 +319,11 @@
         return $result;
     }
     
-    function avgRating($id, $conn){
-        $stmt =  mysqli_prepare($conn, "SELECT AVG(R.NOTE) AS MEDIA FROM TB_DEVELOPER DE
+    function avgRating($id, $conn) {
+        $stmt = mysqli_prepare($conn, "SELECT AVG(R.NOTE) AS MEDIA FROM TB_DEVELOPER DE
         JOIN TB_SERVICES S ON (S.COD_DEVELOPER = ?)
         JOIN TB_RATING R ON (S.ID_SERVICE = R.COD_SERVICE)");
-        mysqli_stmt_bind_param($stmt, 's', $id);
+        mysqli_stmt_bind_param($stmt, "s", $id);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         return $result;

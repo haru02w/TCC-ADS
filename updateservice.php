@@ -69,12 +69,24 @@
         mysqli_close($conn);
 
         if($bool) {
-            $_SESSION['update'] = "As informações do serviço foram alteradas com sucesso!";
-            $_SESSION['updateclass'] = "is-success";
+            $_SESSION['servicemsg'] = "As informações do serviço foram alteradas com sucesso!";
+            $_SESSION['serviceclass'] = "is-success";
         }
         else {
-            $_SESSION['update'] = "Falha ao alterar as informações do serviço! Por favor, tente novamente mais tarde!";
-            $_SESSION['updateclass'] = "is-danger";
+            $_SESSION['servicemsg'] = "Falha ao alterar as informações do serviço! Por favor, tente novamente mais tarde!";
+            $_SESSION['serviceclass'] = "is-danger";
+        }
+        
+        switch($rowser['STATUS']){
+            case 0:
+                header("Location: /customermenu/");
+                break;
+            case 1:
+                header("Location: /pendingservices/");
+                break;
+            case 2:
+                header("Location: /developmentservices/");
+                break;
         }
     }
     
@@ -109,12 +121,6 @@
                     </section>
                     <form action="" method="POST">
                         <div class="section">
-                            <?php if (isset($_SESSION['update']) AND $_SESSION['update'] != "") { ?>
-                                <div class="notification <?php echo $_SESSION['updateclass']; ?>">
-                                    <?php echo $_SESSION['update']; ?>                          
-                                </div>
-                            <?php } ?>
-                            <?php unset($_SESSION['update']); unset($_SESSION['updateclass']);?> 
                             <div class="columns">
                                 <div class="column is-5">
                                     <div class="field">
