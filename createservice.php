@@ -10,8 +10,8 @@
     ]);
     session_start();
     date_default_timezone_set('America/Sao_Paulo');
-    require('./connection.php');
-    require('./functions.php');
+    require('./php/connection.php');
+    require('./php/functions.php');
 
     if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
         $email = $_COOKIE['EMAIL'];
@@ -147,9 +147,6 @@
             methods: {
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
-                },
-                onClickLogout() {
-                    window.location.replace("/logout/")
                 },
                 showMessage(msg, msgclass, position) {
                     bulmaToast.toast({

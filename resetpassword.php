@@ -12,8 +12,8 @@ session_start();
 date_default_timezone_set('America/Sao_Paulo');
 
 if (isset($_POST["reset-request-submit"])) {
-    require("./connection.php");
-    require("./functions.php");
+    require("./php/connection.php");
+    require("./php/functions.php");
 
     $email = filter_input(INPUT_POST, "EMAILPWD_RESET", FILTER_SANITIZE_EMAIL);
 
