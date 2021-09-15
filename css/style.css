@@ -47,6 +47,14 @@ body::-webkit-scrollbar-thumb {
   color: #1c2731;
 }
 
+.backgroundTwo{
+  background-color: rgb(245, 247, 248);
+}
+
+#colorHatchfy{
+  color: #2062cc;
+}
+
 .notification-alert {
   color: white;
   top: 0%;
