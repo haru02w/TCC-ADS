@@ -179,6 +179,7 @@
                     </div>
                 </div>
             </div>
+            <?php require "baseboard.php"?>
         </section>
     </div>
     <noscript>
