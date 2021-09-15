@@ -114,6 +114,7 @@ if (isset($_SESSION['TYPE'])) {
         </div>
       </div>
     </footer>
+    <?php require "baseboard.php"?>
     <!-- REGISTER MODAL-->
     <div class="modal" :class="{'is-active': isActiveRegister}">
       <div class="modal-background"></div>

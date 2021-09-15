@@ -38,78 +38,97 @@
     $id = $row["ID_$type"];
     $rowrat = searchRating($id, $conn);
     $avgrating = mysqli_fetch_assoc(avgRating($id, $conn));
-
-    if (isset($_POST['submit'])) {
-        if (($_FILES['image']['name'] != "")) {
-            if(file_exists($_FILES['image']['tmp_name']))  {
-                
+    
+    if($_SERVER['REQUEST_METHOD'] === "POST") {
+        if (isset($_POST['submit'])) {
+            if($_FILES['image']['error'] === 0 && $_FILES['image']['name'] != "") {
                 $temp = $_FILES['image']['tmp_name'];
-                $filename = $_FILES['image']['name'];
-                $fileext = strtolower(array_pop(explode('.', $filename)));
-                $alloext = array("png", "pjp", "jpg", "pjpeg", "jpeg", "jfif");
-                
-                if(in_array($fileext, $alloext)) {
+                if(file_exists($temp)) {
+                    if(exif_imagetype($temp)) {
+                        
+                        $filename = $_FILES['image']['name'];
+                        $fileext = strtolower(array_pop(explode('.', $filename)));
+                        $alloext = array("png", "pjp", "jpg", "pjpeg", "jpeg", "jfif");
+                            
+                        if(in_array($fileext, $alloext)) {
+                                
+                            if ($row['IMAGE'] !== "/images/user.png") {
+                                unlink($row['IMAGE']);
+                                $row['IMAGE'] = "/images/user.png";
+                            }
+                                
+                            $date = date("m/d/Yh:i:sa", time());
+                            $rand = rand(0, 99999);
+                            $encname = $date . $rand;
+                            $filename = md5($encname) . '.' . $fileext;
+                            $filepath = 'allimages/' . $filename;
+                                
+                            try {
+                                if(!move_uploaded_file($temp, $filepath)) {
+                                    throw new RuntimeException("Falha ao mover o arquivo para o servidor! Por favor, tente novamente mais tarde!");
+                                }
+                                    
+                                $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
+                                mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
+                                $bool = mysqli_stmt_execute($stmt);
+                                    
+                                if(!$bool) {
+                                    unlink($filepath);
+                                    throw new RuntimeException("Falha ao enviar o link da imagem ao banco de dados! Por favor, tente novamente mais tarde!");
+                                }
+                                    
+                                $_SESSION['servicemsg'] = "A imagem foi inserida com sucesso!";
+                                $_SESSION['serviceclass'] = "is-success";
+                            } 
+                            catch (RuntimeException $e) {
+                                $_SESSION['servicemsg'] = $e->getMessage();
+                                $_SESSION['serviceclass'] = "is-danger";
+                            }            
+                        }
+                        else {
+                            $_SESSION['servicemsg'] = "Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.";
+                            $_SESSION['serviceclass'] = "is-danger";
+                        }
+                        header("Location: /account/");
+                        exit();
+                    }
+                    else {
+                        $_SESSION['servicemsg'] = "A imagem selecionada está com problemas! Por favor, tente novamente ou selecione outra imagem!";
+                        $_SESSION['serviceclass'] = "is-danger";
+                    }
+                }
+            }
+            else {
+                $_SESSION['servicemsg'] = "Ocorreu algum erro inesperado! Por favor, tente novamente mais tarde!";
+                $_SESSION['serviceclass'] = "is-danger";
+            }
+        }
+        else if(isset($_POST['delete'])) {
+            if($row['IMAGE'] != "/images/user.png") {
+                try {
+                    $actualimage = $row['IMAGE'];
+                    $filepath = "/images/user.png";
                     
-                    if ($row['IMAGE'] !== "/images/user.png") {
-                        unlink($row['IMAGE']);
-                        $row['IMAGE'] = "/images/user.png";
+                    if(!mysqli_query($conn, "UPDATE TB_$type SET IMAGE = '$filepath' WHERE ID_$type = '$id'")) {
+                        throw new RuntimeException("Falha ao definir a imagem padrão! Por favor, tente novamente mais tarde");
                     }
                     
-                    $date = date("m/d/Yh:i:sa", time());
-                    $rand = rand(0, 99999);
-                    $encname = $date . $rand;
-                    $filename = md5($encname) . '.' . $fileext;
-                    $filepath = 'allimages/' . $filename;
+                    if(!unlink($row['IMAGE'])){
+                        mysqli_query($conn, "UPDATE TB_$type SET IMAGE = '$actualimage' WHERE ID_$type = '$id'");
+                        throw new RuntimeException("Falha ao remover a imagem! Por favor, tente novamente mais tarde");
+                    }
                     
-                    try {
-                        if(!move_uploaded_file($temp, $filepath)) {
-                            throw new Exception("Falha ao mover o arquivo!");
-                        }
-                        
-                        $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
-                        mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
-                        $bool = mysqli_stmt_execute($stmt);
-                        
-                        if(!$bool) {
-                            throw new Exception("Falha ao enviar o link do arquivo ao banco de dados!");
-                        }
-                        
-                        $_SESSION['servicemsg'] = "A imagem foi inserida com sucesso!";
-                        $_SESSION['serviceclass'] = "is-success";
-                    } 
-                    catch (Exception $e) {
-                        $_SESSION['servicemsg'] = "Falha ao inserir a imagem! Por favor, tente novamente mais tarde!";
-                        $_SESSION['serviceclass'] = "is-danger";
-                    }            
-                }
-                else {
-                    $_SESSION['servicemsg'] = "Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.";
+                    $_SESSION['servicemsg'] = "A imagem foi removida com sucesso!";
+                    $_SESSION['serviceclass'] = "is-success";
+                    
+                } catch (RuntimeException $e) {
+                    $_SESSION['servicemsg'] = $e->getMessage();
                     $_SESSION['serviceclass'] = "is-danger";
                 }
+
                 header("Location: /account/");
                 exit();
             }
-        }
-    }
-    elseif(isset($_POST['delete'])) {
-        if($row['IMAGE'] != "/images/user.png") {
-            $boolun = unlink($row['IMAGE']);
-            $filepath = "/images/user.png";
-            $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET IMAGE = ? WHERE ID_$type = ?");
-            mysqli_stmt_bind_param($stmt, "ss", $filepath, $id);
-            $bool = mysqli_stmt_execute($stmt);
-            
-            if($bool && $boolun) {
-                $_SESSION['servicemsg'] = "A imagem foi removida com sucesso!";
-                $_SESSION['serviceclass'] = "is-success";
-            }
-            else {
-                $_SESSION['servicemsg'] = "Falha ao remover a imagem! Por favor, tente novamente mais tarde";
-                $_SESSION['serviceclass'] = "is-danger";
-            }
-
-            header("Location: /account/");
-            exit();
         }
     }
     mysqli_close($conn);
@@ -162,7 +181,7 @@
                                             <label class="label is-medium">Data de Nascimento</label>
                                             <p class="subtitle is-5"><?php echo(implode('/',array_reverse(explode('-',$row['BIRTH_DATE']),FALSE)));?></p>
                                             <form id="formFile" method="post" enctype="multipart/form-data" action="">
-                                                <label class="label is-medium">Foto de perfil</label>
+                                                <label class="label is-medium">Foto de perfil (Max 5MB)</label>
                                                 <div class="box has-text-centered" id="imgpreview" style="display: none;">
                                                     <div class="title">
                                                         <p class="title is-5 has-text-danger"> Você está vendo apenas uma prévia da imagem! Para aplica-la, por favor, clique no botão "Enviar foto de perfil"!</p>
@@ -179,7 +198,7 @@
                                                                 Selecionar<br>imagem...
                                                             </span>
                                                         </span>
-                                                        <span class="file-name"></span>
+                                                        <span id="fileN" class="file-name"></span>
                                                     </label>
                                                 </div>
                                                 <br>
@@ -218,6 +237,7 @@
                     </div>
                 </div>
             </div>
+            <?php require "baseboard.php"?>
         </section>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
@@ -237,8 +257,8 @@
                     window.location.replace("/logout/")
                 },
                 nameImage() {
-                    const fileInput = document.querySelector('#file-image input[type=file]');
-                    const fileName = document.querySelector('#file-image .file-name');
+                    const fileInput = document.querySelector('input[type=file]');
+                    const fileName = document.querySelector('#fileN');
                     const profilePic = document.querySelector("#image");
                     const previewWarning = document.querySelector("#imgpreview");
                     
@@ -252,38 +272,44 @@
                     
                     fileInput.onchange = (evt) => {
                         if (fileInput.files.length > 0) {
-                            const fileInputFirst = fileInput.files[0];
-                            let fileext = fileInputFirst.name.split('.');
-                            fileext = fileext[fileext.length - 1]; fileext = fileext.toLowerCase();
-                            let alloext = ["png", "pjp", "jpg", "pjpeg", "jpeg", "jfif"];
-                            
-                            if(alloext.includes(fileext)) {
-                                var url = window.URL || window.webkitURL;
-                                const image = new Image();
-                                image.onload = function () {
-                                    const fileReader = new FileReader();
-                                    fileReader.onerror = function (evt) {
-                                        fileReader.abort();
+                            if(fileInput.files[0].size <= 5242880) {
+                                const fileInputFirst = fileInput.files[0];
+                                let fileext = fileInputFirst.name.split('.');
+                                fileext = fileext[fileext.length - 1]; fileext = fileext.toLowerCase();
+                                let alloext = ["png", "pjp", "jpg", "pjpeg", "jpeg", "jfif"];
+                                
+                                if(alloext.includes(fileext)) {
+                                    var url = window.URL || window.webkitURL;
+                                    const image = new Image();
+                                    image.onload = function () {
+                                        const fileReader = new FileReader();
+                                        fileReader.onerror = function () {
+                                            fileReader.abort();
+                                            resetNameImage();
+                                            vue.showMessage('Ocorreu um erro ao ler a imagem! Por favor, tente novamente!', 'is-danger', 'bottom-center');
+                                        }
+                                        fileReader.onload = function() {
+                                            profilePic.src = fileReader.result;
+                                            previewWarning.style = "display: block;";
+                                            fileName.textContent = fileInputFirst.name;
+                                            vue.$data.isActiveButtonImage = true;
+                                        }
+                                        fileReader.readAsDataURL(fileInputFirst);
+                                    }
+                                    image.onerror = function () {
                                         resetNameImage();
-                                        vue.showMessage('Ocorreu um erro ao ler a imagem! Por favor, tente novamente!', 'is-danger', 'bottom-center');
+                                        vue.showMessage('A imagem selecionada está com problemas! Por favor, tente novamente ou selecione outra imagem!', 'is-danger', 'bottom-center');
                                     }
-                                    fileReader.onload = function() {
-                                        profilePic.src = fileReader.result;
-                                        previewWarning.style = "display: block;";
-                                        fileName.textContent = fileInputFirst.name;
-                                        vue.$data.isActiveButtonImage = true;
-                                    }
-                                    fileReader.readAsDataURL(fileInputFirst);
+                                    image.src = url.createObjectURL(fileInputFirst);
                                 }
-                                image.onerror = function () {
+                                else {
                                     resetNameImage();
-                                    vue.showMessage('A imagem selecionada está com problemas! Por favor, tente novamente ou selecione outra imagem!', 'is-danger', 'bottom-center');
+                                    vue.showMessage('Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.', 'is-danger', 'bottom-center');
                                 }
-                                image.src = url.createObjectURL(fileInputFirst);
                             }
                             else {
                                 resetNameImage();
-                                vue.showMessage('Formato de imagem inválido! Formatos suportados: PNG, PJP, JPG, PJPEG, JPEG, e JFIF.', 'is-danger', 'bottom-center');
+                                vue.showMessage('O tamanho máximo permitido para a foto de perfil é de 5MB! Por favor, insira outra foto!', 'is-danger', 'bottom-center');
                             }
                         }
                     }
