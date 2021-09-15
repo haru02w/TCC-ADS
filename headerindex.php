@@ -16,7 +16,7 @@
                 Quem somos?
             </a>
             <a class="navbar-item" href="/privacypolicy/">
-                LGPD
+                Politica de Privacidade
             </a>
         </div>
         <div class="navbar-end">

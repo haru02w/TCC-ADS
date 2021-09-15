@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <title>Politicas de privacidade e Termos de Uso</title>
 </head>
-<body class="backgroundTwo">
+<body class="backgroundPrivacy">
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -26,7 +26,7 @@
                 Quem somos?
             </a>
             <a class="navbar-item" href="/privacypolicy/">
-                LGPD
+                Politica de Privacidade
             </a>
         </div>
     </div>

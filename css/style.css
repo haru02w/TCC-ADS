@@ -21,12 +21,8 @@ body::-webkit-scrollbar-thumb {
 }
 
 .background{
-  background-image: url(../images/background.png);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  background-color: #464646;
+  background: rgb(219,191,255);
+background: radial-gradient(circle, rgba(219,191,255,1) 20%, rgba(97,197,224,1) 100%)
 }
 
 .bm--card-equal-height {
@@ -47,7 +43,7 @@ body::-webkit-scrollbar-thumb {
   color: #1c2731;
 }
 
-.backgroundTwo{
+.backgroundPrivacy{
   background-color: rgb(245, 247, 248);
 }
 
