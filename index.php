@@ -57,10 +57,10 @@ if (isset($_SESSION['TYPE'])) {
           <p class="subtitle is-4" id="textColorTwo">
             Receba ou crie o seu programa agora!
           </p>
-          <p class="subtitle is-4" style="color: #ecdddd;">
+          <p class="subtitle is-4" id="textColorTwo">
             Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.
           </p>
-          <p class="subtitle is-4" style="color: #ecdddd;">
+          <p class="subtitle is-4" id="textColorTwo">
             (Este projeto tem o objetivo de proporcionar ensinamentos sobre Analise e Desenvolvimento de Softwares<br> para alunos assim como soluções simples para a sem processos burocraticos<br> e caro para a confecção de um software com propositos especificos)
           </p>
         </div>
