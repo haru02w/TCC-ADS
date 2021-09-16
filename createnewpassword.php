@@ -1,7 +1,7 @@
 <?php
     date_default_timezone_set('America/Sao_Paulo');
-    require("./connection.php");
-    require("./functions.php");
+    require("./php/connection.php");
+    require("./php/functions.php");
 
     if (!isset($_GET['selector']) || !isset($_GET['validator'])) {
         header("Location: /");

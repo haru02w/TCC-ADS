@@ -10,8 +10,8 @@ session_set_cookie_params([
 ]);
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
-require('./connection.php');
-require('./functions.php');
+require('./php/connection.php');
+require('./php/functions.php');
 
 if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
     $type = $_COOKIE['TYPE'];
@@ -164,9 +164,6 @@ mysqli_close($conn);
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
                 },
-                onClickLogout() {
-                    window.location.replace("/logout/")
-                }
             }
         })
     </script>

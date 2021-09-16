@@ -20,15 +20,9 @@ RewriteRule developmentservices/ developmentservices.php [QSA,NC,L]
 
 RewriteRule doneservices/ doneservices.php [QSA,NC,L] 
 
-RewriteRule login/ login.php [QSA,NC,L] 
-
-RewriteRule logout/ logout.php [QSA,NC,L] 
-
 RewriteRule pendingservices/ pendingservices.php [QSA,NC,L]
 
 RewriteRule privacypolicy/ privacypolicy.php [QSA,NC,L]
-
-RewriteRule register/ register.php [QSA,NC,L]
 
 RewriteRule resetpassword/ resetpassword.php [QSA,NC,L]
 
