@@ -40,12 +40,14 @@
         </div>
         <div class="navbar-end">
             <div class="navbar-item">
-                <button class="button is-danger" @click="onClickLogout">
+              <a href="/logout/">
+                <button class="button is-danger">
                     <span> Sair </span>
                     <span class="icon">
                         <i class="fas fa-sign-out-alt"></i>
                     </span>
                 </button>
+              </a>
             </div>
         </div>
     </div>

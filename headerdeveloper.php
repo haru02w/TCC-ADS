@@ -52,7 +52,7 @@
                 </form>
             </div>
             <div class="navbar-item">
-              <a href="/php/logout.php">
+              <a href="/logout/">
                 <button class="button is-danger">
                     <span> Sair </span>
                     <span class="icon">

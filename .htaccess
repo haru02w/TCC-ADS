@@ -30,7 +30,9 @@ RewriteRule search/ search.php [QSA,NC,L]
 
 RewriteRule updateservice/([0-9]+) updateservice.php?ids=$1 [QSA,NC,L]
 
-RewriteRule verifyemail/([0-9a-zA-Z-]+)/ verifyemail.php?token=$1 [QSA,NC,L]
+RewriteRule verifyemail/([0-9a-zA-Z-]+)/ php/verifyemail.php?token=$1 [QSA,NC,L]
 
 RewriteRule whoweare/ whoweare.php [QSA,NC,L]
+
+RewriteRule logout/ php/logout.php [QSA,NC,L]
 
