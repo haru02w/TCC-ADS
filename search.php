@@ -40,21 +40,36 @@ $q = filter_var($q, FILTER_SANITIZE_STRING);
 
 $category = mysqli_query($conn, "SELECT * FROM TB_CATEGORY");
 
-if (empty($_POST['FILTER2'])) {
+$stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE (TITLE LIKE ? OR DESCRIPTION LIKE ?) AND STATUS <= 0 ORDER BY TITLE");
+mysqli_stmt_bind_param($stmt, "ss", $q, $q);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE (TITLE LIKE ? OR DESCRIPTION LIKE ?) AND STATUS <= 0 ORDER BY TITLE");
-    mysqli_stmt_bind_param($stmt, "ss", $q, $q);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+$title = "Resultados da pesquisa";
 
-}else if (isset($_POST['FILTER2'])) {
-    $category_select2 = $_POST['category_select'];
-    //$time_service = $_POST['time'];
-    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_CATEGORY = ?");
-    mysqli_stmt_bind_param($stmt, "s", $category_select2);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+if (isset($_POST['filter'])) {
+    $time_service = $_POST['time'];
+    if ($time_service == "recent") {
+        $info_category = explode('|', $_POST['category_select']);
+        $title = "Resultados da pequisa por " . $info_category[1];
+        $category_select2 = $info_category[0];
+
+        $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_CATEGORY = ? AND STATUS = 0 ORDER BY ID_SERVICE");
+        mysqli_stmt_bind_param($stmt, "s", $category_select2);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    } else if ($time_service == "old"){
+        $info_category = explode('|', $_POST['category_select']);
+        $title = "Resultados da pequisa por " . $info_category[1];
+        $category_select2 = $info_category[0];
+
+        $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES  WHERE COD_CATEGORY = ? AND STATUS = 0 ORDER BY ID_SERVICE DESC");
+        mysqli_stmt_bind_param($stmt, "s", $category_select2);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    }
 }
+
 
 mysqli_close($conn);
 ?>
@@ -84,27 +99,27 @@ mysqli_close($conn);
                 <div class="container">
                     <section class="hero is-dark">
                         <div class="hero-body">
-                            <p class="title">
-                                Resultados da pesquisa
-                            </p>
+                            <p class="title"><?php echo $title ?></p>
                         </div>
                     </section>
                     <br>
                     <div class="container">
-                        <div class="select">
-                            <select>
-                                <option name="time" value="recent">Mais recentes</option>
-                                <option name="time" value="old">Mais antigos</option>
-                            </select>
-                        </div>
-                        <div class="select">
-                            <select>
-                                <?php while ($result_category = mysqli_fetch_assoc($category)) { ?>
-                                    <option name="category_select" value="<?php echo $result_category['ID_CATEGORY'] ?>"><?php echo $result_category['NAME'] ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                        <button class="button is-success" type="submit" name="FILTER2">Aplicar Filtros</button>
+                        <form action="" method="POST">
+                            <div class="select">
+                                <select name="time">
+                                    <option  value="recent">Mais recentes</option>
+                                    <option  value="old">Mais antigos</option>
+                                </select>
+                            </div>
+                            <div class="select">
+                                <select name="category_select">
+                                    <?php while ($result_category = mysqli_fetch_assoc($category)) {  ?>
+                                        <option value="<?php echo $result_category['ID_CATEGORY'] ?>|<?php echo $result_category['NAME'] ?>"><?php echo $result_category['NAME'] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="button is-success" name="filter">Aplicar Filtros</button>
+                        </form>
                     </div>
                     <div class="section is-fullheight">
                         <?php if ($result->num_rows <= 0) { ?>
@@ -164,6 +179,9 @@ mysqli_close($conn);
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
                 },
+                onClickLogout() {
+                    window.location.replace("/logout/")
+                }
             }
         })
     </script>
