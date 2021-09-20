@@ -119,9 +119,6 @@ mysqli_close($conn);
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
                 },
-                onClickLogout() {
-                    window.location.replace("/logout/")
-                },
             }
         })
     </script>
