@@ -160,6 +160,11 @@ if (isset($_POST['REQUEST'])) {
         mysqli_stmt_bind_param($stmt, "ssss", $id_ratings, $id, $note, $review);
         mysqli_stmt_execute($stmt);
     }
+} if(isset($_POST['CONCLUDED'])){
+    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET  STATUS = 3 WHERE ID_SERVICE = ?");
+    mysqli_stmt_bind_param($stmt, "s", $ids);
+    mysqli_stmt_execute($stmt);
+    header("Location: /customermenu/");
 }
 mysqli_close($conn);
 ?>
@@ -445,6 +450,11 @@ mysqli_close($conn);
                                 <?php } ?>
                             </div>
                         <?php } ?>
+                        <?php if($type == "CUSTOMER" && $rowser['STATUS'] == 2){?>
+                            <div class="container has-text-centered">
+                                <button class="button is-info " type="submit" name="CONCLUDED">Concluir Serviço</button>
+                            </div>    
+                        <?php }?>
                     </form>
                 </div>
             </div>

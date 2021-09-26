@@ -59,12 +59,12 @@
         exit();
     }
 
-    if(isset($_POST['TITLE']) && isset($_POST['DESCRIPTION'])) {
+    if(isset($_POST['UPDATE'])) {
         $title = filter_input(INPUT_POST, 'TITLE', FILTER_SANITIZE_STRING);
         $description = filter_input(INPUT_POST, 'DESCRIPTION', FILTER_SANITIZE_STRING);
 
         $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ? WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "ssi", $title, $description, $ids);
+        mysqli_stmt_bind_param($stmt, "sss", $title, $description, $ids);
         $bool = mysqli_stmt_execute($stmt);
         mysqli_close($conn);
 
@@ -88,6 +88,12 @@
                 header("Location: /developmentservices/");
                 break;
         }
+    } if(isset($_POST["DELETE"])){
+
+        $stmt = mysqli_prepare($conn, "DELETE FROM TB_SERVICES WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        mysqli_stmt_execute($stmt);
+        header("Location: /customermenu/");
     }
     
 ?>
@@ -135,8 +141,8 @@
                             </div>
                             <div class="section has-text-centered">
                                 <div class="field">
-                                    <button class="button is-medium is-primary" type="submit"> Alterar serviço </button>
-                                    <button class="button is-medium is-danger" type="button" @click="onClickCancel"> Cancelar alteração </button>
+                                    <button class="button is-medium is-primary" type="submit"  name="UPDATE"> Alterar serviço </button>
+                                    <button class="button is-medium is-danger" type="submit" name="DELETE" > Apagar Serviço </button>
                                 </div>
                             </div>
                         </div>           
