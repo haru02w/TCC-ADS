@@ -13,28 +13,36 @@
         if(empty($name) || empty($cpf) || empty($email) || empty($password1) || empty($password2) || empty($birthdate) || empty($type)) {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     function isEmptyInputLogin($email, $password, $type) {
         if(empty($email) || empty($password) || empty($type)) {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     function isValidEmail($email) {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     function isPasswordMatch($password1, $password2) {
         if($password1 !== $password2) {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     function passwordStrength($password1) {
@@ -43,7 +51,9 @@
         if($score < 2) {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     function login($email, $password, $type, $conn) {
@@ -67,17 +77,26 @@
                         if($bool) {
                             return false;
                         }
-                        echo "Ocorreu um erro inesperado! Por favor, tente novamente!";
-                        exit();
+                        else {
+                            return true;
+                        }
                     }
-                    return false;
+                    else {
+                        return false;
+                    }
                 }
-                return true;
+                else {
+                    return true;
+                }
             } 
-            return true;
+            else {
+                return true;
+            }
             mysqli_close($conn);
         }
-        return true;
+        else {
+            return true;
+        }
     }
 
     function register($name, $cpf, $email, $password1, $birthdate, $type, $conn) {
@@ -134,10 +153,14 @@
                 sendEmail($email, $subject, $content);
                 return false;
             }
+            else {
+                return true;
+            }
             mysqli_close($conn);
-            return true;
         }
-        return true;
+        else {
+            return true; 
+        }
     }
 
     function searchCpfEmail($email, $cpf, $conn) {
@@ -156,8 +179,10 @@
         if($rowstmt != 0 || $rowstmt2 != 0) {
             return true;
         }
+        else {
+            return false;
+        }
         mysqli_close($conn);
-        return false;
     }
 
     function validateCpf($cpf) {
@@ -195,7 +220,9 @@
         if(checkdate($month, $day, $year)) {
             return false;
         }
-        return true;
+        else {
+            return true;
+        }
     }
 
     function searchServices($ids, $conn) {
@@ -276,7 +303,9 @@
         if(empty($hcapresponse) OR $hcapresponse == "") {
             return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
     
     function searchRating($id, $conn) { 
