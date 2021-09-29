@@ -1,4 +1,6 @@
 <?php
+    require("./hidephp.php");
+    
     session_name("HATIDS");
     session_set_cookie_params([
         'lifetime' => 0,
@@ -23,6 +25,8 @@
     $arraybirth = explode("-", $birthdate);
     $type = filter_input(INPUT_POST, 'TYPE_REGISTER', FILTER_SANITIZE_STRING);
     $hcapresponse = $_POST['h-captcha-response'];
+    
+    
     if(isCaptchaComplete($hcapresponse) === true) {
         echo "Por favor, complete a verificação do hCaptcha!";
         exit();

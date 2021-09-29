@@ -1,3 +1,6 @@
+<?php
+    require("./php/hidephp.php");
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

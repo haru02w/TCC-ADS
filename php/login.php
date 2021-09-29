@@ -1,4 +1,5 @@
 <?php
+    require("./hidephp.php");
     session_name("HATIDS");
     session_set_cookie_params([
         'lifetime' => 0,
@@ -17,6 +18,7 @@
     $type = filter_input(INPUT_POST, 'TYPE_LOGIN', FILTER_SANITIZE_STRING);
     if(isset($_POST['remember'])) { $remember = true; } else { $remember = false;}
     $hcapresponse = $_POST['h-captcha-response'];
+    
     if(isCaptchaComplete($hcapresponse) === true) {
         echo "Por favor, complete a verificação do hCaptcha!";
         exit();
