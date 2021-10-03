@@ -1,4 +1,5 @@
 <?php
+    require("./php/hidephp.php");
     session_name("HATIDS");
     session_set_cookie_params([
         'lifetime' => 0,
