@@ -1,4 +1,5 @@
 <?php
+    require("./php/hidephp.php");
     date_default_timezone_set('America/Sao_Paulo');
     require("./php/connection.php");
     require("./php/functions.php");

@@ -36,3 +36,7 @@ RewriteRule whoweare/ whoweare.php [QSA,NC,L]
 
 RewriteRule logout/ php/logout.php [QSA,NC,L]
 
+RewriteRule login/ php/login.php [QSA,NC,L]
+
+RewriteRule register/ php/register.php [QSA,NC,L]
+

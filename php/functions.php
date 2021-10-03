@@ -13,36 +13,29 @@
         if(empty($name) || empty($cpf) || empty($email) || empty($password1) || empty($password2) || empty($birthdate) || empty($type)) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     function isEmptyInputLogin($email, $password, $type) {
         if(empty($email) || empty($password) || empty($type)) {
             return true;
         }
-        else {
-            return false;
-        }
+        
+        return false;
     }
 
     function isValidEmail($email) {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     function isPasswordMatch($password1, $password2) {
         if($password1 !== $password2) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     function passwordStrength($password1) {
@@ -51,9 +44,7 @@
         if($score < 2) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     function login($email, $password, $type, $conn) {
@@ -77,26 +68,16 @@
                         if($bool) {
                             return false;
                         }
-                        else {
-                            return true;
-                        }
+                        return true;
                     }
-                    else {
-                        return false;
-                    }
+                    return false;
                 }
-                else {
-                    return true;
-                }
-            } 
-            else {
                 return true;
-            }
+            } 
             mysqli_close($conn);
-        }
-        else {
             return true;
         }
+        return true;
     }
 
     function register($name, $cpf, $email, $password1, $birthdate, $type, $conn) {
@@ -153,14 +134,10 @@
                 sendEmail($email, $subject, $content);
                 return false;
             }
-            else {
-                return true;
-            }
             mysqli_close($conn);
+            return true;
         }
-        else {
-            return true; 
-        }
+        return true;
     }
 
     function searchCpfEmail($email, $cpf, $conn) {
@@ -179,10 +156,7 @@
         if($rowstmt != 0 || $rowstmt2 != 0) {
             return true;
         }
-        else {
-            return false;
-        }
-        mysqli_close($conn);
+        return false;
     }
 
     function validateCpf($cpf) {
@@ -220,9 +194,7 @@
         if(checkdate($month, $day, $year)) {
             return false;
         }
-        else {
-            return true;
-        }
+        return true;
     }
 
     function searchServices($ids, $conn) {
@@ -303,13 +275,11 @@
         if(empty($hcapresponse) OR $hcapresponse == "") {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
     
     function searchRating($id, $conn) { 
-        $stmt = mysqli_prepare($conn, "SELECT CU.NAME, R.NOTE, R.REVIEW FROM TB_RATING R
+        $stmt = mysqli_prepare($conn, "SELECT CU.NAME, CU.IMAGE, R.NOTE, R.REVIEW FROM TB_RATING R
         JOIN TB_SERVICES S ON (S.COD_DEVELOPER = ? AND S.ID_SERVICE = R.COD_SERVICE)
         JOIN TB_CUSTOMER CU ON (S.COD_CUSTOMER = CU.ID_CUSTOMER)");
         mysqli_stmt_bind_param($stmt, 's', $id);
