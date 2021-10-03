@@ -127,7 +127,6 @@ if (isset($_POST['REQUEST'])) {
         $_SESSION['serviceclass'] = "is-success";
         header("Location: /pendingservices/");
         exit();
-        
     } else {
         $_SESSION['servicemsg'] = "A proposta de serviço não foi recusada! Por favor, tente novamente mais tarde!";
         $_SESSION['serviceclass'] = "is-danger";
@@ -161,7 +160,8 @@ if (isset($_POST['REQUEST'])) {
         mysqli_stmt_bind_param($stmt, "ssss", $id_ratings, $id, $note, $review);
         mysqli_stmt_execute($stmt);
     }
-} if(isset($_POST['CONCLUDED'])){
+}
+if (isset($_POST['CONCLUDED'])) {
     $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET  STATUS = 3 WHERE ID_SERVICE = ?");
     mysqli_stmt_bind_param($stmt, "s", $ids);
     mysqli_stmt_execute($stmt);
@@ -215,6 +215,12 @@ mysqli_close($conn);
                                         <label class="label">Descrição do serviço</label>
                                         <div class="box">
                                             <p class="subtitle is-5"><?php echo $rowser['DESCRIPTION']; ?></p>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Categoria</label>
+                                        <div class="box">
+                                            <p class="subtitle is-5"><?php echo $rowser['NAME']; ?></p>
                                         </div>
                                     </div>
                                     <br>
@@ -285,6 +291,56 @@ mysqli_close($conn);
                                     <?php } ?>
                                 </div>
                             </div>
+                            <ul class="steps has-content-centered is-large">
+                                <li class="steps-segment <?php if($rowser['STATUS'] == 0){
+                                    echo "is-active";
+                                }?>">
+                                    <span class="steps-marker">
+                                        <span class="icon">
+                                            <i class="fa fa-question"></i>
+                                        </span>
+                                    </span>
+                                    <div class="steps-content">
+                                        <p class="is-size-5 has-text-weight-bold">Aguardando desenvolvedor</p>
+                                    </div>
+                                </li>
+                                <li class="steps-segment <?php if($rowser['STATUS'] == 1){
+                                    echo "is-active";
+                                }?>">
+                                    <span class="steps-marker">
+                                        <span class="icon">
+                                            <i class="fa fa-user-clock"></i>
+                                        </span>
+                                    </span>
+                                    <div class="steps-content">
+                                        <p class="is-size-5 has-text-weight-bold">Aguardando resposta</p>
+                                    </div>
+                                </li>
+                                <li class="steps-segment <?php if($rowser['STATUS'] == 2){
+                                    echo "is-active";
+                                }?>">
+                                    <span class="steps-marker">
+                                        <span class="icon">
+                                            <i class="fa fa-spinner"></i>
+                                        </span>
+                                    </span>
+                                    <div class="steps-content">
+                                        <p class="is-size-5 has-text-weight-bold">Serviço em desenvolvimento</p>
+                                    </div>
+                                </li>
+                                <li class="steps-segment <?php if($rowser['STATUS'] == 3){
+                                    echo "is-active";
+                                }?>">
+                                    <span class="steps-marker">
+                                        <span class="icon">
+                                            <i class="fa fa-check"></i>
+                                        </span>
+                                    </span>
+                                    <div class="steps-content">
+                                        <p class="is-size-5 has-text-weight-bold">Serviço Concluído</p>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                         <?php if ($type == "CUSTOMER") { ?>
                             <section class="hero is-dark">
@@ -451,15 +507,15 @@ mysqli_close($conn);
                                 <?php } ?>
                             </div>
                         <?php } ?>
-                        <?php if($type == "CUSTOMER" && $rowser['STATUS'] == 2){?>
+                        <?php if ($type == "CUSTOMER" && $rowser['STATUS'] == 2) { ?>
                             <div class="container has-text-centered">
-                                <button class="button is-info " type="submit" name="CONCLUDED">Concluir Serviço</button>
-                            </div>    
-                        <?php }?>
+                                <button class="button is-primary is-medium " type="submit" name="CONCLUDED">Concluir Serviço</button>
+                            </div>
+                        <?php } ?>
                     </form>
                 </div>
             </div>
-            <?php require "baseboard.php"?>
+            <?php require "baseboard.php" ?>
         </section>
     </div>
     <noscript>
@@ -497,4 +553,5 @@ mysqli_close($conn);
         })
     </script>
 </body>
+
 </html>
