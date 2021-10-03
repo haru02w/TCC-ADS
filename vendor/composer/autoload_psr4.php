@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'ZxcvbnPhp\\' => array($vendorDir . '/bjeavons/zxcvbn-php/src'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'Swoole\\' => array($vendorDir . '/swoole/library/src/core'),
 );

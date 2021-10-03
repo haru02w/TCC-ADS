@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '5a9f9e3b73d7ec2b0ae3b894d5034afdb9e84f11',
+        'reference' => 'f4453afd1acfb62eac950d533d59e32d596bd8f3',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '5a9f9e3b73d7ec2b0ae3b894d5034afdb9e84f11',
+            'reference' => 'f4453afd1acfb62eac950d533d59e32d596bd8f3',
             'dev_requirement' => false,
         ),
         'bjeavons/zxcvbn-php' => array(
@@ -26,6 +26,15 @@
             'install_path' => __DIR__ . '/../bjeavons/zxcvbn-php',
             'aliases' => array(),
             'reference' => '13b505d53c6e72a8fce7f42e3392f13642bbf65e',
+            'dev_requirement' => false,
+        ),
+        'swoole/library' => array(
+            'pretty_version' => 'v0.1.0',
+            'version' => '0.1.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../swoole/library',
+            'aliases' => array(),
+            'reference' => '50585ee60a5ac98d0f7d25cf7593cb238f649345',
             'dev_requirement' => false,
         ),
         'symfony/polyfill-mbstring' => array(
