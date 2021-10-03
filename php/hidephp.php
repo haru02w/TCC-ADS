@@ -1,5 +1,6 @@
 <?php
-    if(strtolower(array_pop(explode('.', $_SERVER["REQUEST_URI"]))) == "php") {
+    $requesteduri = explode('.', $_SERVER["REQUEST_URI"]);
+    if(strtolower(array_pop($requesteduri)) == "php") {
         http_response_code(300);
         include("./errors/404.html");
         die();
