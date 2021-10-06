@@ -198,7 +198,8 @@
     }
 
     function searchServices($ids, $conn) {
-        $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE ID_SERVICE = ?");
+        $stmt = mysqli_prepare($conn, "SELECT *  FROM TB_SERVICES S
+        JOIN TB_CATEGORY C ON (C.ID_CATEGORY = S.COD_CATEGORY AND S.ID_SERVICE = ?)");
         mysqli_stmt_bind_param($stmt, "s", $ids);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
