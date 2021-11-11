@@ -34,22 +34,25 @@
         header("Location: /");
     }
     
-    if (!isset($_GET['ids'])) {
+    if (!isset($_GET['ids']) || !isset($_GET['n']) || !isset($_GET['time'])) {
         header("Location: /customermenu/");
         exit();
     }
     $ids = $_GET['ids'];
+    $title = $_GET['n'];
+    $creationDate = $_GET['time'];
 
     $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
-    $rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
+    $rowser = mysqli_fetch_assoc(searchServices($ids, $title, $creationDate, $conn));
     
     if(is_null($rowuser)) {
         expiredReturn();
     }
     
     if(is_null($rowser)) {
-        header("Location: /customermenu/");
-        exit();
+        http_response_code(404);
+        include("./errors/404.html");
+        die();
     }
     
     $id = $rowuser["ID_CUSTOMER"];
@@ -60,24 +63,43 @@
         exit();
     }
 
-    if(isset($_POST['UPDATE'])) {
-        $title = filter_input(INPUT_POST, 'TITLE', FILTER_SANITIZE_STRING);
-        $description = filter_input(INPUT_POST, 'DESCRIPTION', FILTER_SANITIZE_STRING);
+    if($_SERVER['REQUEST_METHOD'] == "POST") {
+        if(isset($_POST['UPDATE'])) {
+            $title = filter_input(INPUT_POST, 'TITLE', FILTER_SANITIZE_STRING);
+            $cleantitle = strtolower(preg_replace("/[^a-zA-Z0-9-]/", "-", strtr(utf8_decode(trim($title)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),"aaaaeeiooouuncAAAAEEIOOOUUNC-")));
+            $cleantitle = preg_replace('/-+/', '-', $cleantitle);
+            $description = filter_input(INPUT_POST, 'DESCRIPTION', FILTER_SANITIZE_STRING);
 
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, DESCRIPTION = ? WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "sss", $title, $description, $ids);
-        $bool = mysqli_stmt_execute($stmt);
-        mysqli_close($conn);
-
-        if($bool) {
-            $_SESSION['servicemsg'] = "As informações do serviço foram alteradas com sucesso!";
-            $_SESSION['serviceclass'] = "is-success";
-        }
-        else {
-            $_SESSION['servicemsg'] = "Falha ao alterar as informações do serviço! Por favor, tente novamente mais tarde!";
-            $_SESSION['serviceclass'] = "is-danger";
-        }
+            if(empty($title) OR empty($description)) {
+                $_SESSION['servicereturn'] = array("msg" => "Por favor, preencha os campos de titulo e descrição!","class" => "is-danger");
+            }
+            else {
+                $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET TITLE = ?, CLEANTITLE = ?, DESCRIPTION = ? WHERE ID_SERVICE = ?");
+                mysqli_stmt_bind_param($stmt, "ssss", $title, $cleantitle, $description, $ids);
+                $bool = mysqli_stmt_execute($stmt);
+                mysqli_close($conn);
         
+                if($bool) {
+                    $_SESSION['servicereturn'] = array("msg" => "As informações do serviço foram alteradas com sucesso!","class" => "is-success");
+                }
+                else {
+                    $_SESSION['servicereturn'] = array("msg" => "Falha ao alterar as informações do serviço! Por favor, tente novamente mais tarde!","class" => "is-danger");
+                }
+            }
+        } 
+        if(isset($_POST['DELETE'])){
+            $stmt = mysqli_prepare($conn, "DELETE FROM TB_SERVICES WHERE ID_SERVICE = ?");
+            mysqli_stmt_bind_param($stmt, "s", $ids);
+            $bool = mysqli_stmt_execute($stmt);
+    
+            if($bool) {
+                $_SESSION['servicereturn'] = array("msg" => "O serviço foi removido com sucesso!","class" => "is-success");
+            }
+            else {
+                $_SESSION['servicereturn'] = array("msg" => "Falha ao remover os serviço! Por favor, tente novamente mais tarde!","class" => "is-danger");
+            }
+        }
+
         switch($rowser['STATUS']){
             case 0:
                 header("Location: /customermenu/");
@@ -89,14 +111,9 @@
                 header("Location: /developmentservices/");
                 break;
         }
-    } if(isset($_POST["DELETE"])){
-
-        $stmt = mysqli_prepare($conn, "DELETE FROM TB_SERVICES WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "s", $ids);
-        mysqli_stmt_execute($stmt);
-        header("Location: /customermenu/");
+        exit();
     }
-    
+    mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -142,30 +159,28 @@
                             </div>
                             <div class="section has-text-centered">
                                 <div class="field">
-                                    <button class="button is-medium is-primary" type="submit"  name="UPDATE"> Alterar serviço </button>
-                                    <button class="button is-medium is-danger" type="submit" name="DELETE" > Apagar Serviço </button>
+                                    <button class="button is-medium is-primary" type="submit" name="UPDATE">Alterar serviço</button>
+                                    <button class="button is-medium is-danger" type="submit" name="DELETE">Apagar Serviço</button>
+                                    <button class="button is-medium is-info" type="button" @click="onClickCancel">Cancelar alteração</button>
                                 </div>
                             </div>
                         </div>           
                     </form>
                 </div>
             </div>
-            <?php require "baseboard.php"?>
         </section>
+            <?php require "baseboard.php"?>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
-        new Vue({
+        var vue = new Vue({
             el: '#app',
             data: {
                 isActiveBurger: false,
             },
             methods: {
                 onClickBurger() {
-                    this.isActiveBurger = !this.isActiveBurger
-                },
-                onClickLogout() {
-                    window.location.replace("/logout/")
+                    this.isActiveBurger = !this.isActiveBurger;
                 },
                 onClickCancel() {
                     switch(<?php echo $rowser['STATUS']; ?>) {
@@ -179,10 +194,34 @@
                             window.location.replace("/developmentservices/");
                             break;
                     }
-                    
                 },
+                showMessage(message, messageclass, position) {
+                    bulmaToast.toast({
+                        message: message,
+                        type: messageclass,
+                        duration: 5000,
+                        position: position,
+                        dismissible: true,
+                        pauseOnHover: true,
+                        closeOnClick: false,
+                        animate: {
+                            in: 'fadeIn',
+                            out: 'fadeOut'
+                        },
+                    })
+                }
             }
         })
     </script>
+    <?php
+    if (isset($_SESSION['servicereturn'])) {
+        echo "<script>";
+        $serviceclass = $_SESSION['servicereturn']['class'];
+        $servicemsg = $_SESSION['servicereturn']['msg'];
+        echo "vue.showMessage('$servicemsg', '$serviceclass', 'bottom-center')";
+        unset($_SESSION['servicereturn']);
+        echo "</script>";
+    }
+    ?>
 </body>
 </html>

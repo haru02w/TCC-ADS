@@ -23,6 +23,9 @@
             <a class="navbar-item" href="/privacypolicy/">
                 Politica de Privacidade
             </a>
+            <a class="navbar-item" href="/howitworks/">
+                Como funciona?
+            </a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">

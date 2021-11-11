@@ -1,173 +1,205 @@
 <?php
-require("./php/hidephp.php");
-session_name("HATIDS");
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => "",
-    'secure' => true,
-    'httponly' => false,
-    'samesite' => 'None'
-]);
-session_start();
-date_default_timezone_set('America/Sao_Paulo');
-require('./php/connection.php');
-require('./php/functions.php');
+    require("./php/hidephp.php");
+    session_name("HATIDS");
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => "",
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'None'
+    ]);
+    session_start();
+    date_default_timezone_set('America/Sao_Paulo');
+    require('./php/connection.php');
+    require('./php/functions.php');
 
-if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
-    $email = $_COOKIE['EMAIL'];
-    $type = $_COOKIE['TYPE'];
-} else if (isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
-    if (isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+    if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
+        $email = $_COOKIE['EMAIL'];
+        $type = $_COOKIE['TYPE'];
+    } 
+    else if (isset($_SESSION['EMAIL']) && isset($_SESSION['TYPE'])) {
+        if (isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] > 60 * 30) {
+            expiredReturn();
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+        $email = $_SESSION['EMAIL'];
+        $type = $_SESSION['TYPE'];
+    } 
+    else {
         expiredReturn();
     }
-    $_SESSION['LAST_ACTIVITY'] = time();
-    $email = $_SESSION['EMAIL'];
-    $type = $_SESSION['TYPE'];
-} else {
-    expiredReturn();
-}
 
-if (!isset($_GET['ids'])) {
-    header("Location: /" . strtolower($type) . "menu.php");
-    exit();
-}
-$ids = $_GET['ids'];
-
-$rowser = mysqli_fetch_assoc(searchServices($ids, $conn));
-$rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
-
-if (is_null($rowuser)) {
-    expiredReturn();
-}
-
-if (is_null($rowser)) {
-    header("Location: /" . strtolower($type) . "menu/");
-    exit();
-}
-
-$id = $rowuser["ID_$type"];
-$iddev = $rowser['COD_DEVELOPER'];
-$idcus = $rowser['COD_CUSTOMER'];
-
-
-if ($type == "CUSTOMER") {
-    if ($idcus !== $id) {
-        header("Location: /customermenu/");
+    if (!isset($_GET['ids']) || !isset($_GET['n']) || !isset($_GET['time'])) {
+        header("Location: /");
         exit();
     }
-} elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
-    if ($iddev !== $id) {
-        header("Location: /developermenu/");
-        exit();
+    $ids = $_GET['ids'];
+    $title = $_GET['n'];
+    $creationDate = $_GET['time'];
+
+    $rowser = mysqli_fetch_assoc(searchServices($ids, $title, $creationDate, $conn));
+    $rowuser = mysqli_fetch_assoc(searchEmailType($email, $type, $conn));
+
+    if (is_null($rowuser)) {
+        expiredReturn();
     }
-}
 
-$infodev = searchInfoDev($iddev, $conn);
-$infocus = searchInfoCus($idcus, $conn);
-$developer_exist = 0;
-$service_exist = 0;
+    if (is_null($rowser)) {
+        http_response_code(404);
+        include("./errors/404.html");
+        die();
+    }
 
-if ($rowser['STATUS'] >= 1) {
-    $birthdev = explode("-", $infodev['BIRTH_DATE']);
-    $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
-}
+    $id = $rowuser["ID_$type"];
+    $iddev = $rowser['COD_DEVELOPER'];
+    $idcus = $rowser['COD_CUSTOMER'];
 
-$birthcus = explode("-", $infocus['BIRTH_DATE']);
-$infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
-
-if (isset($_POST['REQUEST'])) {
-    $status = $rowser['STATUS'];
-
-    if ($status >= 1) {
-        $_SESSION['servicemsg'] = "O serviço já foi solicitado por outro desenvolvedor! Por favor, solicite outro serviço!";
-        $_SESSION['serviceclass'] = "is-warning";
-        header("Location: /pendingservices/");
-        exit();
-    } else {
-        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
-        mysqli_stmt_bind_param($stmt, "is", $id, $ids);
-        $bool = mysqli_stmt_execute($stmt);
-
-        if ($bool) {
-            $_SESSION['servicemsg'] = "Solicitação enviada com sucesso! Por favor, aguarde a confirmação do cliente!";
-            $_SESSION['serviceclass'] = "is-success";
-            header("Location: /pendingservices/");
+    if ($type == "CUSTOMER") {
+        if ($idcus !== $id) {
+            header("Location: /customermenu/");
             exit();
-        } else {
-            $_SESSION['servicemsg'] = "Falha ao enviar a solicitação! Por favor, tente novamente mais tarde!";
-            $_SESSION['serviceclass'] = "is-danger";
-            header("Location: /pendingservices/");
+        }
+    } 
+    elseif ($type == "DEVELOPER" and $rowser['STATUS'] >= 1) {
+        if ($iddev !== $id) {
+            header("Location: /search/");
             exit();
         }
     }
-} else if (isset($_POST['SEND'])) {
-    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
-    mysqli_stmt_bind_param($stmt, "s", $ids);
-    $bool = mysqli_stmt_execute($stmt);
 
-    if ($bool) {
-        $_SESSION['servicemsg'] = "A proposta de serviço foi aceita! Para começar o desenvolvimento, entre em contato com o desenvolvedor!";
-        $_SESSION['serviceclass'] = "is-success";
-        header("Location: /developmentservices/");
-        exit();
-    } else {
-        $_SESSION['servicemsg'] = "A proposta de serviço não foi aceita! Por favor, tente novamente mais tarde!";
-        $_SESSION['serviceclass'] = "is-danger";
-        header("Location: /developmentservices/");
-        exit();
-    }
-} else if (isset($_POST['SENDRECUSE'])) {
-    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
-    mysqli_stmt_bind_param($stmt, "s", $ids);
-    $bool = mysqli_stmt_execute($stmt);
+    $infodev = searchInfoDev($iddev, $conn);
+    $infocus = searchInfoCus($idcus, $conn);
 
-    if ($bool) {
-        $_SESSION['servicemsg'] = "A proposta de serviço foi recusada com sucesso!";
-        $_SESSION['serviceclass'] = "is-success";
-        header("Location: /pendingservices/");
+    if ($rowser['STATUS'] >= 1) {
+        $birthdev = explode("-", $infodev['BIRTH_DATE']);
+        $infodev['BIRTH_DATE'] = $birthdev[2] . "/" . $birthdev[1] . "/" . $birthdev[0];
+    }
+
+    $birthcus = explode("-", $infocus['BIRTH_DATE']);
+    $infocus['BIRTH_DATE'] = $birthcus[2] . "/" . $birthcus[1] . "/" . $birthcus[0];
+
+    if (isset($_POST['REQUEST'])) {
+        $status = $rowser['STATUS'];
+
+        if ($status >= 1) {
+            $_SESSION['servicereturn'] = array("msg" => "O serviço já foi solicitado por outro desenvolvedor! Por favor, solicite outro serviço!","class" => "is-warning");
+            header("Location: /pendingservices/");
+            exit();
+        } 
+        else {
+            $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = ?, STATUS = 1 WHERE ID_SERVICE = ?");
+            mysqli_stmt_bind_param($stmt, "is", $id, $ids);
+            $bool = mysqli_stmt_execute($stmt);
+            $boolmail = statusChanged($infocus['EMAIL'], "Atualização no status do serviço (".$rowser['TITLE'].").", "Você tem uma proposta de um desenvolver no serviço " . $rowser['TITLE']. "!");
+
+            if ($bool && $boolmail) {
+                $_SESSION['servicereturn'] = array("msg" => "Solicitação enviada com sucesso! Por favor, aguarde a confirmação do cliente!","class" => "is-success");
+                header("Location: /pendingservices/");
+                exit();
+            } 
+            else {
+                $_SESSION['servicereturn'] = array("msg" => "Falha ao enviar a solicitação! Por favor, tente novamente mais tarde!","class" => "is-danger");
+                header("Location: /pendingservices/");
+                exit();
+            }
+        }
+    } 
+    else if (isset($_POST['SEND'])) {
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 2 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        $bool = mysqli_stmt_execute($stmt);
+        $boolmail = statusChanged($infodev['EMAIL'], "Atualização no status do serviço (".$rowser['TITLE'].").", "A sua proposta no serviço ".$rowser['TITLE'] ." foi aceita! Entre em contato com o cliente para iniciar o desenvolvimento!");
+
+        if ($bool && $boolmail) {
+            $_SESSION['servicereturn'] = array("msg" => "A proposta de serviço foi aceita! Para começar o desenvolvimento, entre em contato com o desenvolvedor!","class" => "is-success");
+            header("Location: /developmentservices/");
+            exit();
+        } else {
+            $_SESSION['servicereturn'] = array("msg" => "Não foi possivel aceitar a proposta de serviço! Por favor, tente novamente mais tarde!","class" => "is-danger");
+            header("Location: /developmentservices/");
+            exit();
+        }
+    } 
+    else if (isset($_POST['SENDRECUSE'])) {
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET COD_DEVELOPER = NULL, STATUS = 0 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        $bool = mysqli_stmt_execute($stmt);
+        $boolmail = statusChanged($infodev['EMAIL'], "Atualização no status do serviço (".$rowser['TITLE'].").", "A sua proposta no serviço ".$rowser['TITLE'] ." foi recusada! Você pode selecionar outro serviço no nosso site.");
+
+        if ($bool && $boolmail) {
+            $_SESSION['servicereturn'] = array("msg" => "A proposta de serviço foi recusada com sucesso!","class" => "is-success");
+            header("Location: /pendingservices/");
+            exit();
+            
+        } else {
+            $_SESSION['servicereturn'] = array("msg" => "Não foi possivel recusar a proposta de serviço. Por favor, tente novamente mais tarde!","class" => "is-danger");
+            header("Location: /pendingservices/");
+            exit();
+        }
+    } 
+    elseif (isset($_POST['REPORT'])) {
+        $result_report = mysqli_query($conn, "SELECT COD_DEVELOPER FROM TB_REPORT WHERE COD_DEVELOPER = '$id' AND COD_SERVICE = '$ids'");
+        if (mysqli_num_rows($result_report) == 1) {
+            $_SESSION['servicereturn'] = array("msg" => "Você já reportou esse serviço!","class" => "is-warning");
+        } 
+        else {
+            $type_report = filter_input(INPUT_POST, "cont", FILTER_SANITIZE_STRING);
+            $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, COD_DEVELOPER, TYPE_REPORT) VALUES (?,?,?)");
+            mysqli_stmt_bind_param($stmt, "sss", $ids, $id, $type_report);
+            $bool = mysqli_stmt_execute($stmt);
+            $boolmail = statusChanged($infocus['EMAIL'], "ATENÇÃO!!","O serviço ".$rowser['TITLE']." foi REPORTADO. Verifique se há algum conteúdo impróprio. Caso não haja, ignore esta mensagem.");
+            
+            if($bool) {
+                $_SESSION['servicereturn'] = array("msg" => "O serviço foi reportado com sucesso!","class" => "is-success");
+            }
+            else {
+                $_SESSION['servicereturn'] = array("msg" => "Falha ao reportar o serviço! Por favor, tente novamente mais tarde!","class" => "is-danger");
+            }
+            $result_report_limit = mysqli_query($conn, "SELECT COD_SERVICE FROM TB_REPORT WHERE COD_SERVICE = '$ids'");
+
+            if(mysqli_num_rows($result_report_limit) >= 4){
+              mysqli_query($conn, "DELETE FROM TB_SERVICES WHERE COD_SERVICE = '$ids'");
+              statusChanged($infocus['EMAIL'], "Atualização do serviço (".$rowser['TITLE'].").", "O serviço ".$rowser['TITLE']." foi BANIDO. Você pode criar outro serviço no nosso site.");
+            }
+        }
+    } 
+    elseif (isset($_POST['RATING'])) {
+        $resrat = mysqli_query($conn, "SELECT COD_SERVICE FROM TB_RATING WHERE COD_CUSTOMER = '$id' AND COD_SERVICE = '$ids'");
+        if (mysqli_num_rows($resrat) == 1) {
+            $_SESSION['servicereturn'] = array("msg" => "Você já avaliou esse desenvolvedor!","class" => "is-warning");
+        } 
+        else {
+            $note = filter_input(INPUT_POST, "av", FILTER_SANITIZE_STRING);
+            $review = filter_input(INPUT_POST, "review", FILTER_SANITIZE_STRING);
+            $stmt = mysqli_prepare($conn, "INSERT INTO TB_RATING(COD_SERVICE, COD_CUSTOMER, NOTE, REVIEW) VALUES (?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssss", $ids, $id, $note, $review);
+            $bool = mysqli_stmt_execute($stmt);
+
+            if($bool) {
+                $_SESSION['servicereturn'] = array("msg" => "O desenvolvedor foi avaliado com sucesso!","class" => "is-success");
+            }
+            else {
+                $_SESSION['servicereturn'] = array("msg" => "Falha ao enviar a sua avaliação! Por favor, tente novamente mais tarde!","class" => "is-danger");
+            }
+        }
+    } 
+    elseif(isset($_POST['CONCLUDED'])){
+        $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET STATUS = 3 WHERE ID_SERVICE = ?");
+        mysqli_stmt_bind_param($stmt, "s", $ids);
+        $bool = mysqli_stmt_execute($stmt);
+        $boolmail = statusChanged($infodev['EMAIL'], "Atualização no status do serviço (".$rowser['TITLE'].").", "O serviço ".$rowser['TITLE']." foi marcado como concluído pelo Cliente. Obrigado por utilizar nossos serviços.");
+
+        if($bool && $boolmail) {
+            $_SESSION['servicereturn'] = array("msg" => "O serviço foi concluído com sucesso! Caso deseje, você pode estar enviando uma avaliação ao desenvolvedor!","class" => "is-success");
+        }
+        else {
+            $_SESSION['servicereturn'] = array("msg" => "Não foi possivel definir o serviço como concluído! Por favor, tente novamente mais tarde!","class" => "is-danger");
+        }
+        header("Location: /doneservices/");
         exit();
-    } else {
-        $_SESSION['servicemsg'] = "A proposta de serviço não foi recusada! Por favor, tente novamente mais tarde!";
-        $_SESSION['serviceclass'] = "is-danger";
-        header("Location: /pendingservices/");
-        exit();
     }
-    //codigo do report, com verificação se o developer já reportou
-} elseif (isset($_POST['REPORT'])) {
-    $idss = $rowser['ID_SERVICE'];
-    $result_report = mysqli_query($conn, "SELECT COD_DEVELOPER FROM TB_REPORT WHERE COD_DEVELOPER = '$id' AND COD_SERVICE = '$idss'");
-    if (mysqli_num_rows($result_report) == 1) {
-        $developer_exist = 1;
-    } else {
-        $developer_exist = 2;
-        $type_report = $_POST['cont'];
-        $stmt = mysqli_prepare($conn, "INSERT INTO TB_REPORT(COD_SERVICE, COD_DEVELOPER,TYPE_REPORT) VALUES (?,?,?)");
-        mysqli_stmt_bind_param($stmt, "sss", $idss, $id, $type_report);
-        mysqli_stmt_execute($stmt);
-    }
-    //codigo do rating, com verificação se o serviço já foi avaliado
-} elseif (isset($_POST['RATING'])) {
-    $id_ratings = $rowser['ID_SERVICE'];
-    $result_rating = mysqli_query($conn, "SELECT COD_SERVICE FROM TB_RATING WHERE COD_CUSTOMER = '$id' AND COD_SERVICE = '$id_ratings'");
-    if (mysqli_num_rows($result_rating) == 1) {
-        $service_exist = 1;
-    } else {
-        $service_exist = 2;
-        $note = $_POST['av'];
-        $review = $_POST['review'];
-        $stmt = mysqli_prepare($conn, "INSERT INTO TB_RATING(COD_SERVICE, COD_CUSTOMER, NOTE, REVIEW) VALUES (?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "ssss", $id_ratings, $id, $note, $review);
-        mysqli_stmt_execute($stmt);
-    }
-}
-if (isset($_POST['CONCLUDED'])) {
-    $stmt = mysqli_prepare($conn, "UPDATE TB_SERVICES SET  STATUS = 3 WHERE ID_SERVICE = ?");
-    mysqli_stmt_bind_param($stmt, "s", $ids);
-    mysqli_stmt_execute($stmt);
-    header("Location: /customermenu/");
-}
-mysqli_close($conn);
+    mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html>
@@ -181,6 +213,7 @@ mysqli_close($conn);
     <script src="/js/jscript.js"></script>
     <script src="/js/v-mask.min.js"></script>
     <script src="/js/moment.js"></script>
+    <script src="/js/bulma-toast.min.js"></script>
 </head>
 
 <body class="background">
@@ -206,23 +239,23 @@ mysqli_close($conn);
                             <div class="columns">
                                 <div class="column is-5">
                                     <div class="field">
-                                        <label class="label">Título do serviço</label>
+                                        <label class="label has-text-white">Título do serviço</label>
                                         <div class="box">
                                             <p class="subtitle is-5"><?php echo $rowser['TITLE']; ?></p>
                                         </div>
                                     </div>
                                     <div class="field">
-                                        <label class="label">Descrição do serviço</label>
-                                        <div class="box">
-                                            <p class="subtitle is-5"><?php echo $rowser['DESCRIPTION']; ?></p>
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <label class="label">Categoria</label>
+                                        <label class="label has-text-white">Categoria do serviço</label>
                                         <div class="box">
                                             <p class="subtitle is-5"><?php echo $rowser['NAME']; ?></p>
                                         </div>
                                     </div>
+                                    <div class="field">
+                                        <label class="label has-text-white">Descrição do serviço</label>
+                                        <div class="box">
+                                            <p class="subtitle is-5"><?php echo $rowser['DESCRIPTION']; ?></p>
+                                        </div>
+                                    </div> 
                                     <br>
                                     <?php if ($rowser['STATUS'] == 0 and $type == "DEVELOPER") { ?>
                                         <a class="button is-danger is-medium" @click="onClickButtonModal">Reportar</a>
@@ -260,87 +293,60 @@ mysqli_close($conn);
                                                             Outro
                                                         </label>
                                                         <br>
-                                                        <button type="submit" class="button" name="REPORT">Enviar Denúncia</button>
+                                                        <br>
+                                                        <button type="submit" class="button is-info" name="REPORT">Enviar Denúncia</button>
                                                     </div>
                                                 </section>
                                             </div>
                                         </div>
                                         <br>
-                                        <!-- codigo da mensagem do report caso o developer já tenha reportado e quando o report é feito-->
-                                        <?php if ($developer_exist == 1) { ?>
-                                            <article class="message is-danger">
-                                                <div class="message-header">
-                                                    <p>Aviso</p>
-                                                    <button class="delete" aria-label="delete"></button>
-                                                </div>
-                                                <div class="message-body">
-                                                    Você já reportou esse serviço.
-                                                </div>
-                                            </article>
-                                        <?php } else if ($developer_exist == 2) { ?>
-                                            <article class="message is-sucess">
-                                                <div class="message-header">
-                                                    <p>Aviso</p>
-                                                    <button class="delete" aria-label="delete"></button>
-                                                </div>
-                                                <div class="message-body">
-                                                    Reporte feito com sucesso.
-                                                </div>
-                                            </article>
-                                        <?php } ?>
                                     <?php } ?>
-                                </div>
+                                </div>            
                             </div>
-                            <ul class="steps has-content-centered is-large">
-                                <li class="steps-segment <?php if($rowser['STATUS'] == 0){
-                                    echo "is-active";
-                                }?>">
-                                    <span class="steps-marker">
-                                        <span class="icon">
-                                            <i class="fa fa-question"></i>
+                            <?php if($type == "CUSTOMER"){ ?>
+                                <ul class="steps has-content-centered is-large">
+                                    <li class="steps-segment <?php if($rowser['STATUS'] == 0){echo "is-active";}?>">
+                                        <span class="steps-marker">
+                                            <span class="icon">
+                                                <i class="fa fa-question"></i>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <div class="steps-content">
-                                        <p class="is-size-5 has-text-weight-bold">Aguardando desenvolvedor</p>
-                                    </div>
-                                </li>
-                                <li class="steps-segment <?php if($rowser['STATUS'] == 1){
-                                    echo "is-active";
-                                }?>">
-                                    <span class="steps-marker">
-                                        <span class="icon">
-                                            <i class="fa fa-user-clock"></i>
+                                        <div class="steps-content">
+                                            <p class="is-size-5 has-text-weight-bold has-text-white">Aguardando desenvolvedor</p>
+                                        </div>
+                                    </li>
+                                    <li class="steps-segment <?php if($rowser['STATUS'] == 1){echo "is-active";}?>">
+                                        <span class="steps-marker">
+                                            <span class="icon">
+                                                <i class="fa fa-user-clock"></i>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <div class="steps-content">
-                                        <p class="is-size-5 has-text-weight-bold">Aguardando resposta</p>
-                                    </div>
-                                </li>
-                                <li class="steps-segment <?php if($rowser['STATUS'] == 2){
-                                    echo "is-active";
-                                }?>">
-                                    <span class="steps-marker">
-                                        <span class="icon">
-                                            <i class="fa fa-spinner"></i>
+                                        <div class="steps-content">
+                                            <p class="is-size-5 has-text-weight-bold has-text-white">Aguardando resposta</p>
+                                        </div>
+                                    </li>
+                                    <li class="steps-segment <?php if($rowser['STATUS'] == 2){echo "is-active";}?>">
+                                        <span class="steps-marker">
+                                            <span class="icon">
+                                                <i class="fa fa-spinner"></i>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <div class="steps-content">
-                                        <p class="is-size-5 has-text-weight-bold">Serviço em desenvolvimento</p>
-                                    </div>
-                                </li>
-                                <li class="steps-segment <?php if($rowser['STATUS'] == 3){
-                                    echo "is-active";
-                                }?>">
-                                    <span class="steps-marker">
-                                        <span class="icon">
-                                            <i class="fa fa-check"></i>
+                                        <div class="steps-content">
+                                            <p class="is-size-5 has-text-weight-bold has-text-white">Serviço em desenvolvimento</p>
+                                        </div>
+                                    </li>
+                                    <li class="steps-segment <?php if($rowser['STATUS'] == 3){echo "is-active";}?>">
+                                        <span class="steps-marker">
+                                            <span class="icon">
+                                                <i class="fa fa-check"></i>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <div class="steps-content">
-                                        <p class="is-size-5 has-text-weight-bold">Serviço Concluído</p>
-                                    </div>
-                                </li>
-                            </ul>
+                                        <div class="steps-content">
+                                            <p class="is-size-5 has-text-weight-bold has-text-white">Serviço Concluído</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            <?php } ?>
                         </div>
                         <?php if ($type == "CUSTOMER") { ?>
                             <section class="hero is-dark">
@@ -355,13 +361,12 @@ mysqli_close($conn);
                                     <div class="columns">
                                         <div class="column is-3">
                                             <div class="field">
-                                                <label class="label has-text-centered"> Foto do desenvolvedor </label>
+                                                <label class="label has-text-centered has-text-white"> Foto do desenvolvedor </label>
                                                 <figure class="image is-square">
-                                                    <img style="object-fit: cover;" class="is-rounded" src="<?php echo $infodev['IMAGE'] ?>">
+                                                    <img style="object-fit: cover;" class="is-rounded" src="../../../<?php echo $infodev['IMAGE'] ?>">
                                                 </figure>
                                                 <br>
                                                 <?php if ($rowser['STATUS'] == 3) { ?>
-                                                    <?php if ($service_exist == 0) { ?>
                                                         <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
                                                         <div class="modal" :class="{'is-active': isActiveModal}">
                                                             <div class="modal-background"></div>
@@ -388,47 +393,39 @@ mysqli_close($conn);
                                                                     <label class="label" for="description">Sua review do serviço</label>
                                                                     <textarea class="textarea has-fixed-size" placeholder="Digite aqui" name="review"></textarea>
                                                                     <br>
-                                                                    <button type="submit" class="button" name="RATING">Avaliar</button>
+                                                                    <button type="submit" class="button is-info" name="RATING">Avaliar</button>
                                                                 </section>
                                                             </div>
                                                         </div>
-                                                    <?php } ?>
-                                                    <!-- codigo da mensagem de avaliação quando a avaliação já foi feita ou quando é a primeira vez -->
-                                                    <?php if ($service_exist == 2) { ?>
-                                                        <article class="message is-success">
-                                                            <div class="message-header">
-                                                                <p>Aviso</p>
-                                                                <button class="delete" aria-label="delete"></button>
-                                                            </div>
-                                                            <div class="message-body">
-                                                                Serviço avaliado com sucesso.
-                                                            </div>
-                                                        </article>
-                                                    <?php } ?>
                                                 <?php } ?>
                                             </div>
                                         </div>
                                         <div class="column">
                                             <div class="field">
-                                                <label class="label">Nome</label>
+                                                <label class="label has-text-white">Nome</label>
                                                 <div class="box">
                                                     <p class="subtitle is-5"><?php echo $infodev['NAME']; ?></p>
                                                 </div>
                                             </div>
                                             <div class="field">
-                                                <label class="label" for="description">Email</label>
+                                                <label class="label has-text-white">Email</label>
                                                 <div class="box">
                                                     <p class="subtitle is-5"><?php echo $infodev['EMAIL']; ?></p>
                                                 </div>
                                             </div>
                                             <div class="field">
-                                                <label class="label" for="contact">Data de nascimento</label>
+                                                <label class="label has-text-white">Data de nascimento</label>
                                                 <div class="box">
                                                     <p class="subtitle is-5"><?php echo $infodev['BIRTH_DATE']; ?></p>
                                                 </div>
                                             </div>
+                                            <div class="field">
+                                                <label class="label has-text-white">Telefone</label>
+                                                <div class="box">
+                                                    <p class="subtitle is-5"><?php echo $infodev['CONTACT']; ?></p>
+                                                </div>
+                                            </div>
                                         </div>
-
                                     </div>
                                 <?php } ?>
                                 <?php if ($rowser['STATUS'] <= 0) { ?>
@@ -458,33 +455,33 @@ mysqli_close($conn);
                                 <div class="columns">
                                     <div class="column is-3">
                                         <div class="field">
-                                            <label class="label has-text-centered">Foto do cliente</label>
+                                            <label class="label has-text-centered has-text-white">Foto do cliente</label>
                                             <figure class="image is-square">
-                                                <img style="object-fit: cover;" class="is-rounded" src="<?php echo $infocus['IMAGE']; ?>">
+                                                <img style="object-fit: cover;" class="is-rounded" src="../../../<?php echo $infocus['IMAGE']; ?>">
                                             </figure>
                                         </div>
                                     </div>
                                     <div class="column">
                                         <div class="field">
-                                            <label class="label">Nome</label>
+                                            <label class="label has-text-white">Nome</label>
                                             <div class="box">
                                                 <p class="subtitle is-5"><?php echo $infocus['NAME']; ?></p>
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <label class="label">Email</label>
+                                            <label class="label has-text-white">Email</label>
                                             <div class="box">
                                                 <p class="subtitle is-5"><?php echo $infocus['EMAIL']; ?></p>
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <label class="label">Data de nascimento</label>
+                                            <label class="label has-text-white">Data de nascimento</label>
                                             <div class="box">
                                                 <p class="subtitle is-5"><?php echo $infocus['BIRTH_DATE']; ?></p>
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <label class="label">Contato</label>
+                                            <label class="label has-text-white">Telefone</label>
                                             <div class="box">
                                                 <p class="subtitle is-5"><?php echo $infocus['CONTACT'] ?></p>
                                             </div>
@@ -507,36 +504,20 @@ mysqli_close($conn);
                                 <?php } ?>
                             </div>
                         <?php } ?>
-                        <?php if ($type == "CUSTOMER" && $rowser['STATUS'] == 2) { ?>
+                        <?php if($type == "CUSTOMER" && $rowser['STATUS'] == 2){?>
                             <div class="container has-text-centered">
-                                <button class="button is-primary is-medium " type="submit" name="CONCLUDED">Concluir Serviço</button>
-                            </div>
-                        <?php } ?>
+                                <button class="button is-info is-medium" type="submit" name="CONCLUDED">Concluir Serviço</button>
+                            </div>    
+                        <?php }?>
                     </form>
                 </div>
             </div>
-            <?php require "baseboard.php" ?>
         </section>
+            <?php require "baseboard.php"?>
     </div>
-    <noscript>
-        <style>
-            .script {
-                display: none;
-            }
-        </style>
-        <section class="hero is-fullheight">
-            <div class="hero-body">
-                <div class="container has-text-centered">
-                    <div class="box has-text-centered">
-                        <p class="title font-face"> JavaScript não habilitado! </p> <br>
-                        <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </noscript>
+    <noscript> <style> .script { display: none; } </style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
-        new Vue({
+    var vue = new Vue({
             el: '#app',
             data: {
                 isActiveBurger: false,
@@ -548,10 +529,34 @@ mysqli_close($conn);
                 },
                 onClickButtonModal() {
                     this.isActiveModal = !this.isActiveModal
+                },
+                showMessage(message, messageclass, position) {
+                    bulmaToast.toast({
+                        message: message,
+                        type: messageclass,
+                        duration: 5000,
+                        position: position,
+                        dismissible: true,
+                        pauseOnHover: true,
+                        closeOnClick: false,
+                        animate: {
+                            in: 'fadeIn',
+                            out: 'fadeOut'
+                        },
+                    })
                 }
             }
         })
     </script>
+    <?php
+    if (isset($_SESSION['servicereturn'])) {
+        echo "<script>";
+        $serviceclass = $_SESSION['servicereturn']['class'];
+        $servicemsg = $_SESSION['servicereturn']['msg'];
+        echo "vue.showMessage('$servicemsg', '$serviceclass', 'bottom-center')";
+        unset($_SESSION['servicereturn']);
+        echo "</script>";
+    }
+    ?>
 </body>
-
 </html>

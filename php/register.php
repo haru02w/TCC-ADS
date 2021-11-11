@@ -19,6 +19,7 @@
     $email = filter_input(INPUT_POST, 'EMAIL_REGISTER', FILTER_SANITIZE_EMAIL);
     $password1 = filter_input(INPUT_POST, 'PASSWORD1', FILTER_SANITIZE_STRING);
     $password2 = filter_input(INPUT_POST, 'PASSWORD2', FILTER_SANITIZE_STRING);
+    $contact = filter_input(INPUT_POST, 'CONTACT', FILTER_SANITIZE_STRING);
     $birthdate = implode('-',array_reverse(explode('/',filter_input(INPUT_POST, 'BIRTH_DATE', FILTER_SANITIZE_STRING)),FALSE));
     $arraybirth = explode("-", $birthdate);
     $type = filter_input(INPUT_POST, 'TYPE_REGISTER', FILTER_SANITIZE_STRING);
@@ -44,7 +45,7 @@
         $verifyResponse = curl_exec($verify);
         $responseData = json_decode($verifyResponse);
         
-        if(isEmptyInputRegister($name, $cpf, $email, $password1, $password2, $birthdate, $type)) {
+        if(isEmptyInputRegister($name, $cpf, $email, $password1, $password2, $birthdate, $type, $contact)) {
             echo "Por favor, preencha todos os campos!";
             exit();
         }
@@ -80,7 +81,7 @@
         }
     
         if($responseData->success) {
-            if(!register($name, $cpf, $email, $password1, $birthdate, $type, $conn)) {
+            if(!register($name, $cpf, $email, $password1, $birthdate, $contact, $type, $conn)) {
                 echo "Sucesso";
             }
             else{

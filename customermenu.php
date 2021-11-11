@@ -43,7 +43,7 @@
     
     $id = $rowuser["ID_CUSTOMER"];
 
-    $stmt = mysqli_prepare($conn, "SELECT * FROM TB_SERVICES WHERE COD_CUSTOMER = ? AND STATUS = 0");
+    $stmt = mysqli_prepare($conn, "SELECT *,SubString(DESCRIPTION,1,180) as DESC2 FROM TB_SERVICES S JOIN TB_CATEGORY C ON (C.ID_CATEGORY = S.COD_CATEGORY) WHERE COD_CUSTOMER = ? AND STATUS = 0");
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
     $resultserv = mysqli_stmt_get_result($stmt);
@@ -80,41 +80,46 @@
                             </p>
                         </div>
                     </section>
-                    <div class="section is-fullheight">   
-                        <?php if($resultserv->num_rows <= 0) { ?>
-                            <div class="box">
-                                <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
-                            </div>
-                        <?php } ?>
-                        <div class="columns is-variable is-multiline">
+                    <br> 
+                    <?php if($resultserv->num_rows <= 0) { ?>
+                        <div class="box">
+                            <p class="title is-5"> Você não tem serviços sem desenvolvedores! <a href="/createservice/" class="is-5">Clique aqui</a> para criar um serviço!</p>
+                        </div>
+                    <?php } ?>
+                    <div class="columns is-variable is-multiline">
                         <?php while ($rowser = mysqli_fetch_assoc($resultserv)) { ?>
-                            <div class="column is-4">
+                            <div class="column is-6">
                                 <div class="card bm--card-equal-height">
-                                    <header class="card-header">
-                                        <p class="card-header-title"><?php echo $rowser['TITLE']; ?></p>
-                                    </header>
                                     <div class="card-content">
                                         <div class="content">
-                                            <?php echo $rowser['DESCRIPTION']; ?> 
+                                            <p class="title is-3">
+                                                <?php echo $rowser['TITLE']; ?>
+                                            </p>
+                                            <p class="subtitle is-5">
+                                                <?php echo publishedDate($rowser['CREATIONDATE'])?>
+                                            </p>
+                                            <p class="subtitle is-4">
+                                                <?php echo $rowser['DESC2']; ?> ...
+                                            </p>
+                                            <button type="button" class="button is-rounded is-link"><?php echo $rowser['NAME']?></button>
                                         </div>
                                     </div>
                                     <footer class="card-footer">
-                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Ver detalhes</a>
-                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>" class="card-footer-item">Editar serviço</a>
+                                        <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['CREATIONDATE']?>/<?php echo $rowser['CLEANTITLE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/updateservice/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['CREATIONDATE']?>/<?php echo $rowser['CLEANTITLE']?>" class="card-footer-item">Editar serviço</a>
                                     </footer>
                                 </div>
                             </div>
                         <?php } ?>
-                        </div>
                     </div>
                 </div>
             </div>
-            <?php require "baseboard.php"?>
         </section>
+            <?php require "baseboard.php"?>
     </div>
     <noscript> <style> .script {display:none;}</style> <section class="hero is-fullheight"> <div class="hero-body"> <div class="container has-text-centered"> <div class="box has-text-centered"> <p class="title font-face"> JavaScript não habilitado! </p> <br> <p class="title is-5"> Por favor, habilite o JavaScript para a página funcionar! </p> </div> </div> </div> </section> </noscript>
     <script>
-        new Vue({
+    var vue = new Vue({
             el: '#app',
             data: {
                 isActiveBurger: false,
@@ -123,17 +128,33 @@
                 onClickBurger() {
                     this.isActiveBurger = !this.isActiveBurger
                 },
+                showMessage(message, messageclass, position) {
+                    bulmaToast.toast({
+                        message: message,
+                        type: messageclass,
+                        duration: 6000,
+                        position: position,
+                        dismissible: true,
+                        pauseOnHover: true,
+                        closeOnClick: false,
+                        animate: {
+                            in: 'fadeIn',
+                            out: 'fadeOut'
+                        },
+                    })
+                }
             }
         })
     </script>
-    <?php if (isset($_SESSION['servicemsg'])) {
-    echo "<script>";
-            $serviceclass = $_SESSION['serviceclass'];
-            $servicemsg = $_SESSION['servicemsg'];
-            echo "bulmaToast.toast({ message: '$servicemsg', type: '$serviceclass', duration: 6000, position: 'bottom-center', dismissible: true, pauseOnHover: true, closeOnClick: false, animate: { in: 'fadeIn', out: 'fadeOut' }, })";
-            unset($_SESSION['servicemsg']);
-            unset($_SESSION['serviceclass']);
-    echo "</script>";
-    } ?>
+    <?php
+    if (isset($_SESSION['servicereturn'])) {
+        echo "<script>";
+        $serviceclass = $_SESSION['servicereturn']['class'];
+        $servicemsg = $_SESSION['servicereturn']['msg'];
+        echo "vue.showMessage('$servicemsg', '$serviceclass', 'bottom-center')";
+        unset($_SESSION['servicereturn']);
+        echo "</script>";
+    }
+    ?>
 </body>
 </html>

@@ -1,7 +1,8 @@
 {
     "require": {
         "bjeavons/zxcvbn-php": "^1.2",
-        "swoole/library": "^0.1.0"
+        "swoole/library": "^0.1.0",
+        "cboden/ratchet": "^0.4.3"
 
     }
 }

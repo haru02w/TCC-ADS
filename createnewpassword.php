@@ -180,8 +180,8 @@
                     </div>
                 </div>
             </div>
-            <?php require "baseboard.php"?>
         </section>
+            <?php require "baseboard.php"?>
     </div>
     <noscript>
         <style>

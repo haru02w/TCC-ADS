@@ -54,9 +54,8 @@
 
                         if (in_array($fileext, $alloext)) {
 
-                            if ($row['IMAGE'] !== "/images/user.png") {
+                            if ($row['IMAGE'] !== "images/user.png") {
                                 unlink($row['IMAGE']);
-                                $row['IMAGE'] = "/images/user.png";
                             }
 
                             $date = date("m/d/Yh:i:sa", time());
@@ -103,10 +102,10 @@
             }
         }
         if (isset($_POST['delete'])) {
-            if ($row['IMAGE'] != "/images/user.png") {
+            if ($row['IMAGE'] != "images/user.png") {
                 try {
                     $actualimage = $row['IMAGE'];
-                    $filepath = "/images/user.png";
+                    $filepath = "images/user.png";
 
                     if (!mysqli_query($conn, "UPDATE TB_$type SET IMAGE = '$filepath' WHERE ID_$type = '$id'")) {
                         throw new Exception("Falha ao definir a imagem padrão! Por favor, tente novamente mais tarde");
@@ -128,7 +127,35 @@
                 }
             }
         }
+
+        if(isset($_POST['update'])) {
+            $email = filter_input(INPUT_POST, 'emailupdate', FILTER_SANITIZE_EMAIL);
+            $tel = filter_input(INPUT_POST, 'telupdate', FILTER_SANITIZE_STRING);
+
+            if(empty($email) || empty($tel)) {
+                $_SESSION['servicereturn'] = array("msg" => "Para atualizar os dados da conta, por favor, preencha todos os campos!", "class" => "is-danger");
+            }
+            else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['servicereturn'] = array("msg" => "O email inserido não é válido!", "class" => "is-danger");
+            }
+            else {
+                $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET CONTACT = ?, EMAIL = ? WHERE ID_$type = ?");
+                mysqli_stmt_bind_param($stmt, "sss", $tel, $email, $id);
+                $bool = mysqli_stmt_execute($stmt);
+                mysqli_close($conn);
+        
+                if($bool) {
+                    $_SESSION['servicereturn'] = array("msg" => "Os dados da conta foram alterados com sucesso!","class" => "is-success");
+                }
+                else {
+                    $_SESSION['servicereturn'] = array("msg" => "Falha ao alterar os dados da conta! Por favor, tente novamente mais tarde!","class" => "is-danger");
+                }
+            }
+        }
+        header("Location: /account/");
+        exit();
     }
+
     mysqli_close($conn);
 ?>
 
@@ -138,11 +165,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Meu Perfil</title>
+    <title>Hatchfy - Meu Perfil</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
     <script src="/js/vue.js"></script>
     <script src="/js/bulma-toast.min.js"></script>
+    <script src="/js/v-mask.min.js"></script>
 </head>
 
 <body class="background">
@@ -170,35 +198,62 @@
                                     <div class="column">
                                         <figure class="image is-square">
                                             <img id="image" style="object-fit: cover;" class="is-rounded" src="../<?php echo $row['IMAGE']; ?>">
-                                            <div class="edit">
-                                                <label for="imageUpload"></label> 
-                                            </div>
+                                            <form method="post" enctype="multipart/form-data" action="">
+                                                <?php if ($row['IMAGE'] != "images/user.png") { ?>
+                                                    <div class="edit left">
+                                                        <label id="lblRemove" class="has-tooltip-multiline has-tooltip-text-centered" data-tooltip="Remover foto de perfil" @click="onClickRemoveImage"></label>
+                                                    </div>
+                                                    <div class="modal" :class="{'is-active': isActiveRemoveImage}">
+                                                        <div class="modal-background"></div>
+                                                        <div class="modal-card">
+                                                            <header class="modal-card-head">
+                                                                <p class="modal-card-title">Remover imagem</p>
+                                                                <button type="button" class="delete" aria-label="close" @click="onClickRemoveImage"></button>
+                                                            </header>
+                                                            <section class="modal-card-body">Você realmente deseja remover a sua foto de perfil?</section>
+                                                            <footer class="modal-card-foot">
+                                                                <button type="submit" name="delete" class="button is-danger is-fullwidth has-text-centered">Remover foto de perfil</button>
+                                                            </footer>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
+                                                <div class="edit">
+                                                    <input @click="nameImage" type="file" id="imageUpload" name="image" accept="image/png, image/jpeg">
+                                                    <label id="lblEdit" class="has-tooltip-multiline has-tooltip-text-centered" for="imageUpload" data-tooltip="Adicionar foto de perfil"></label>
+                                                </div>
+                                                <div class="modal" :class="{'is-active': isActiveButtonImage}">
+                                                    <div class="modal-background"></div>
+                                                    <div class="modal-card">
+                                                        <header class="modal-card-head">
+                                                            <p class="modal-card-title">Confirme a sua foto de perfil</p>
+                                                            <button type="button" class="delete" aria-label="close" @click="onClickButtonImage"></button>
+                                                        </header>
+                                                        <section class="modal-card-body">
+                                                            <figure class="image is-square">
+                                                                <img id="imageConfirm" src="../images/user.png" style="object-fit: cover;" class="is-rounded">
+                                                            </figure>
+                                                        </section>
+                                                        <footer class="modal-card-foot">
+                                                            <button type="submit" name="submit" class="button is-success is-fullwidth has-text-centered">Enviar foto de perfil</button>
+                                                        </footer>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </figure>
                                     </div>
                                     <div class="column">
                                         <div class="box has-text-centered">
-                                            <div class="box has-text-centered" id="imgpreview" style="display: none;">
-                                                <div class="title">
-                                                    <p class="title is-5 has-text-danger"> Você está vendo apenas uma prévia da imagem! Para aplica-la, por favor, clique no botão "Enviar foto de perfil"!</p>
-                                                </div>
-                                            </div>
                                             <label class="label is-medium">Nome do Usuário</label>
                                             <p class="subtitle is-5"><?php echo $row['NAME']; ?></p>
                                             <label class="label is-medium">Email do Usuário</label>
                                             <p class="subtitle is-5"><?php echo $row['EMAIL']; ?></p>
                                             <label class="label is-medium">Data de Nascimento</label>
                                             <p class="subtitle is-5"><?php echo (implode('/', array_reverse(explode('-', $row['BIRTH_DATE']), FALSE))); ?></p>
-                                            <form id="formFile" method="post" enctype="multipart/form-data" action="">
-                                                <input class="imageUploadInput" @click="nameImage" type="file" id="imageUpload" name="image" accept="image/png, image/jpeg">
-                                                <div v-show="isActiveButtonImage" class="field">
-                                                    <button type="submit" name="submit" class="button is-link"> Enviar foto de perfil </button>
-                                                </div>
-                                                <?php if ($row['IMAGE'] != "/images/user.png") { ?>
-                                                    <div class="field">
-                                                        <button type="submit" name="delete" class="button is-danger"> Remover foto de perfil </button>
-                                                    </div>
-                                                <?php } ?>
-                                            </form>
+                                            <label class="label is-medium"> Telefone</label>
+                                            <p class="subtitle is-5"><?php echo $row['CONTACT']; ?></p>
+                                        </div>
+                                        <div class="buttons is-centered">
+                                            <button class="button is-info" @click="onClickUpdate"> Atualizar dados da conta</button>
                                         </div>
                                     </div>
                                 </div>
@@ -215,13 +270,13 @@
                                         <?php while ($rating = mysqli_fetch_assoc($rowrat)) { ?>
                                             <article class="media">
                                                 <figure class="media-left">
-                                                    <p class="image is-64x64">
-                                                        <img class="is-rounded" src="../<?php echo $rating['IMAGE']; ?>">
+                                                    <p class="image is-64x64 is-square">
+                                                        <img class="is-rounded" style="object-fit: cover;" src="../<?php echo $rating['IMAGE']; ?>">
                                                     </p>
                                                 </figure>
                                                 <div class="media-content">
                                                     <div class="content">
-                                                        <p class="title is-5"> <?php echo $rating['NAME'] ?> </p>
+                                                        <p class="title is-5"> <?php echo $rating['NAME']; ?> (<?php echo $rating['TITLE']; ?>)</p>
                                                         <p class="subtitle is-5">
                                                             <?php
                                                             for ($stars = 0; $stars < $rating['NOTE']; $stars++) {
@@ -247,8 +302,37 @@
                     </div>
                 </div>
             </div>
-            <?php require "baseboard.php" ?>
+            <form action="" method="POST">
+                <div class="modal" :class="{'is-active': isActiveUpdate}">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Atualizar dados da conta</p>
+                            <button type="button" class="delete" aria-label="Fechar" @click="onClickUpdate"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <div class="field">
+                                <label class="label">Telefone</label>
+                                <div class="control">
+                                    <input autocomplete="on" class="input" type="tel" placeholder="Digite aqui o telefone" v-mask="maskTel()" v-model="contact" name="telupdate">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input autocomplete="on" class="input" type="email" placeholder="Digite aqui o email" v-model='email' name="emailupdate">
+                                </div>
+                            </div>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <button type="submit" class="button is-success" name="update">Alterar dados</button>
+                            <button type="button" class="button" @click="onClickUpdate">Cancelar alteração</button>
+                        </footer>
+                    </div>
+                </div>
+            </form>
         </section>
+        <?php require "baseboard.php" ?>
     </div>
     <noscript>
         <style>
@@ -268,27 +352,37 @@
         </section>
     </noscript>
     <script>
-        var profilePicSrc = document.querySelector("#image").src;
+        Vue.directive('mask', VueMask.VueMaskDirective);
         var vue = new Vue({
             el: '#app',
             data: {
                 isActiveBurger: false,
                 isActiveButtonImage: false,
+                isActiveRemoveImage: false,
+                isActiveUpdate: false,
+                contact: "<?php echo $row['CONTACT']; ?>",
+                email: "<?php echo $row['EMAIL']; ?>",
             },
             methods: {
                 onClickBurger() {
-                    this.isActiveBurger = !this.isActiveBurger
+                    this.isActiveBurger = !this.isActiveBurger;
+                },
+                onClickUpdate() {
+                    this.isActiveUpdate = !this.isActiveUpdate;
+                },
+                onClickButtonImage() {
+                    this.isActiveButtonImage = !this.isActiveButtonImage;
+                },
+                onClickRemoveImage() {
+                    this.isActiveRemoveImage = !this.isActiveRemoveImage;
                 },
                 nameImage() {
                     const fileInput = document.querySelector('input[type=file]');
-                    const profilePic = document.querySelector("#image");
-                    const previewWarning = document.querySelector("#imgpreview");
+                    const profilePic = document.querySelector("#imageConfirm");
 
                     function resetNameImage() {
                         fileInput.value = null;
-                        previewWarning.style = "display: none;";
                         vue.$data.isActiveButtonImage = false;
-                        profilePic.src = profilePicSrc;
                     }
 
                     fileInput.onchange = (evt) => {
@@ -312,7 +406,6 @@
                                         }
                                         fileReader.onload = function() {
                                             profilePic.src = fileReader.result;
-                                            previewWarning.style = "display: block;";
                                             vue.$data.isActiveButtonImage = true;
                                         }
                                         fileReader.readAsDataURL(fileInputFirst);
@@ -337,7 +430,7 @@
                     bulmaToast.toast({
                         message: message,
                         type: messageclass,
-                        duration: 5000,
+                        duration: 6000,
                         position: position,
                         dismissible: true,
                         pauseOnHover: true,
@@ -347,6 +440,13 @@
                             out: 'fadeOut'
                         },
                     })
+                },
+                maskTel() {
+                    if (!!this.contact) {
+                        return this.contact.length == 15 ? '(##) #####-####' : '(##) ####-#####'
+                    } else {
+                        return '(##) #####-####'
+                    }
                 }
             }
         })

@@ -24,9 +24,6 @@
                     Serviços
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/developermenu/">
-                        Meus serviços
-                    </a>
                     <a class="navbar-item" href="/search/" >
                         Serviços disponíveis
                     </a>
@@ -44,18 +41,6 @@
             <a class="navbar-item" href="/account/"> Minha conta </a>
         </div>
         <div class="navbar-end">
-            <div class="navbar-item">
-                <form action="/search/" method="GET">
-                    <div class="field has-addons">
-                        <div class="control">
-                            <input type="search" class="input is-rounded" placeholder="Procurar serviços..." name="q">
-                        </div>
-                        <div class="control has-icons">
-                            <button type="submit" class="fas fa-search button is-rounded"></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
             <div class="navbar-item">
               <a href="/logout/">
                 <button class="button is-danger">

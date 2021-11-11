@@ -17,13 +17,13 @@ if (isset($_SESSION['TYPE'])) {
   if ($_SESSION['TYPE'] == "CUSTOMER") {
     header("Location: /customermenu/");
   } else if ($_SESSION['TYPE'] == "DEVELOPER") {
-    header("Location: /developermenu/");
+    header("Location: /search/");
   }
 } else if (isset($_COOKIE['EMAIL']) && isset($_COOKIE['TYPE'])) {
   if ($_COOKIE['TYPE'] == "CUSTOMER") {
     header("Location: /customermenu/");
   } else if ($_COOKIE['TYPE'] == "DEVELOPER") {
-    header("Location: /developermenu/");
+    header("Location: /search/");
   }
 }
 ?>
@@ -33,7 +33,7 @@ if (isset($_SESSION['TYPE'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="HatchFy. Receba ou crie o seu programa agora! Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.">
+  <meta name="description" content="Receba ou crie o seu programa agora! Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado através de uma aplicação feita por desenvolvedores jovens.">
   <title>Hatchfy</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Roboto&display=swap">
@@ -53,18 +53,17 @@ if (isset($_SESSION['TYPE'])) {
       <div class="notification-alert"></div>
       <div class="hero-body">
         <div class="container has-text-centered">
-          <p class="title is-2">HatchFy</p>
-          <p class="subtitle is-4" id="textColorTwo">
-            Receba ou crie o seu programa agora!
+          <p class="subtitle is-2" id="textColorThree">
+             Receba ou crie o seu programa agora!
           </p>
           <p class="subtitle is-4" id="textColorTwo">
             Nossa plataforma te ajudará a obter experiência no mercado de trabalho ou ter o seu problema solucionado 
             através de uma aplicação feita por desenvolvedores em inicio de carreira.
           </p>
           <p class="subtitle is-4" id="textColorTwo">
-            Este projeto tem o objetivo de proporcionar ensinamentos sobre Analise e Desenvolvimento de Softwares<br> 
-            para alunos. Assim como soluções simples para problemas do meio digital sem processos burocráticos<br>
-             para a confecção de um software com propósitos específicos
+            Este projeto tem o objetivo de proporcionar ensinamentos sobre Analise e Desenvolvimento de Softwares.<br>  
+            Assim como soluções simples para problemas do meio digital sem processos burocráticos<br>
+             utilizando a confecção de um software.
           </p>
         </div>
       </div>
@@ -213,6 +212,15 @@ if (isset($_SESSION['TYPE'])) {
               <p class="help is-success" v-show="validateDate() == true">A data é válida!</p>
               <p class="help is-danger" v-show="validateDate() == false">A data é inválida!</p>
             </div>
+            <div class="field">
+              <label for="CONTACT" class="label">Telefone</label>
+              <div class="control has-icons-left">
+                <input type="tel" autocomplete="on" class="input" placeholder="Digite aqui o seu telefone" id="CONTACT" name="CONTACT" @input="validSubmitRegister" v-model="registerContact" v-mask='maskTel()'>
+                <span class="icon is-small is-left">
+                  <i class="fas fa-phone"></i>
+                </span>
+              </div>
+            </div>
             <label for="TYPE_REGISTER" class="label">Tipo de usuário</label>
             <div class="control has-icons-left">
               <div class="select">
@@ -332,6 +340,7 @@ if (isset($_SESSION['TYPE'])) {
         registerName: "",
         registerCpf: "",
         registerEmail: "",
+        registerContact: "",
         passwd1: "",
         passwd2: "",
         registerDate: "",
@@ -400,12 +409,14 @@ if (isset($_SESSION['TYPE'])) {
             if (registerDateArray[2] < <?php echo "$year - 100" ?> || registerDateArray[2] > <?php echo "$year" ?>) {
               this.isValidDateRegister = false;
               return false;
-            } else {
+            } 
+            else {
               this.isValidDateRegister = moment(this.registerDate, 'DD/MM/YYYY').isValid();
               if (this.isValidDateRegister != true) {
                 this.isValidDateRegister = false;
                 return false;
-              } else {
+              } 
+              else {
                 this.isValidDateRegister = true;
                 return true;
               }
@@ -413,7 +424,7 @@ if (isset($_SESSION['TYPE'])) {
           }
         },
         validSubmitRegister() {
-          if (this.registerName != "" && this.registerCpf != "" && this.registerEmail != "" && this.passwd1 != "" && this.passwd2 != "" && this.registerDate != "" && this.registerSelect != "") {
+          if (this.registerName != "" && this.registerCpf != "" && this.registerEmail != "" && this.passwd1 != "" && this.passwd2 != "" && this.registerDate != "" && this.registerSelect != "" && this.registerContact != "") {
             this.isValidCpfRegister = this.validateCpf();
             this.isValidDateRegister = this.validateDate();
             this.isValidEmailRegister = this.validateEmail();
@@ -421,10 +432,12 @@ if (isset($_SESSION['TYPE'])) {
             this.isValidPassword = this.validatePassword();
             if (this.isValidCpfRegister == true && this.isValidDateRegister == true && this.isValidEmailRegister == true && this.isConfirmPassword == true && this.isValidPassword >= 1) {
               this.casesRegister = true;
-            } else {
+            } 
+            else {
               this.casesRegister = false;
             }
-          } else {
+          } 
+          else {
             this.casesRegister = false;
           }
         },
@@ -433,11 +446,21 @@ if (isset($_SESSION['TYPE'])) {
             var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
             if (this.loginEmail.match(mailformat)) {
               this.casesLogin = true;
-            } else {
+            } 
+            else {
               this.casesLogin = false;
             }
-          } else {
+          } 
+          else {
             this.casesLogin = false;
+          }
+        },
+        maskTel() {
+          if(!!this.registerContact) {
+            return this.registerContact.length == 15 ? '(##) #####-####' : '(##) ####-#####'
+          } 
+          else {
+            return '(##) #####-####'
           }
         },
       }

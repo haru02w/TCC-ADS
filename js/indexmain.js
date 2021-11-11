@@ -96,7 +96,7 @@ postButtonL.onclick = () => {
                     window.location.replace("/customermenu/");
                 }
                 else if (data === "DEVELOPER") {
-                    window.location.replace("/developermenu/");
+                    window.location.replace("/search/");
                 }
                 else {
                     messageDivL.style.display = "block";
@@ -122,7 +122,7 @@ postButtonL.onclick = () => {
 }
 
 function resetR() {
-    vue.$data.registerName = "", vue.$data.registerCpf = "", vue.$data.registerEmail = "", vue.$data.registerDate = "", vue.$data.registerSelect = "", vue.$data.passwd1 = "", vue.$data.passwd2 = "";
+    vue.$data.registerName = "", vue.$data.registerCpf = "", vue.$data.registerEmail = "", vue.$data.registerDate = "", vue.$data.registerSelect = "", vue.$data.passwd1 = "", vue.$data.passwd2 = "", vue.$data.registerContact = "";
     document.getElementById("NAME_REGISTER").value = "";
     document.getElementById("CPF_REGISTER").value = "";
     document.getElementById("EMAIL_REGISTER").value = "";
@@ -130,6 +130,7 @@ function resetR() {
     document.getElementById("PASSWORD2").value = "";
     document.getElementById("BIRTH_DATE").value = "";
     document.getElementById("TYPE_REGISTER").value = "";
+    document.getElementById("CONTACT").value = "";
 }
 function resetL() {
     vue.$data.loginPasswd = "", vue.$data.loginSelect = "";
