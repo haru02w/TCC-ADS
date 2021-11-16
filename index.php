@@ -47,10 +47,10 @@ if (isset($_SESSION['TYPE'])) {
 
 <body class="background">
   <div id="app" class="script">
+    <div class="notification-alert" id="notificationAlert"></div>
     <div class="pageloader is-link is-active"><span class="title">Carregando...</span></div>
     <?php require("./headerindex.php"); ?>
     <section class="hero is-fullheight">
-      <div class="notification-alert"></div>
       <div class="hero-body">
         <div class="container has-text-centered">
           <p class="subtitle is-2" id="textColorThree">
@@ -472,7 +472,7 @@ if (isset($_SESSION['TYPE'])) {
     <?php if (isset($_SESSION['indexmsg'])) {
       $indexclass = $_SESSION['indexclass'];
       $indexmsg = $_SESSION['indexmsg'];
-      echo "var notif = document.querySelector('#app .hero .notification-alert'); notif.classList.add('$indexclass'); notif.innerHTML = '$indexmsg';";
+      echo "var notif = document.querySelector('#notificationAlert'); notif.classList.add('$indexclass'); notif.innerHTML = '$indexmsg';";
       unset($_SESSION['indexmsg']);
       unset($_SESSION['indexclass']);
     } ?>
@@ -481,7 +481,7 @@ if (isset($_SESSION['TYPE'])) {
       pgload.classList.remove('is-active');
       <?php 
         if(isset($indexmsg)) {
-          echo "notif.classList.add('show'); setTimeout(function () { document.querySelector('#app .hero .notification-alert').classList.remove('show');} , 6000);";
+          echo "notif.classList.add('show'); setTimeout(function () { notif.classList.remove('show');} , 6000);";
         }
       ?>
     }

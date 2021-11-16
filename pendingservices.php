@@ -61,8 +61,12 @@
 
 <body class="background">
     <div id="app" class="script">
-        <?php if($type == "CUSTOMER") { require("./headercustomer.php");} else { require("./headerdeveloper.php");} ?>
-        <br>
+        <?php if($type == "CUSTOMER") { 
+            require("./headercustomer.php");
+        }
+        else { 
+            require("./headerdeveloper.php");
+        } ?>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">

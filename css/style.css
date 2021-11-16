@@ -62,9 +62,10 @@ body::-webkit-scrollbar-thumb {
 .notification-alert {
   color: white;
   top: 0%;
-  right: 50%;
+  right: 0%;
   font-size: 20px;
-  position: sticky;
+  position: fixed;
+  word-break: break-all;
   padding: 19px;
   border-radius: 14px;
   transition-timing-function: cubic-bezier(.17,.67,.83,.67);
@@ -174,8 +175,12 @@ body::-webkit-scrollbar-thumb {
   color: #48c78e;
 }
 
-
-#imageUpload{
+#imageUpload {
   display: none;
+}
+
+#ChatBox {
+  overflow-y: scroll; 
+  height: 400px;
 }
 

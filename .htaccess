@@ -42,5 +42,5 @@ RewriteRule register/ php/register.php [QSA,NC,L]
 
 RewriteRule howitworks/ howitworks.php [QSA,NC,L]
 
-RewriteRule chat/ chat.php [QSA,NC,L]
+RewriteRule chat/([0-9a-zA-Z-]+) chat.php?setoken=$1 [QSA,NC,L]
 

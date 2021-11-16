@@ -223,7 +223,6 @@
         } else {
             require("./headerdeveloper.php");
         } ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
@@ -367,36 +366,36 @@
                                                 </figure>
                                                 <br>
                                                 <?php if ($rowser['STATUS'] == 3) { ?>
-                                                        <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
-                                                        <div class="modal" :class="{'is-active': isActiveModal}">
-                                                            <div class="modal-background"></div>
-                                                            <div class="modal-card">
-                                                                <header class="modal-card-head">
-                                                                    <p class="modal-card-title">Avaliar Serviço</p>
-                                                                    <button class="delete" type="button" aria-label="close" @click="onClickButtonModal"></button>
-                                                                </header>
-                                                                <section class="modal-card-body has-text-centered">
-                                                                    <div class="estrelas">
-                                                                        <input type="radio" id="cm_star-empty" name="av" value="" checked />
-                                                                        <label for="cm_star-1"><i class="fa fa-star fa-3x"></i></label>
-                                                                        <input type="radio" id="cm_star-1" name="av" value="1" />
-                                                                        <label for="cm_star-2"><i class="fa fa-star fa-3x"></i></label>
-                                                                        <input type="radio" id="cm_star-2" name="av" value="2" />
-                                                                        <label for="cm_star-3"><i class="fa fa-star fa-3x"></i></label>
-                                                                        <input type="radio" id="cm_star-3" name="av" value="3" />
-                                                                        <label for="cm_star-4"><i class="fa fa-star fa-3x"></i></label>
-                                                                        <input type="radio" id="cm_star-4" name="av" value="4" />
-                                                                        <label for="cm_star-5"><i class="fa fa-star fa-3x"></i></label>
-                                                                        <input type="radio" id="cm_star-5" name="av" value="5" />
-                                                                    </div>
-                                                                    <br>
-                                                                    <label class="label" for="description">Sua review do serviço</label>
-                                                                    <textarea class="textarea has-fixed-size" placeholder="Digite aqui" name="review"></textarea>
-                                                                    <br>
-                                                                    <button type="submit" class="button is-info" name="RATING">Avaliar</button>
-                                                                </section>
-                                                            </div>
+                                                    <div class="buttons is-centered"><button type="button" class="button is-success is-medium" @click="onClickButtonModal">Avaliar</button></div>
+                                                    <div class="modal" :class="{'is-active': isActiveModal}">
+                                                        <div class="modal-background"></div>
+                                                        <div class="modal-card">
+                                                            <header class="modal-card-head">
+                                                                <p class="modal-card-title">Avaliar Serviço</p>
+                                                                <button class="delete" type="button" aria-label="close" @click="onClickButtonModal"></button>
+                                                            </header>
+                                                            <section class="modal-card-body has-text-centered">
+                                                                <div class="estrelas">
+                                                                    <input type="radio" id="cm_star-empty" name="av" value="" checked />
+                                                                    <label for="cm_star-1"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-1" name="av" value="1" />
+                                                                    <label for="cm_star-2"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-2" name="av" value="2" />
+                                                                    <label for="cm_star-3"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-3" name="av" value="3" />
+                                                                    <label for="cm_star-4"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-4" name="av" value="4" />
+                                                                    <label for="cm_star-5"><i class="fa fa-star fa-3x"></i></label>
+                                                                    <input type="radio" id="cm_star-5" name="av" value="5" />
+                                                                </div>
+                                                                <br>
+                                                                <label class="label" for="description">Sua review do serviço</label>
+                                                                <textarea class="textarea has-fixed-size" placeholder="Digite aqui" name="review"></textarea>
+                                                                <br>
+                                                                <button type="submit" class="button is-info" name="RATING">Avaliar</button>
+                                                            </section>
                                                         </div>
+                                                    </div>
                                                 <?php } ?>
                                             </div>
                                         </div>
@@ -434,11 +433,13 @@
                                     </div>
                                 <?php } ?>
                                 <?php if ($rowser['STATUS'] == 1) { ?>
-                                    <div class="section has-text-centered">
-                                        <div class="field">
-                                            <button class="button is-medium is-primary" name="SEND" type="submit">Aceitar pedido</button>
-                                            <button class="button is-medium is-danger" name="SENDRECUSE" type="submit">Recusar pedido</button>
-                                        </div>
+                                    <div class="field is-grouped is-grouped-centered is-grouped-multiline">
+                                        <p class="control">
+                                            <button type="submit" name="SEND" class="button is-medium is-primary">Aceitar pedido</button>
+                                        </p>
+                                        <p class="control">
+                                            <button type="submit" name="SENDRECUSE" class="button is-medium is-danger">Recusar pedido</button>
+                                        </p>
                                     </div>
                                 <?php } ?>
                             </div>

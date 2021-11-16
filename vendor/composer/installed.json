@@ -1000,61 +1000,6 @@
             "install-path": "../react/stream"
         },
         {
-            "name": "swoole/library",
-            "version": "v0.1.0",
-            "version_normalized": "0.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swoole/library.git",
-                "reference": "50585ee60a5ac98d0f7d25cf7593cb238f649345"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swoole/library/zipball/50585ee60a5ac98d0f7d25cf7593cb238f649345",
-                "reference": "50585ee60a5ac98d0f7d25cf7593cb238f649345",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1"
-            },
-            "time": "2019-12-06T06:44:20+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "src/constants.php",
-                    "src/std/exec.php",
-                    "src/ext/curl.php",
-                    "src/functions.php",
-                    "src/alias.php",
-                    "src/alias_ns.php"
-                ],
-                "psr-4": {
-                    "Swoole\\": "src/core"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Swoole Team",
-                    "email": "team@swoole.com"
-                }
-            ],
-            "description": "Library of Swoole",
-            "keywords": [
-                "library",
-                "swoole"
-            ],
-            "support": {
-                "issues": "https://github.com/swoole/library",
-                "source": "https://github.com/swoole/library/tree/v0.1.0"
-            },
-            "install-path": "../swoole/library"
-        },
-        {
             "name": "symfony/deprecation-contracts",
             "version": "v2.4.0",
             "version_normalized": "2.4.0.0",

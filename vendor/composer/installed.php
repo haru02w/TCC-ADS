@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '772abd8bcc8f7d76cc397e404cf1a25d4f3dafbf',
+        'reference' => '4139d3295ffb9e077d98d00ebe18dde88499f53b',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '772abd8bcc8f7d76cc397e404cf1a25d4f3dafbf',
+            'reference' => '4139d3295ffb9e077d98d00ebe18dde88499f53b',
             'dev_requirement' => false,
         ),
         'bjeavons/zxcvbn-php' => array(
@@ -149,15 +149,6 @@
             'install_path' => __DIR__ . '/../react/stream',
             'aliases' => array(),
             'reference' => '7a423506ee1903e89f1e08ec5f0ed430ff784ae9',
-            'dev_requirement' => false,
-        ),
-        'swoole/library' => array(
-            'pretty_version' => 'v0.1.0',
-            'version' => '0.1.0.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../swoole/library',
-            'aliases' => array(),
-            'reference' => '50585ee60a5ac98d0f7d25cf7593cb238f649345',
             'dev_requirement' => false,
         ),
         'symfony/deprecation-contracts' => array(

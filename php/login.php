@@ -49,16 +49,7 @@
         }
         
         if($responseData->success) {
-            if(!login($email, $password, $type, $conn)) {
-                if($remember == true) {
-                    $cookieopt = array ( 'expires' => time()+86400*30, 'path' => '/', 'domain' => '', 'secure' => true, 'httponly' => false, 'samesite' => 'None');
-                    setcookie('EMAIL', $email, $cookieopt);
-                    setcookie('TYPE', $type, $cookieopt);
-                }
-                else {
-                    $_SESSION['EMAIL'] = $email;
-                    $_SESSION['TYPE'] = $type;  
-                }
+            if(!login($email, $password, $type, $remember, $conn)) {
                 echo $type;
                 exit();
             }

@@ -62,7 +62,6 @@
 <body class="background">
     <div id="app" class="script">
         <?php if($type == "CUSTOMER") { require("./headercustomer.php");} else { require("./headerdeveloper.php"); } ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
@@ -99,6 +98,7 @@
                                     </div>
                                     <footer class="card-footer">
                                         <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['CREATIONDATE']?>/<?php echo $rowser['CLEANTITLE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <a href="/chat/<?php echo $rowser['TOKENCHAT'];?>" class="card-footer-item">Histórico de mensagens</a>
                                     </footer>
                                 </div>
                             </div>

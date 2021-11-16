@@ -46,7 +46,7 @@
         return false;
     }
 
-    function login($email, $password, $type, $conn) {
+    function login($email, $password, $type, $remember, $conn) {
         if($type === "DEVELOPER" || $type === "CUSTOMER") {
             $result = searchEmailType($email, $type, $conn);
             if(($result) and ($result->num_rows != 0)) {
@@ -57,6 +57,27 @@
                     if($row['VERIFIED'] === 0) {
                         echo "A sua conta ainda não foi verificada! Para verificar, entre em seu email e clique no link de verificação!";
                         exit();
+                    }
+
+                    if($remember == true) {
+                        $cookieopt = array ( 'expires' => time()+86400*30, 'path' => '/', 'domain' => '', 'secure' => true, 'httponly' => false, 'samesite' => 'None');
+                        setcookie('EMAIL', $email, $cookieopt);
+                        setcookie('TYPE', $type, $cookieopt);
+                    }
+                    else {
+                        session_name("HATIDS");
+                        session_set_cookie_params([
+                            'lifetime' => 0,
+                            'path' => '/',
+                            'domain' => "",
+                            'secure' => true,   
+                            'httponly' => false,
+                            'samesite' => 'None'
+                        ]);
+                        session_start();
+                        $_SESSION['EMAIL'] = $email;
+                        $_SESSION['TYPE'] = $type;
+                        $_SESSION['TOKENCHAT'] = generateNewChatToken($conn, $email, $type);
                     }
                     if(password_needs_rehash($passwd, PASSWORD_DEFAULT, $options)) {
                         $hash = password_hash($password, PASSWORD_DEFAULT, $options);
@@ -319,4 +340,12 @@
                 return "Publicado: há ". floor($difftime / 604800) . " semanas";
                 break;
         }
+    }
+
+    function generateNewChatToken($conn, $email, $type) {
+        $token = bin2hex(random_bytes(10).date("h:i:sa"));
+        $stmt = mysqli_prepare($conn, "UPDATE TB_$type SET TOKENCHAT = ? WHERE EMAIL = ?");
+        mysqli_stmt_bind_param($stmt, "ss", $token, $email);
+        mysqli_stmt_execute($stmt);
+        return $token;
     }

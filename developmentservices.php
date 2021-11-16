@@ -66,7 +66,6 @@
         } else {
             require("./headerdeveloper.php");
         } ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
@@ -103,6 +102,13 @@
                                     </div>
                                     <footer class="card-footer">
                                         <a href="/details/<?php echo $rowser['ID_SERVICE'];?>/<?php echo $rowser['CREATIONDATE']?>/<?php echo $rowser['CLEANTITLE'];?>" class="card-footer-item">Ver detalhes</a>
+                                        <?php 
+                                            if($type == "DEVELOPER") { ?>
+                                                <a href="/chat/<?php echo $rowser["TOKENCHAT"];?>" class="card-footer-item">Conversar com o cliente</a>
+                                        <?php }
+                                            else { ?>
+                                                <a href="/chat/<?php echo $rowser["TOKENCHAT"];?>" class="card-footer-item">Conversar com o desenvolvedor</a>
+                                        <?php } ?>
                                     </footer>
                                 </div>
                             </div>

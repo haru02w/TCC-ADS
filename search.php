@@ -35,10 +35,10 @@
 
     $category = mysqli_query($conn, "SELECT * FROM TB_CATEGORY");
 
-    $timeService = filter_input(INPUT_GET, "t", FILTER_SANITIZE_STRING);
-    $categorySelect = filter_input(INPUT_GET, "cs", FILTER_SANITIZE_STRING);
-    $actpage = filter_input(INPUT_GET, "page", FILTER_SANITIZE_NUMBER_INT);
-    $q = filter_input(INPUT_GET, "q", FILTER_SANITIZE_STRING);
+    $timeService = strip_tags(filter_input(INPUT_GET, "t", FILTER_SANITIZE_STRING));
+    $categorySelect = strip_tags(filter_input(INPUT_GET, "cs", FILTER_SANITIZE_STRING));
+    $actpage = strip_tags(filter_input(INPUT_GET, "page", FILTER_SANITIZE_NUMBER_INT));
+    $q = strip_tags(filter_input(INPUT_GET, "q", FILTER_SANITIZE_STRING));
 
     if(empty($q)) {
         $querySearch = "%%";
@@ -119,13 +119,12 @@
 <body class="background">
     <div id="app" class="script">
         <?php require("./headerdeveloper.php"); ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
                     <section class="hero is-dark">
                         <div class="hero-body">
-                            <p class="title"> Resultados da pesquisa </p>
+                            <p class="title"> Resultados da pesquisa</p>
                         </div>
                     </section>
                     <br>

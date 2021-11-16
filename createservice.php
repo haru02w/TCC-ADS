@@ -41,11 +41,12 @@
     $resultcat = mysqli_query($conn, $sql);
 
     if (isset($_POST["CREATE"])) {
-        $title = filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING);
+        $title = strip_tags(filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING));
         $cleantitle = strtolower(preg_replace("/[^a-zA-Z0-9-]/", "-", strtr(utf8_decode(trim($title)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),"aaaaeeiooouuncAAAAEEIOOOUUNC-")));
-        $cleantitle = preg_replace('/-+/', '-', $cleantitle);
-        $desc = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING);
-        $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING);
+        $cleantitle = strip_tags(preg_replace('/-+/', '-', $cleantitle));
+        $desc = strip_tags(filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING));
+        $category = strip_tags(filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING));
+        $tokenservice = bin2hex(random_bytes(12).date("h:i:sa"));
         $status = 0;
         $iddev = null;
         $creationDate = time();
@@ -54,8 +55,8 @@
             $_SESSION['servicereturn'] = array("msg" => "Por favor, preencha os campos de titulo, descrição e categoria!","class" => "is-danger");
         } 
         else {
-            $stmt = mysqli_prepare($conn, "INSERT INTO TB_SERVICES (COD_CUSTOMER, COD_DEVELOPER, COD_CATEGORY, TITLE, CLEANTITLE, DESCRIPTION, STATUS, CREATIONDATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "ssssssss", $id, $iddev, $category, $title, $cleantitle, $desc, $status, $creationDate);
+            $stmt = mysqli_prepare($conn, "INSERT INTO TB_SERVICES (COD_CUSTOMER, COD_DEVELOPER, COD_CATEGORY, TITLE, CLEANTITLE, DESCRIPTION, STATUS, CREATIONDATE, TOKENCHAT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "sssssssss", $id, $iddev, $category, $title, $cleantitle, $desc, $status, $creationDate, $tokenservice);
             $bool = mysqli_stmt_execute($stmt);
 
             if ($bool) {
@@ -90,7 +91,6 @@
 <body class="background">
     <div id="app" class="script">
         <?php require("./headercustomer.php"); ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
@@ -106,17 +106,17 @@
                             <div class="columns is-centered">
                                 <div class="column is-5">
                                     <div class="field">
-                                        <label class="label">Título do serviço</label>
+                                        <label class="label has-text-white">Título do serviço</label>
                                         <input class="input" type="text" v-model="title" name="title" placeholder="Digite o título do serviço (Máximo de 40 caracteres)">
                                     </div>
                                     <div class="control">
-                                        <label class="label" for="description">Descrição do serviço</label>
+                                        <label class="label has-text-white" for="description">Descrição do serviço</label>
                                         <textarea v-model="description" class="textarea has-fixed-size" placeholder="Digite a descrição do serviço (Máximo de 2000 caracteres)" name="description"></textarea>
                                     </div>
                                 </div>
                                 <div class="column is-5">
                                     <div class="field">
-                                        <label class="label" for="category">Tipo de serviço</label>
+                                        <label class="label has-text-white" for="category">Tipo de serviço</label>
                                         <div class="select">
                                             <select name="category" v-model="category">
                                                 <option value="" disabled selected>Selecione o tipo do serviço</option>

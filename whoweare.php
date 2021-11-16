@@ -15,7 +15,7 @@ require("./php/hidephp.php");
 
 <body class="backgroundPrivacy">
     <div id="app">
-        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="/">
                     <img src="/images/logochick.png" alt="Logo do HatchFy" width="28" height="28">
@@ -41,7 +41,6 @@ require("./php/hidephp.php");
                 </div>
             </div>
         </nav>
-        <br>
         <section class="section hero is-fullheight">
             <div class="container">
                 <h1 class="title has-text-centered">Quem somos <b class="has-text-link">Hatchfy</b></h1>

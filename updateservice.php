@@ -132,7 +132,6 @@
 <body class="background">
     <div id="app" class="script">
         <?php require("./headercustomer.php"); ?>
-        <br>
         <section class="hero is-fullheight">
             <div class="hero-body">
                 <div class="container">
