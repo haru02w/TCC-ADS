@@ -19,7 +19,7 @@ require("./php/hidephp.php");
             <div class="navbar-brand">
                 <a class="navbar-item" href="/">
                     <img src="/images/logochick.png" alt="Logo do HatchFy" width="28" height="28">
-                    <p class="subtitle is-3 font-face">&nbsp HatchFy</p>
+                    <p class="subtitle has-text-link is-3 font-face">&nbsp HatchFy</p>
                 </a>
                 <a role="button" class="navbar-burger" aria-label="menu" :class="{'is-active' : isActiveBurger}" aria-expanded="false" data-target="navbarMenuPage" @click="onClickBurger">
                     <span aria-hidden="true"></span>
@@ -43,7 +43,7 @@ require("./php/hidephp.php");
         </nav>
         <section class="section hero is-fullheight">
             <div class="container">
-                <h1 class="title has-text-centered">Quem somos <b class="has-text-link">Hatchfy</b></h1>
+                <h1 class="title has-text-centered">Quem somos </h1>
                 <p class="subtitle has-text-centered">Acreditamos ser transparentes e objetivos em nosso trabalho, visando buscar melhores maneiras
                     de recepcionar nossos usuários.
                 </p>
